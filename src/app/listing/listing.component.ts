@@ -152,7 +152,7 @@ export class ListingComponent implements OnInit {
 
       case 'Survey':
         this.router.navigate(['/questionnaire'], {
-          queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, index: 0, submissionId:data?.submissionId,solutionId:data?.solutionId
+          queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, index: 0, submissionId:data?.submissionId,solutionId:data?.solutionId,solutionType:"survey"
           }
         });
         break ;

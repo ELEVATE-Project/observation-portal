@@ -29,10 +29,10 @@
                               
                                 <div class="progress-container">
                                     <div class="progress-box">
-                                        <span class="progress-text">{{ entity?.completePercentage || 0 }}%</span>
+                                        <span class="progress-text">{{ entity?.isSubmitted ? 100 : (entity?.completePercentage || 0) }}%</span>
                                       
                                         <mat-progress-bar
-                                          *ngIf="entity?.progressStatus === 'completed' || entity?.progressStatus === 'submitted'"
+                                          *ngIf="entity?.isSubmitted || entity?.progressStatus === 'completed' || entity?.progressStatus === 'submitted'"
                                           mode="determinate"
                                           value="100"
                                           color="primary"
@@ -40,7 +40,7 @@
                                         </mat-progress-bar>
                                       
                                         <mat-progress-bar
-                                          *ngIf="entity?.progressStatus === 'inProgress'"
+                                          *ngIf="!entity?.isSubmitted && entity?.progressStatus === 'inProgress'"
                                           mode="determinate"
                                           [value]="entity?.completePercentage || 0"
                                           color="accent"
@@ -48,7 +48,7 @@
                                         </mat-progress-bar>
                                       
                                         <mat-progress-bar
-                                          *ngIf="!entity?.progressStatus || entity?.progressStatus === 'notStarted'"
+                                        *ngIf="!entity?.isSubmitted && (!entity?.progressStatus || entity?.progressStatus === 'notStarted')"
                                           mode="determinate"
                                           value="0"
                                           color="warn"

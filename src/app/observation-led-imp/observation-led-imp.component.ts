@@ -41,9 +41,9 @@ export class ObservationLedImpComponent {
       .subscribe((res: any) => {
         let result = res?.result;
         if (result?.projectId) {
-          window.location.href = ``;
+          window.location.href = `/ml/project-details?type=details&id=${result?.projectId}&_id=${result?.projectId}&solutionId=${result?.solutionId}`;
         } else {
-          window.location.href = ``;
+          window.location.href = `/ml/project-details?externalId=${project?.externalId}&referenceFrom=observation`;
         }
       });
   }
