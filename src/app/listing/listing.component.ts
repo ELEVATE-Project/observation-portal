@@ -34,7 +34,6 @@ export class ListingComponent implements OnInit {
   solutionListCount :any = 0;
   selectedObservation:any;
   isAnyEntitySelected: boolean = false;
-  surveyExpiry:any;
   surveyPage:any;
   observationReportPage: any;
   description:any;
@@ -248,7 +247,7 @@ export class ListingComponent implements OnInit {
       const formattedEndDate = this.datePipe.transform(element?.endDate, 'mediumDate');
       message = `${this.translate.instant('VALID_TILL')} ${formattedEndDate}`;
     }
-    this.surveyExpiry = message;
+    element.surveyExpiry = message;
   }
   
   
