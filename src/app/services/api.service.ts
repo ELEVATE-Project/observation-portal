@@ -49,7 +49,7 @@ export class ApiService {
   async getAccessToken(): Promise<string | null> {
 
     const options = {
-        url: urlConfig['profileListing'].refreshTokenUrl,
+        url: urlConfig['observation'].refreshTokenUrl,
         headers: { 'Content-Type': 'application/json' },
         body: { refresh_token: localStorage.getItem('refToken')},
     };
