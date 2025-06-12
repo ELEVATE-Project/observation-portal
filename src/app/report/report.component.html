@@ -1,5 +1,5 @@
 
-<main>
+<main *ngIf="loaded">
     <div class="list-title">
     <div class="list">
         <h1 class="heading">{{ observationDetails?.entityName }}</h1>
@@ -297,7 +297,7 @@
       <div *ngIf="isModalOpen" class="modal">
         <div class="modal-content">
           <header>
-            <h2>Preview</h2>
+            <h2>{{'PREVIEW | translate}}</h2>
             <button (click)="closeDialog()">{{"CLOSE"|translate}}</button>
           </header>
           <div>
@@ -311,7 +311,9 @@
   </main>
 
 <ng-template #noData>
+@if(loaded){
   <p class="no-data-found">{{"NO_DATA_MSG" |translate}}</p>
+}  
 </ng-template>
 
 <app-spinner *ngIf="!loaded"></app-spinner>
