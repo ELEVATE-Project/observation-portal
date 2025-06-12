@@ -26,6 +26,8 @@
             "outputPath": "dist/observation-portal",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "/observations/",
+            "deployUrl": "/observations/",
             "polyfills": [
               "zone.js"
             ],
@@ -46,7 +48,18 @@
           },
           "configurations": {
             "production": {
-              "budgets": [],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5MB",
+                  "maximumError": "10MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "5MB",
+                  "maximumError": "10MB"
+                }
+              ],
               "outputHashing": "all"
             },
             "development": {

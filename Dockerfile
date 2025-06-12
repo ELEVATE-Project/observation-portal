@@ -8,7 +8,8 @@ COPY package*.json ./
 RUN npm install --force
 
 COPY . .
-RUN ng build --base-href /observations/
+
+RUN ng build --configuration production
 
 FROM node:18 AS final
 
