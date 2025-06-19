@@ -6,7 +6,7 @@ var angularJsonPath = path.resolve(__dirname, 'angular.json');
 
 var envFileContent = fs.readFileSync(envFilePath, 'utf8');
 
-var match = envFileContent.match(/navigateBaseHref\s*:\s*['"`](.*?)['"`]/);
+var match = envFileContent.match(/hostPath\s*:\s*['"`](.*?)['"`]/);
 
 var baseHref = match ? match[1] : '/';
 
