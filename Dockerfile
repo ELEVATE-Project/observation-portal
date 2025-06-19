@@ -17,9 +17,9 @@ WORKDIR /usr/src/app
 
 COPY --from=build /app/dist/observation-portal/browser /usr/src/app/dist
 
-RUN npm install --force -g serve
-
 COPY src/assets/env/env.js /usr/src/app/dist/assets/env/env.js
+
+RUN npm install --force -g serve
 
 WORKDIR /usr/src/app/dist
 
