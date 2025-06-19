@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "prebuild": "node set-basehref.js",
+    "prebuild": "node set-baseHref.js",
     "build": "npm run prebuild && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
