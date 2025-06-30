@@ -196,3 +196,9 @@ body{
       grid-template-columns: 1fr;
     }
   }
+
+   .mat-mdc-dialog-content.mdc-dialog__content {
+  margin: 0 !important;
+  padding: 1rem 1.5rem !important;
+  text-align: center;
+}
