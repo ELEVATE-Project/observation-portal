@@ -22,7 +22,7 @@
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
     "chart.js": "^4.4.8",
-    "diksha-questionnaire-player": "^1.0.40",
+    "diksha-questionnaire-player": "^1.0.41",
     "jwt-decode": "^4.0.0",
     "network-service": "^0.0.1",
     "rxjs": "~7.8.0",

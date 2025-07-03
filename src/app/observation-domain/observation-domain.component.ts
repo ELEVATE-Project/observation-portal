@@ -74,8 +74,6 @@ export class ObservationDomainComponent implements OnInit {
       this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "downloadObservation");
       if (this.isQuestionerDataInIndexDb?.data) {
         this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
-      } else {
-        this.getObservationByEntityId();
       }
 
       if (Array.isArray(this.isDataInDownloadsIndexDb) && this.isDataInDownloadsIndexDb.length > 0) {
@@ -100,40 +98,19 @@ export class ObservationDomainComponent implements OnInit {
   mapDataToVariables(observationData) {
     this.entities = observationData?.assessment?.evidences;
     this.evidences = this.entities;
+    this.evidences.forEach((element: any) => {
+      element.show = false;
+    });
     this.loaded = true
   }
 
-  getObservationByEntityId() {
-    this.evidences = [];
-    this.apiService.post(urlConfig.observation.observationSubmissions + this.observationId + `?entityId=${this.entityId}`, this.apiService.profileData)
-      .pipe(
-        finalize(() => this.loaded = true),
-        catchError((err: any) => {
-          this.toaster.showToast(err?.error?.message, 'Close');
-          throw Error(err);
-        })
-      )
-      .subscribe((res: any) => {
-
-        if (res.result) {
-          this.entities = res?.result;
-
-          let evidencesStatus = this.entities
-            .filter((obj: any) => obj?._id == this.id)
-            .map((obj: any) => obj.evidencesStatus);
-
-          this.entities
-            .map((obj: any) => {
-              if (obj?._id == this.id) {
-                this.submissionNumber = obj?.submissionNumber;
-              }
-            }
-            )
-          this.evidences = evidencesStatus.flat();
-        } else {
-          this.toaster.showToast(res.message, 'danger');
-        }
-      })
+  toggleExpand(entity:any){
+    this.evidences = this.evidences.map((element: any) => {
+      return {
+        ...element,
+        show: element.code === entity.code ? !element.show : false
+      };
+    });
   }
 
   getObservationsByStatus(statuses: ('All' | 'draft' | 'completed' | 'started')[]) {
@@ -149,7 +126,7 @@ export class ObservationDomainComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
 
-  navigateToDetails(data, index,notApplicable) {
+  navigateToDetails(data,sectionIndex,entityIndex,notApplicable) {
     if(notApplicable){
       return;
     }
@@ -163,7 +140,15 @@ export class ObservationDomainComponent implements OnInit {
       }}
     }) :
       this.router.navigate(['questionnaire'], {
-        queryParams: { observationId: this.observationId, entityId: this.entityId, submissionNumber: this.submissionNumber, evidenceCode: data?.code, index: index, submissionId: this.submissionId },
+        queryParams: { 
+          observationId: this.observationId,  
+          entityId: this.entityId, 
+          submissionNumber: this.submissionNumber, 
+          evidenceCode: data?.code, 
+          index: entityIndex, 
+          submissionId: this.submissionId,
+          sectionIndex:sectionIndex
+        },
         state: { data: {
           isSurvey:true
         }}
@@ -206,8 +191,6 @@ export class ObservationDomainComponent implements OnInit {
         this.isQuestionerDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
         if(this.isQuestionerDataInIndexDb?.data){
           this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
-        }else{
-          this.getObservationByEntityId();
         }
       }
         } else {

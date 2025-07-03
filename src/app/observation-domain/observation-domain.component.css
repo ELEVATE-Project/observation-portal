@@ -1,7 +1,43 @@
-.card-header {
-    display: flex;
-    justify-content: space-between;
+.domain-content {
+  padding: 1rem;
 }
+
+.domain-container {
+  margin-bottom: 1rem;
+}
+
+.domain-card {
+  width: 100%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.card-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.custom-header {
+  padding: 8px 16px;
+  color: var(--primary-color);
+}
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.no-data-text {
+  font-size: 16px;
+  color: var(--color-dark);
+  margin: 0;
+}
+
 
 .description-icon {
     margin-bottom: -0.313rem;
@@ -70,9 +106,6 @@
   .grid-item {
     cursor: pointer;
   }
-  .observation-card{
-    height: 100%;
-  }
   .observation-name {
     font-size: 1.125rem;
     font-weight: bold;
@@ -82,7 +115,7 @@
     padding: 1rem;
   }
   .progress-container{
-    width: 100%;
+    width: 50%;
   }
   .progress-box {
     display: flex;
