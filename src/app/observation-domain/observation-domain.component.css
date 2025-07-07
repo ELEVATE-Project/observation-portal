@@ -1,7 +1,43 @@
+.domain-content {
+  padding: 1rem;
+}
+
+.domain-container {
+  margin-bottom: 1rem;
+}
+
+.domain-card {
+  width: 100%;
+}
+
 .card-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+  width: 100%;
 }
+.card-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.custom-header {
+  padding: 8px 16px;
+  color: var(--primary-color);
+}
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.no-data-text {
+  font-size: 16px;
+  color: var(--color-dark);
+  margin: 0;
+}
+
 
 .description-icon {
     margin-bottom: -0.313rem;
@@ -20,6 +56,7 @@
 }
 
 .not-applicable {
+    height: 2.625rem;
     border-radius: 1.25rem;
     padding: 0.625rem;
     background-color: transparent;
@@ -30,14 +67,12 @@
 }
 
 .secondary-btn {
-    height: 2.625rem;
     background-color: var(--primary-color);
     color: var(--general-btn-text-color);
     border: none;
 }
   
 .primary-btn {
-    height: 2.625rem;
     background-color: var(--color-light);
     color: var(--primary-color);
     border: 0.063rem solid var(--primary-color);
@@ -71,9 +106,6 @@
   .grid-item {
     cursor: pointer;
   }
-  .observation-card{
-    height: 100%;
-  }
   .observation-name {
     font-size: 1.125rem;
     font-weight: bold;
@@ -83,7 +115,7 @@
     padding: 1rem;
   }
   .progress-container{
-    width: 100%;
+    width: 50%;
   }
 
   .progress-box {
@@ -109,4 +141,42 @@
   
   ::ng-deep .mat-progress-bar-fill::after {
     border-radius: 0.5rem;
+  }
+  
+  .domain-list-title {
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: var(--color-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .download-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .download-text {
+    margin: 0;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1;
+  }
+  
+  .download-btn {
+    padding: 2px;
+    width: 32px;
+    height: 32px;
+    min-width: unset;
+  }
+  
+  .download-btn mat-icon {
+    font-size: 22px;
+  }
+  
+  .restrict {
+    pointer-events: none;
   }

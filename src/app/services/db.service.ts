@@ -112,5 +112,26 @@ export class DbService {
       console.error("Failed to clear db");
     }
   }
+  async updateDB(updatedObservationData: any, submissionId: string) {
+    try {
+      const transaction = this.db.transaction([this.storeName], 'readwrite');
+      const store = transaction.objectStore(this.storeName);
+  
+      const dataToUpdate = {
+        key: submissionId,
+        data: updatedObservationData
+      };
+      const request = store.put(dataToUpdate);
+      request.onsuccess = () => {
+        console.log('Data updated successfully in IndexedDB');
+      };
+  
+      request.onerror = (event: any) => {
+        console.error('Error updating IndexedDB:', event.target.error);
+      };
+    } catch (error) {
+      console.error('Failed to update IndexedDB:', error);
+    }
+  }
 
 }

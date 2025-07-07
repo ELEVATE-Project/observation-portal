@@ -9,6 +9,12 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UrlParamsService } from '../services/urlParams.service';
 import { QueryParamsService } from '../services/queryParams.service';
 import { offlineSaveObservation } from '../services/offlineSaveObservation.service';
+import { DownloadService } from '../services/download.service';
+import { DbDownloadService } from '../services/dbDownload.service';
+import { NetworkServiceService } from 'network-service';
+import {TranslateService} from '@ngx-translate/core';
+import { dialogConfirmationMap } from '../constants/actionContants';
+
 @Component({
   selector: 'app-observation-details',
   standalone: false,
@@ -28,9 +34,15 @@ export class ObservationDetailsComponent implements OnInit {
   isPendingTabSelected: boolean = true;
   filteredObservations:any =[];
   isRubricDriven:any;
+  isQuestionerDataInIndexDb: any;
+  allObservationDownloadedDataInIndexDb: any;
+  dbKeys: any;
+  submissionIdSet = new Set<string>();
+  confirmModel:any;
 
   @ViewChild('confirmDialogModel') confirmDialogModel: TemplateRef<any>;
   @ViewChild('updateDialogModel') updateDialogModel: TemplateRef<any>;
+  @ViewChild('dialogModel') dialogModel:TemplateRef<any>;
 
 
   constructor(
@@ -41,7 +53,11 @@ export class ObservationDetailsComponent implements OnInit {
     private urlParamsService:UrlParamsService,
     private route: ActivatedRoute,
     private queryParamsService: QueryParamsService,
-    private offlineData:offlineSaveObservation 
+    private offlineData:offlineSaveObservation,
+    private downloadService: DownloadService,
+    private dbDownloadService: DbDownloadService,
+    private network: NetworkServiceService,
+    private translate: TranslateService
   ) {
   }
 
@@ -53,8 +69,34 @@ export class ObservationDetailsComponent implements OnInit {
     this.observationId = this.urlParamsService?.observationId;
     this.allowMultipleAssessemts = this.urlParamsService?.allowMultipleAssessemts;
     this.observationInit = true;
-    this.getObservationByEntityId();
-  }
+    this.network.isOnline$.subscribe(status => {
+      if (status == true) {
+        this.getObservationByEntityId();
+        this.fetchDownloadedData(false);
+      } else {
+        this.loaded = true;
+        this.setLanguage();
+        this.fetchDownloadedData(true);
+      }});
+}
+
+dialogMessage(data: any, entity?: any) {
+  this.confirmModel = dialogConfirmationMap[data];
+  const actionsMap = {
+    observeAgain: () => this.observeAgain(),
+    downloadPop: () => this.downloadObservation(entity),
+  };
+
+  const dialogRef = this.dialog.open(this.dialogModel);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes' && actionsMap[data]) {
+        actionsMap[data]();
+      }
+    });
+}
+close(){
+  this.dialog.closeAll()
+}
 
 getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'started')[]): void {
   if (!this.observations) {
@@ -109,7 +151,13 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
         data?.observationId,
         data.entityId,
         data?._id
-      ]);
+      ],
+      {
+        state: {
+          ...data,
+          allowMultipleAssessemts: this.allowMultipleAssessemts
+        }
+      });
     } else {
       this.router.navigate(['questionnaire'], {
         queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, evidenceCode: data?.evidencesStatus[0]?.code, index: 0,submissionId:data?._id
@@ -201,5 +249,48 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
       this.isPendingTabSelected = false;
       this.getObservationsByStatus(['completed']);
     }
+}
+async downloadObservation(observationDetail) {
+  let observationDetails = {
+    ...observationDetail,
+    allowMultipleAssessemts: this.allowMultipleAssessemts
+  };
+  let submissionId = observationDetails?._id;
+  await this.downloadService.downloadObservation(this.observationId, this.entityId, observationDetails, submissionId)
+  this.fetchDownloadedData(false);
+}
+
+updateDownloadedSubmissions() {
+  this.submissionIdSet = new Set(
+    this.dbKeys?.map(item => item.metaData?.submissionId)
+  );
+}
+
+async fetchDownloadedData(mapData) {
+  this.allObservationDownloadedDataInIndexDb = await this.dbDownloadService.getAllDownloadsData();
+  this.isQuestionerDataInIndexDb = this.allObservationDownloadedDataInIndexDb.find(
+    item => item.key === this.observationId
+  );
+  this.dbKeys = this.isQuestionerDataInIndexDb?.data || [];
+  this.updateDownloadedSubmissions();
+
+  if (mapData) {
+    this.observations = this.isQuestionerDataInIndexDb?.data.map(item => ({
+      title: item.metaData.observationName,
+      createdAt: item.metaData.observationCreatedDate,
+      isRubricDriven: item.metaData.isRubric,
+      _id: item.metaData.submissionId,
+      status: item.metaData.status,
+      observationId: item.metaData.observationId,
+      entityId: item.metaData.entityId
+    }));
+    this.observationInit = false;
+    this.isRubricDriven = this.isQuestionerDataInIndexDb?.data[0]?.isRubric;
+    this.getObservationsByStatus(['draft', 'started', 'inprogress']);
+  }
+}
+setLanguage() {
+  this.translate.setDefaultLang('en');
+  this.translate.use('en');
 }
 }

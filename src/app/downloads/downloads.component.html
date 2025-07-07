@@ -1,0 +1,76 @@
+<div class="content" *ngIf="loaded">
+    <div class="list-title">
+      <div class="list-heading">
+        <h1 class="heading">Downloads</h1>
+      </div>
+  </div>
+
+  @if(true){
+    <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+        <mat-tab *ngFor="let filter of filters" [label]="filter.label | translate">
+          <ng-template matTabContent>
+            <div class="d-flex flex-dc gap-4">
+              <div class="observation-list">
+                  <div class="grid-container">
+
+
+            <div *ngIf="filter.value === 'observation'">
+              <div *ngFor="let allData of isDataInDownloadsIndexDb; let i = index">
+                <!-- *ngFor="let entity of allData?.data; let i = index" -->
+              <div class="grid-item">
+
+                <mat-card class="observation-card" (click)="navigateTo(allData?.data[0]?.route)">
+                  <mat-card-content>
+                    <div >
+                      <h2 class="observation-name">{{ allData?.data[0]?.title }}</h2>
+                      <p>{{allData?.data[0]?.subTitle}}</p>
+                    </div>
+                      <div class="download-wrapper">
+                        <button class="download-btn" (click)="deleteData(allData.key); $event.stopPropagation()">
+                            Delete
+                          </button>
+                    </div>
+                  </mat-card-content>
+                  
+                </mat-card>
+            </div>
+          </div>
+
+          <div class="centered-container" *ngIf="isDataInDownloadsIndexDb?.length ==0">
+            <p>No Data Downloaded</p>
+          </div>
+          
+
+      
+
+            </div>
+            <div *ngIf="filter.value === 'survey'">
+              <!-- Survey content -->
+              <p>Survey content here</p>
+            </div>
+            <div *ngIf="filter.value === 'projects'">
+              <!-- Projects content -->
+              <p>Projects content here</p>
+            </div>
+          </div>
+        </div>
+        </div>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+      
+      
+  
+  }
+
+
+  <ng-template #confirmDialogModel>
+    <h1 mat-dialog-title>{{'DELETE_CONTENT'|translate}}</h1>
+    <mat-dialog-content>{{ 'DELETE_CONTENT_DESCRIPTION' | translate}}</mat-dialog-content>
+  
+    <mat-dialog-actions class="mat-dialog-actions">
+      <button [mat-dialog-close]="'delete'" class="confirm-delete-btn">{{'DELETE' | translate}}</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+<app-spinner *ngIf="!loaded"></app-spinner>

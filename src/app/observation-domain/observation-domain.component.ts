@@ -7,6 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { catchError, finalize } from 'rxjs';
 import { UrlParamsService } from '../services/urlParams.service';
 import { offlineSaveObservation } from '../services/offlineSaveObservation.service';
+import { DownloadService } from '../services/download.service';
+import { TranslateService } from '@ngx-translate/core';
+import { DbService } from '../services/db.service';
 @Component({
   selector: 'app-observation-domain',
   standalone: false,
@@ -29,7 +32,14 @@ export class ObservationDomainComponent implements OnInit {
   submissionNumber:any;
   submissionId: any;
   completeObservationData: any;
-  stateData:any
+  stateData:any;
+  observationDownloaded: boolean = false;
+  isQuestionerDataInIndexDb: any;
+  isDataInDownloadsIndexDb: any = [];
+  observationDetails: any
+  confirmModel:any;
+  @ViewChild('downloadModel') downloadModel:TemplateRef<any>;
+  @ViewChild('ECMModel') ECMModel:TemplateRef<any>;
 
   constructor(
     private apiService: ApiService, 
@@ -38,10 +48,17 @@ export class ObservationDomainComponent implements OnInit {
     private dialog: MatDialog, 
     private urlParamsService:UrlParamsService,
     private route: ActivatedRoute,
-    private offlineData:offlineSaveObservation 
-  ) {}
+    private offlineData:offlineSaveObservation,
+    private downloadService: DownloadService,
+    private translate:TranslateService,
+     private db: DbService
+  ) {
+    const passedData = this.router.getCurrentNavigation()?.extras.state;
+    this.observationDetails = passedData;
+  }
 
-  async ngOnInit(){
+  async ngOnInit() {
+    window.addEventListener('message', this.handleMessage);
     this.stateData = history.state?.data;
     if(this.stateData){
       this.mapDataToVariables(this.stateData)
@@ -51,50 +68,48 @@ export class ObservationDomainComponent implements OnInit {
     this.entityId = this.urlParamsService?.entityId;
     this.id = this.urlParamsService?.solutionId;
     this.submissionId = this.urlParamsService?.solutionId;
-    let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
-    if (isDataInIndexDb?.data) {
-      this.mapDataToVariables(isDataInIndexDb?.data)
-    }else {
-      this.getObservationByEntityId();
-    }
+    this.isQuestionerDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
+
+      this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "downloadObservation");
+      if (this.isQuestionerDataInIndexDb?.data) {
+        this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
+      }
+
+      if (Array.isArray(this.isDataInDownloadsIndexDb) && this.isDataInDownloadsIndexDb.length > 0) {
+        const existingIndex = this.isDataInDownloadsIndexDb.findIndex(
+          (item: any) => 
+            item.metaData.submissionId === this.submissionId &&
+          item.metaData.entityId === this.entityId
+        );
+
+        if (existingIndex !== -1) {
+        this.observationDownloaded = true;
+
+        } else {
+        this.observationDownloaded = false;
+        }
+      }else{
+        this.observationDownloaded = false;
+      }
     }
   }
+
   mapDataToVariables(observationData) {
     this.entities = observationData?.assessment?.evidences;
     this.evidences = this.entities;
+    this.evidences.forEach((element: any) => {
+      element.show = false;
+    });
     this.loaded = true
   }
-  getObservationByEntityId() {
-    this.evidences = [];
-    this.apiService.post(urlConfig.observation.observationSubmissions + this.observationId + `?entityId=${this.entityId}`, this.apiService.profileData)
-    .pipe(
-      finalize(() =>this.loaded = true),
-      catchError((err: any) => {
-        this.toaster.showToast(err?.error?.message, 'Close');
-        throw Error(err);
-      })
-    )
-      .subscribe((res: any) => {
-        
-        if (res.result) {
-          this.entities = res?.result;
 
-        let evidencesStatus = this.entities
-          .filter((obj: any) => obj?._id == this.id)
-          .map((obj: any) => obj.evidencesStatus);
-
-          this.entities
-          .map((obj: any) => {
-            if(obj?._id == this.id){
-              this.submissionNumber = obj?.submissionNumber;
-            }
-          }
-        )
-        this.evidences = evidencesStatus.flat();
-        } else {
-          this.toaster.showToast(res.message, 'danger');
-        }
-      })
+  toggleExpand(entity:any){
+    this.evidences = this.evidences.map((element: any) => {
+      return {
+        ...element,
+        show: element.code === entity.code ? !element.show : false
+      };
+    });
   }
 
   getObservationsByStatus(statuses: ('All' | 'draft' | 'completed' | 'started')[]) {
@@ -110,46 +125,73 @@ export class ObservationDomainComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
 
-  navigateToDetails(data,index) {
-    this.stateData ? this.router.navigate(['questionnaire'],{
+  navigateToDetails(data,sectionIndex,entityIndex,notApplicable) {
+    if(notApplicable){
+      return;
+    }
+    this.stateData ? this.router.navigate(['questionnaire'], {
       queryParams:{
         solutionType:this.stateData?.solutionType
       },
-      state:{data:this.stateData}
+      state:{data:{
+        ...this.stateData,
+        isSurvey:false
+      }}
     }):
-    this.router.navigate(['questionnaire'], {
-      queryParams: { observationId:this.observationId, entityId:this.entityId, submissionNumber:this.submissionNumber,evidenceCode:data?.code, index:index,submissionId: this.submissionId }
-    });
+      this.router.navigate(['questionnaire'], {
+        queryParams: { 
+          observationId:this.observationId,  
+          entityId:this.entityId, 
+          submissionNumber:this.submissionNumber, 
+          evidenceCode:data?.code, 
+          index:entityIndex, 
+          submissionId: this.submissionId,
+          sectionIndex:sectionIndex
+        },
+        state: { data: {
+          isSurvey:true
+        }}
+      });
   }
 
-
-  notApplicable(entity) {
+  notApplicable(entity,selectedIndex) {
     this.remark = "";
-    const dialogRef = this.dialog.open(this.notApplicableModel);
-
-    dialogRef.afterClosed().subscribe(result => {
+    const dialogRefEcm = this.dialog.open(this.ECMModel);
+    dialogRefEcm.afterClosed().subscribe(result => {
       if (result === 'confirm') {
-        const evidence = {
-          externalId: entity?.code,
-          remarks: this.remark,
-          notApplicable: true
-        }
-        this.updateEntity(evidence)
+        const dialogRef = this.dialog.open(this.notApplicableModel);
+        dialogRef.afterClosed().subscribe(result => {
+          if (result === 'add') {
+            const evidence = {
+              externalId: entity?.code,
+              remarks: this.remark,
+              notApplicable: true
+            };
+            this.updateEntity(evidence,selectedIndex);
+          }
+        });
       }
     });
   }
 
-  updateEntity(evidence) {
-    let payload={
-        ...evidence,
-        ...this.apiService.profileData
+  updateEntity(evidences,code) {
+    let payload = {
+      evidence:{
+        ...evidences
+      },
+      ...this.apiService.profileData
     }
-    this.apiService.post(urlConfig.observation.update + this.id, payload)
-
-      .subscribe((res: any) => {
-
-        if (res.status == 200) {
-          this.getObservationByEntityId();
+    this.apiService.post(urlConfig.observation.update + this.id, payload).subscribe(async (res: any) => {
+      if (res.status == 200) {
+      let data: any = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
+      if (data?.data?.assessment?.evidences?.[code]) {
+        data.data.assessment.evidences[code].notApplicable = true;
+        await this.db.updateDB(data?.data,this.submissionId)
+        this.isQuestionerDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
+        if(this.isQuestionerDataInIndexDb?.data){
+          this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
+        }
+      }
         } else {
           this.toaster.showToast(res.message, 'Close');
         }
@@ -158,4 +200,27 @@ export class ObservationDomainComponent implements OnInit {
       })
 
   }
+  async downloadObservation() {
+    await this.downloadService.downloadObservation(this.observationId, this.entityId, this.observationDetails, this.submissionId)
+    this.observationDownloaded = true;
+  }
+  downloadPop() {
+      const dialogRef = this.dialog.open(this.downloadModel);
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === 'yes') {
+          this.downloadObservation()
+        }
+      });
+    }
+    handleMessage = async(event: MessageEvent) => {
+      if (event.data?.type === 'START') {
+        const stateData = event.data.data;
+          if(stateData?.solution?.isRubricDriven){
+            this.router.navigate([
+            'entityList',
+            stateData?.solution?._id,
+            stateData?.solution?.name]);
+          }
+      }
+    };
 }
