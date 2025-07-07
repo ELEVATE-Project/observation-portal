@@ -23,7 +23,7 @@
       git:
         repo: https://github.com/ELEVATE-Project/observation-portal
         dest: "{{project_path}}"
-        version: "{{gitBranch}}"
+        version: "{{BRANCH_NAME}}"
         force: yes
 
     - name: Install dependencies
@@ -38,7 +38,7 @@
         sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/environments/environment.ts
       register: envConfig
 
-    - debug: msg="envConfig result: {{ envConfig }}"
+    # - debug: msg="envConfig result: {{ envConfig }}"
 
     - name: Fetch pm2 config file
       shell: "curl --location --request GET '{{ vaultAddress }}observationPortalPm2Config' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data.data' > '{{ project_path }}/pm2.config.json'"
