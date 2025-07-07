@@ -23,7 +23,7 @@
       git:
         repo: https://github.com/ELEVATE-Project/observation-portal
         dest: "{{project_path}}"
-        version: "{{BRANCH_NAME}}"
+        version: "{{gitBranch}}"
         force: yes
 
     - name: Install dependencies
