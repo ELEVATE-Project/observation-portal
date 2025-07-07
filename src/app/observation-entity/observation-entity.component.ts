@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { catchError, finalize } from 'rxjs';
 import { MatSelectionListChange } from '@angular/material/list';
 import { UrlParamsService } from '../services/urlParams.service';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 @Component({
   selector: 'app-observation-entity',
   standalone: false,
@@ -25,7 +26,6 @@ export class ObservationEntityComponent  {
   addedEntities: string[] = [];
   entities = new FormControl();
   @ViewChild('searchEntityModal') searchEntityModal: TemplateRef<any>;
-  @ViewChild('confirmDialogModel') confirmDialogModel: TemplateRef<any>;
   dialogRef: any;
   observationId: any;
   searchEntities: any = [];
@@ -153,7 +153,14 @@ export class ObservationEntityComponent  {
   }
 
   deleteEntity(id) {
-    const dialogRef = this.dialog.open(this.confirmDialogModel);
+    const dialogRef = this.dialog.open(GenericPopupComponent,{
+      width: '400px',
+      data: {
+        title: 'CONFIRM_DELETION',
+        message: 'CONFIRM_DELETE',
+        entityType: this.selectedEntities?.entityType
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'yes') {

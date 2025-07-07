@@ -10,6 +10,7 @@ import { offlineSaveObservation } from '../services/offlineSaveObservation.servi
 import { DownloadService } from '../services/download.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DbService } from '../services/db.service';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 @Component({
   selector: 'app-observation-domain',
   standalone: false,
@@ -38,8 +39,6 @@ export class ObservationDomainComponent implements OnInit {
   isDataInDownloadsIndexDb: any = [];
   observationDetails: any
   confirmModel:any;
-  @ViewChild('downloadModel') downloadModel:TemplateRef<any>;
-  @ViewChild('ECMModel') ECMModel:TemplateRef<any>;
 
   constructor(
     private apiService: ApiService, 
@@ -156,9 +155,17 @@ export class ObservationDomainComponent implements OnInit {
 
   notApplicable(entity,selectedIndex) {
     this.remark = "";
-    const dialogRefEcm = this.dialog.open(this.ECMModel);
+    const dialogRefEcm = this.dialog.open(GenericPopupComponent,{
+      width: '400px',
+      data: {
+        title:'CONFIRM',
+        message: 'ECM_NOT_APPLICABLE',
+        yesLabel: 'CONFIRM',
+        noLabel: 'CANCEL'
+      }
+    });
     dialogRefEcm.afterClosed().subscribe(result => {
-      if (result === 'confirm') {
+      if (result === 'yes') {
         const dialogRef = this.dialog.open(this.notApplicableModel);
         dialogRef.afterClosed().subscribe(result => {
           if (result === 'add') {
@@ -205,7 +212,12 @@ export class ObservationDomainComponent implements OnInit {
     this.observationDownloaded = true;
   }
   downloadPop() {
-      const dialogRef = this.dialog.open(this.downloadModel);
+      const dialogRef = this.dialog.open(GenericPopupComponent,{
+        width: '400px',
+      data: {
+        message: 'DOWNLOAD_MSG',
+      }
+      });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'yes') {
           this.downloadObservation()

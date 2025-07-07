@@ -107,20 +107,3 @@
     </mat-dialog-actions>
   </div>
 </ng-template>
-
-<ng-template #downloadModel>
-  <mat-dialog-content>{{ 'DOWNLOAD_MSG'| translate}}</mat-dialog-content>
-  <mat-dialog-actions class="mat-dialog-actions">
-    <button [mat-dialog-close]="'yes'" class="primary-btn">{{"YES"|translate}}</button>
-    <button mat-dialog-close="no" class="secondary-btn">{{"NO"| translate}}</button>
-  </mat-dialog-actions>
-</ng-template>
-
-<ng-template #ECMModel>
-  <h1 mat-dialog-title>{{"CONFIRM" | translate}}</h1>
-  <mat-dialog-content>{{ 'ECM_NOT_APPLICABLE'| translate}}</mat-dialog-content>
-  <mat-dialog-actions class="mat-dialog-actions">
-    <button [mat-dialog-close]="'cancel'" class="primary-btn">{{"CANCEL"|translate}}</button>
-    <button mat-dialog-close="confirm" class="secondary-btn">{{"CONFIRM"| translate}}</button>
-  </mat-dialog-actions>
-</ng-template>

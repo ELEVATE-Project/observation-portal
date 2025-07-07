@@ -106,25 +106,3 @@
 </mat-dialog-actions>
 </ng-template>
 
-<ng-template #confirmDialogModel>
-<h1 mat-dialog-title>{{"CONFIRM_DELETION"|translate}}</h1>
-<mat-dialog-content>{{'DELETE_OBSERVATION_CONFIRMATION' | translate}}</mat-dialog-content>
-<mat-dialog-actions class="mat-dialog-actions">
-  <button [mat-dialog-close]="'yes'" class="primary-btn">{{"YES"|translate}}</button>
-  <button mat-dialog-close="no" class="secondary-btn">{{"NO"| translate}}</button>
-</mat-dialog-actions>
-</ng-template>
-
-<ng-template #dialogModel>
-  @if(confirmModel?.title){
-    <div class="dialog-title-with-close">
-      <h1 mat-dialog-title>{{ confirmModel?.title | translate }}</h1>
-      <mat-icon class="close-icon" (click)="close()">close</mat-icon>
-    </div>
-  }
-  <mat-dialog-content>{{confirmModel?.message | translate}}</mat-dialog-content>
-<mat-dialog-actions class="mat-dialog-actions">
-  <button [mat-dialog-close]="'yes'" class="primary-btn">{{"YES"|translate}}</button>
-  <button mat-dialog-close="no" class="secondary-btn">{{"NO"| translate}}</button>
-  </mat-dialog-actions>
-</ng-template>

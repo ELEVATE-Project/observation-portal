@@ -14,6 +14,7 @@ import { DbDownloadService } from '../services/dbDownload.service';
 import { NetworkServiceService } from 'network-service';
 import {TranslateService} from '@ngx-translate/core';
 import { dialogConfirmationMap } from '../constants/actionContants';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 
 @Component({
   selector: 'app-observation-details',
@@ -40,9 +41,7 @@ export class ObservationDetailsComponent implements OnInit {
   submissionIdSet = new Set<string>();
   confirmModel:any;
 
-  @ViewChild('confirmDialogModel') confirmDialogModel: TemplateRef<any>;
   @ViewChild('updateDialogModel') updateDialogModel: TemplateRef<any>;
-  @ViewChild('dialogModel') dialogModel:TemplateRef<any>;
 
 
   constructor(
@@ -87,7 +86,13 @@ dialogMessage(data: any, entity?: any) {
     downloadPop: () => this.downloadObservation(entity),
   };
 
-  const dialogRef = this.dialog.open(this.dialogModel);
+  const dialogRef = this.dialog.open(GenericPopupComponent,{
+    width: '400px',
+      data: {
+        title: this.confirmModel?.title,
+        message: this.confirmModel?.message,
+      }
+  });
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'yes' && actionsMap[data]) {
         actionsMap[data]();
@@ -180,7 +185,13 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
 
   deleteEntity(id: any) {
 
-    const dialogRef = this.dialog.open(this.confirmDialogModel);
+    const dialogRef = this.dialog.open(GenericPopupComponent,{
+      width: '400px',
+      data: {
+        title: 'CONFIRM_DELETION',
+        message: 'DELETE_OBSERVATION_CONFIRMATION',
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'yes') {

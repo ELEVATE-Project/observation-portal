@@ -113,13 +113,3 @@
         </div>
   </ng-template>
   
-  
-  <ng-template #confirmDialogModel>
-    <h1 mat-dialog-title>{{'CONFIRM_DELETION'|translate}}</h1>
-    <mat-dialog-content>{{ 'CONFIRM_DELETE' | translate: { entityType: selectedEntities?.entityType } }}</mat-dialog-content>
-  
-    <mat-dialog-actions class="mat-dialog-actions">
-      <button [mat-dialog-close]="'yes'" class="primary-btn">{{'YES' | translate}}</button>
-      <button mat-dialog-close="no" class="secondary-btn">{{'NO' | translate}}</button>
-    </mat-dialog-actions>
-  </ng-template>
