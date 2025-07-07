@@ -1,0 +1,80 @@
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" class="material-tabs">
+    <mat-tab label="{{ 'ALLEVIDENCES' | translate }}">
+      <div class="tab-content">
+  
+        <div *ngIf="images?.length">
+          <h5>{{ 'IMAGES' | translate }}</h5>
+          <div class="grid">
+            <div class="grid-item" *ngFor="let i of images">
+              <mat-icon class="customizeIcon image-icon"
+                        matTooltip="View the uploaded image"
+                        matTooltipClass="tooltip"
+                        (click)="openDialog(i.url, 'image')">
+                image
+              </mat-icon>
+            </div>
+          </div>
+        </div>
+  
+        <div *ngIf="videos?.length">
+          <h5>{{ 'VIDEOS' | translate }}</h5>
+          <div class="grid">
+            <div class="grid-item" *ngFor="let v of videos">
+              <mat-icon class="customizeIcon video-icon"
+                        matTooltip="View the uploaded video"
+                        matTooltipClass="tooltip"
+                        (click)="openDialog(v.url, 'video')">
+                video_file
+              </mat-icon>
+            </div>
+          </div>
+        </div>
+  
+        <div *ngIf="documents?.length">
+          <h5>{{ 'DOCUMENTS' | translate }}</h5>
+          <div class="grid">
+            <div class="grid-item" *ngFor="let d of documents">
+              <mat-icon class="customizeIcon document-icon"
+                        matTooltip="View the uploaded file"
+                        matTooltipClass="tooltip"
+                        (click)="openUrl(d)">
+                description
+              </mat-icon>
+            </div>
+          </div>
+        </div>
+  
+        <div *ngIf="audios?.length">
+          <h5>{{ 'AUDIOS' | translate }}</h5>
+          <div class="grid">
+            <div class="grid-item" *ngFor="let a of audios">
+              <mat-icon class="customizeIcon audio-icon"
+                        matTooltip="Play the uploaded audio"
+                        matTooltipClass="tooltip"
+                        (click)="openDialog(a.url, 'video')">
+                audiotrack
+              </mat-icon>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    </mat-tab>
+  
+    <mat-tab label="{{ 'REMARKS' | translate }}">
+      <div class="tab-content">
+        <div *ngIf="remarks?.length">
+          <div class="remark-item" *ngFor="let r of remarks">
+            {{ r }}
+            <hr/>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  
+
+@if(!loaded){
+    <app-spinner></app-spinner>
+}
+  

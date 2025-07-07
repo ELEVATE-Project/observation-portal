@@ -37,7 +37,6 @@ ngOnInit(): void {
 
 onTabChange(index: number) {
   const selectedTab = this.filters[index];
-  console.log('Selected Tab:', selectedTab.value);
 }
 
 isDataInDownloadsIndexDb:any;
@@ -45,7 +44,6 @@ isDataInDownloadsIndexDb:any;
 async fetchDownloadedData(type){
   if(type == "observation"){
     this.isDataInDownloadsIndexDb = await this.dbDownloadService.getAllDownloadsData();
-    console.log("isDataInDownloadsIndexDb", this.isDataInDownloadsIndexDb);
   }
 }
 

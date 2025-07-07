@@ -32,7 +32,7 @@ export class DeeplinkRedirectComponent {
   ngOnInit() {
     this.network.isOnline$.subscribe(status => this.isOnline = status);
     window.addEventListener('message', this.handleMessage);
-    this.route.paramMap.subscribe(async (param:any)=>{
+    this.route.paramMap.subscribe((param:any)=>{
       this.type = param.get("type")
       this.linkId = param.get("id")
       if(!this.isOnline){

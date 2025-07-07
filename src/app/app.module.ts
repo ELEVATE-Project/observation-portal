@@ -58,6 +58,7 @@ import { SurveyFilterComponent } from './shared/survey-filter/survey-filter.comp
 import { SurveyPreviewComponent } from './shared/survey-preview/survey-preview.component';
 import { DownloadsComponent } from './downloads/downloads.component';
 import { SurveyExpiredComponent } from './survey-expired/survey-expired.component';
+import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -80,7 +81,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     SurveyFilterComponent,
     SurveyPreviewComponent,
     DownloadsComponent,
-    SurveyExpiredComponent
+    SurveyExpiredComponent,
+    ViewEvidencesComponent
   ],
   imports: [
     BrowserModule,

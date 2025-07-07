@@ -16,7 +16,6 @@
 
             <div *ngIf="filter.value === 'observation'">
               <div *ngFor="let allData of isDataInDownloadsIndexDb; let i = index">
-                <!-- *ngFor="let entity of allData?.data; let i = index" -->
               <div class="grid-item">
 
                 <mat-card class="observation-card" (click)="navigateTo(allData?.data[0]?.route)">

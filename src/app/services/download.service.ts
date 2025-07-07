@@ -45,7 +45,6 @@ export class DownloadService {
 
   async downloadObservation( observationId, entityId, observationDetails, submissionId) {
 
-    // return
     const newItem = {
       title: observationDetails?.observationName,
       subTitle: observationDetails?.program?.name,

@@ -12,4 +12,5 @@ export const APP_ROUTES = {
     SURVEYREPORTS:'surveyReports/:id',
     DOWNLOADS: "downloads",
     SURVEYEXPIRED:'surveyStatus',
+    VIEWALLEVIDENCES:'viewAllEvidences'
 };
