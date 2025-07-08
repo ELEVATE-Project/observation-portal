@@ -10,7 +10,7 @@
       register: slurpfile
 
     - name: Run vault credentials
-      shell: "curl --location --request GET '{{ vaultAddress }}mentored-portal' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{root_path}}/data-observation.json'"
+      shell: "curl --location --request GET '{{ vaultAddress }}elevate-observation-pwa' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{root_path}}/data-observation.json'"
       register: vaultCurl
 
     - name: Show Vault environment data
