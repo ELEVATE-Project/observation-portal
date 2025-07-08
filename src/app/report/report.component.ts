@@ -267,7 +267,7 @@ export class ReportComponent implements OnInit {
     return options;
   }
 
-async openDialog(url: any, type: string) {
+openDialog(url: any, type: string) {
     this.dialog.open(SurveyPreviewComponent, {
       width: '400px',
       data: {
@@ -322,7 +322,7 @@ async openDialog(url: any, type: string) {
     this.applyFilter(true);
   }
 
-async openUrl(evidence: any) {
+  openUrl(evidence: any) {
     window.open(evidence.url, '_blank');
   }
 
