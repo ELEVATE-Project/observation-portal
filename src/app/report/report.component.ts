@@ -272,7 +272,7 @@ openDialog(url: any, type: string) {
       width: '400px',
       data: {
         objectType:type,
-        objectUrl:url
+        objectUrl:url.previewUrl
       }
     })
   }
@@ -323,7 +323,7 @@ openDialog(url: any, type: string) {
   }
 
   openUrl(evidence: any) {
-    window.open(evidence.url, '_blank');
+    window.open(evidence.previewUrl, '_blank');
   }
 
   isChartNotEmpty(chart: any, i?:any) {
