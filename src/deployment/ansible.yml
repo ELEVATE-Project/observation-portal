@@ -10,12 +10,16 @@
       register: slurpfile
 
     - name: Run vault credentials
-      shell: "curl --location --request GET '{{ vaultAddress }}elevate-project-pws' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{root_path}}/data-observation.json'"
+      shell: "curl --location --request GET '{{ vaultAddress }}elevate-observation-pwa' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{root_path}}/data-observation.json'"
       register: vaultCurl
 
     - name: Show Vault environment data
       shell: cat {{root_path}}/data2.json | jq '.data'
       register: vaultEnvData
+
+    - name: Print Vault environment data
+      debug:
+        msg: "{{ vaultEnvData.stdout }}"
 
     - name: Ensure project directory exists
       file:
