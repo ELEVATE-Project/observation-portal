@@ -96,12 +96,12 @@ export class SurveyReportsComponent implements OnInit {
   
   
 
-  openDialog(url: string, type: string) {
+  openDialog(url: any, type: string) {
     const dialogRef = this.dialog.open(SurveyPreviewComponent, {
       width: '400px',
       data: {
         objectType:type,
-        objectUrl:url
+        objectUrl:url?.previewUrl
       }  
     });
   
@@ -152,7 +152,7 @@ export class SurveyReportsComponent implements OnInit {
   }
  
 openUrl(evidence: any) {
-  window.open(evidence.url, '_blank');
+  window.open(evidence?.previewUrl, '_blank');
 }
 
 getEvidenceType(extension: string): 'image' | 'video' | 'audio' | 'url' | 'unknown' {

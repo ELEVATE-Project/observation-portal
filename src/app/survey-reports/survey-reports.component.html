@@ -74,7 +74,7 @@
                 <ng-container [ngSwitch]="evidence.extension">
                   <mat-icon class="evidence-icon"
                     [matTooltip]="getTooltip(getEvidenceType(evidence.extension))"
-                  (click)="getEvidenceType(evidence.extension) === 'url'? openUrl(evidence): openDialog(evidence.url, getEvidenceType(evidence.extension))">
+                  (click)="getEvidenceType(evidence.extension) === 'url'? openUrl(evidence): openDialog(evidence, getEvidenceType(evidence.extension))">
                   {{ getIconName(getEvidenceType(evidence.extension), evidence.extension.toLowerCase()) }}
               </mat-icon>
                 </ng-container>
