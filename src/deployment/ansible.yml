@@ -47,11 +47,16 @@
     #     sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/assets/environments/environment.ts
     #   register: envConfig
 
-    - name: Generate environment.ts
+    - name: Convert JSON to window["env"] format and store in environment.ts
       shell: |
-        echo "export const environment = " > {{ project_path }}/src/assets/environments/environment.ts
-        cat {{root_path}}/data2.json | jq '.data' >> {{ project_path }}/src/assets/environments/environment.ts
-        echo ";" >> {{ project_path }}/src/assets/environments/environment.ts
+        echo 'window["env"] = {' > {{ project_path }}/src/assets/environments/environment.ts
+        jq -r 'to_entries | map("  \(.key): " +
+          (if (.value|type) == "string" then "\"" + .value + "\""
+          elif (.value|type) == "boolean" or (.value|type) == "number" then (.value|tostring)
+          else "\"\""
+          end)
+        ) | join(",\n")' {{ root_path }}/data2.json >> {{ project_path }}/src/assets/environments/environment.ts
+        echo '};' >> {{ project_path }}/src/assets/environments/environment.ts
       register: envConfig
 
     # - debug: msg="envConfig result: {{ envConfig }}"
