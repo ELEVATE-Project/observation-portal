@@ -13,6 +13,10 @@
       shell: "curl --location --request GET '{{ vaultAddress }}elevate-project-pws' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{root_path}}/data-observation.json'"
       register: vaultCurl
 
+    - name: Show Vault environment data
+      shell: cat {{root_path}}/data2.json | jq '.data'
+      register: vaultEnvData
+
     - name: Ensure project directory exists
       file:
         path: "{{ project_path }}"
@@ -33,10 +37,17 @@
     - name: Set permission for env script
       shell: chmod 744 {{ project_path }}/src/scripts/json2env.sh
 
+    # - name: Generate environment.ts
+    #   shell: |
+    #     cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/assets/environments/environment.ts &&
+    #     sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/assets/environments/environment.ts
+    #   register: envConfig
+
     - name: Generate environment.ts
       shell: |
-        cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/assets/environments/environment.ts &&
-        sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/assets/environments/environment.ts
+        echo "export const environment = " > {{ project_path }}/src/assets/environments/environment.ts
+        cat {{root_path}}/data2.json | jq '.data' >> {{ project_path }}/src/assets/environments/environment.ts
+        echo ";" >> {{ project_path }}/src/assets/environments/environment.ts
       register: envConfig
 
     # - debug: msg="envConfig result: {{ envConfig }}"
