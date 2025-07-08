@@ -48,7 +48,7 @@
     #   register: envConfig
 
     - name: Convert JSON to window["env"] format and store in environment.ts
-      shell: cat {{ root_path }}/data2.json | {{ project_path }}/apps/scripts/json2env.sh > {{ project_path }}/.env
+      shell: cat {{ root_path }}/data2.json | {{ project_path }}/src/scripts/json2env.sh > {{ project_path }}/.env
       register: envConfig
 
     # - debug: msg="envConfig result: {{ envConfig }}"
