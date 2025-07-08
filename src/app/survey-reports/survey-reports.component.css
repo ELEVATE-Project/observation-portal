@@ -160,3 +160,24 @@ mat-chip {
 .evidence-icon:hover {
   transform: scale(1.1);
 }
+
+.view-all-wrapper {
+display: flex;
+justify-content: flex-end;
+flex: 1;
+}
+
+.view-all-btn {
+font-size: 0.75rem;
+padding: 0.25rem 0.75rem;
+border: 1px solid var(--color-dark);
+background-color: transparent;
+border-radius: 1rem;
+cursor: pointer;
+transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.view-all-btn:hover {
+background-color: var(--color-dark);
+color: white;
+}

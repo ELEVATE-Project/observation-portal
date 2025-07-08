@@ -4,7 +4,8 @@
         "update":"/survey/v1/surveySubmissions/update/",
         "reportUrl":"/survey/v1/reports/fetch",
         "surveyVerifyLink":"/survey/v1/surveys/details/",
-        "reports":"/survey/v1/reports/submissionReport?submissionId="
+        "reports":"/survey/v1/reports/submissionReport?submissionId=",
+        "surveyEvidences":"/ml/surveys/mlreports/v1/listAllEvidences"
     },
     "observation":{
         "listing":"/survey/v1/solutions/targetedSolutions",
@@ -20,7 +21,8 @@
         "project": "/project/v1/project/templates/details/",
         "templateDetails":"/project/v1/solutions/details/",
         "refreshTokenUrl":"/user/v1/account/generateToken",
-        "observationVerifyLink":"/survey/v1/solutions/verifyLink/"
+        "observationVerifyLink":"/survey/v1/solutions/verifyLink/",
+        "observationEvidences": "/ml/observations/mlreports/v1/listAllEvidences"
     },
     "presignedUrl":"/survey/v1/files/preSignedUrls"
 }

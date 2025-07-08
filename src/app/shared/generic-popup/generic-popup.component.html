@@ -1,0 +1,18 @@
+<div class="dialog-container">
+  @if(data?.title){
+    <div class="dialog-header">
+      <h2 class="dialog-title" mat-dialog-title>{{ data.title | translate }}</h2>
+      <button mat-icon-button class="close-button" aria-label="Close" (click)="onClose('no')">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+
+    <mat-dialog-content class="dialog-content">{{ data.message | translate: { entityType: data.entityType } }}</mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+        <button mat-raised-button color="primary" class="btn primary-btn" (click)="onClose('yes')">{{ yesLabel | translate }}</button>
+        <button mat-stroked-button class="btn secondary-btn" (click)="onClose('no')">{{ noLabel | translate }}</button>
+    </mat-dialog-actions>
+</div>
+  

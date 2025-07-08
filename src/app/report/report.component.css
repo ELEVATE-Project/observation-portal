@@ -234,6 +234,7 @@
   
   .row {
     display: flex;
+    flex-wrap: wrap;
     margin-bottom: 0.5rem;
     padding: 0.5rem;
     text-align: center;
@@ -249,9 +250,10 @@
   }
   
   .column {
-    flex: 1 0 auto;
+    flex: 1 1 150px;
     padding: 0.5rem;
     min-width: 6.563rem;
+    word-break: break-word;
   }
   
   .expansion-panel{
@@ -260,6 +262,10 @@
   
   .title-accordion{
     font-size: large;
+    word-break: break-word;
+    margin: 0;     
+    overflow-wrap: break-word; 
+    max-width: 100%; 
   }
   
   .no-data-found{
@@ -315,7 +321,26 @@
     display: flex;
     justify-content: center;
   }
-
+  .view-all-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
+  }
+  
+.view-all-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--color-dark);
+    background-color: transparent;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+  
+.view-all-btn:hover {
+    background-color: var(--color-dark);
+    color: white;
+}
   @media (max-width: 47.9375rem) {
     .chip {
       display: block;

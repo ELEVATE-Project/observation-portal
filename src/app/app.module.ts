@@ -56,6 +56,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { SurveyReportsComponent } from './survey-reports/survey-reports.component';
 import { SurveyFilterComponent } from './shared/survey-filter/survey-filter.component';
 import { SurveyPreviewComponent } from './shared/survey-preview/survey-preview.component';
+import { DownloadsComponent } from './downloads/downloads.component';
+import { SurveyExpiredComponent } from './survey-expired/survey-expired.component';
+import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.component';
+import { GenericPopupComponent } from './shared/generic-popup/generic-popup.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -76,7 +80,11 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     DeeplinkRedirectComponent,
     SurveyReportsComponent,
     SurveyFilterComponent,
-    SurveyPreviewComponent
+    SurveyPreviewComponent,
+    DownloadsComponent,
+    SurveyExpiredComponent,
+    ViewEvidencesComponent,
+    GenericPopupComponent
   ],
   imports: [
     BrowserModule,

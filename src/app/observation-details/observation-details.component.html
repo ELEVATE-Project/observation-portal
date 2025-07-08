@@ -21,7 +21,20 @@
 
                   </mat-card-content>
   
-                  <div *ngIf="!entity?.isRubricDriven || allowMultipleAssessemts == 'true'">
+                  <div class="actions-buttons" *ngIf="!entity?.isRubricDriven || allowMultipleAssessemts == 'true'">
+                    <div class="download-wrapper" [ngClass]="{ 'margin-right-spacing': (!entity?.isRubricDriven || allowMultipleAssessemts == 'false') }" *ngIf="submissionIdSet.has(entity?._id)">
+                      <button mat-icon-button (click)="$event.stopPropagation()" class="download-btn">
+                        <mat-icon class="downloaded">check</mat-icon>
+                      </button>
+                      <p class="downloaded-text download-text">{{'DOWNLOADED' | translate}}</p>
+                    </div>
+                    
+                    <div class="download-wrapper" *ngIf="!submissionIdSet.has(entity?._id)" [ngClass]="{ 'margin-right-spacing': (!entity?.isRubricDriven || allowMultipleAssessemts == 'false') }">
+                      <button mat-icon-button (click)="dialogMessage('downloadPop',entity); $event.stopPropagation()" class="download-btn">
+                        <mat-icon>arrow_downward</mat-icon>
+                      </button>
+                      <p class="download-text">{{'DOWNLOAD' | translate}}</p>
+                    </div>
                   <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
                     <mat-icon>more_vert</mat-icon>
                   </button>
@@ -68,7 +81,7 @@
   </mat-tab-group>
   
   <div class="fixed-bottom-buttons">
-    <button mat-raised-button (click)="observeAgain()" *ngIf="allowMultipleAssessemts == 'true' && isPendingTabSelected">{{"OBSERVE_AGIAN" | translate}}</button>
+    <button mat-raised-button (click)="dialogMessage('observeAgain')" *ngIf="allowMultipleAssessemts == 'true' && isPendingTabSelected">{{"OBSERVE_AGIAN" | translate}}</button>
     <button mat-raised-button color="accent" (click)="viewReport()" *ngIf="!isPendingTabSelected && filteredObservations?.length > 0">{{"VIEW_REPORT" | translate}}</button>
   </div>
 </div>
@@ -93,11 +106,3 @@
 </mat-dialog-actions>
 </ng-template>
 
-<ng-template #confirmDialogModel>
-<h1 mat-dialog-title>{{"CONFIRM_DELETION"|translate}}</h1>
-<mat-dialog-content>{{'DELETE_OBSERVATION_CONFIRMATION' | translate}}</mat-dialog-content>
-<mat-dialog-actions class="mat-dialog-actions">
-  <button [mat-dialog-close]="'yes'" class="primary-btn">{{"YES"|translate}}</button>
-  <button mat-dialog-close="no" class="secondary-btn">{{"NO"| translate}}</button>
-</mat-dialog-actions>
-</ng-template>

@@ -13,7 +13,7 @@
     <mat-card *ngFor="let question of reportDetails; let qi = index" class="question-card">
 
         <mat-card-header style="background-color: whitesmoke;">
-          <mat-card-title style="font-size: 1rem;">{{question.questionNumber}}. {{ question.question }}</mat-card-title>
+        <mat-card-title style="font-size: 1rem;">{{qi + 1}}. {{ question.question }}</mat-card-title>
         </mat-card-header>
     
         <mat-card-content>
@@ -72,24 +72,18 @@
             <div class="evidence-icons">
               <ng-container *ngFor="let evidence of question.evidences">
                 <ng-container [ngSwitch]="evidence.extension">
-                  <mat-icon *ngSwitchCase="'jpg'"
-                            class="evidence-icon"
-                            matTooltip="View the uploaded image"
-                            (click)="openDialog(evidence.url,'image')">image</mat-icon>
-                  <mat-icon *ngSwitchCase="'png'"
-                            class="evidence-icon"
-                            matTooltip="View the uploaded image"
-                            (click)="openDialog(evidence.url,'image')">image</mat-icon>
-                  <mat-icon *ngSwitchCase="'pdf'"
-                            class="evidence-icon"
-                            matTooltip="View PDF"
-                            (click)="openUrl(evidence.url)">picture_as_pdf</mat-icon>
-                  <mat-icon *ngSwitchCase="'mp4'"
-                            class="evidence-icon"
-                            matTooltip="View the uploaded video"
-                            (click)="openDialog(evidence.url,'video')">videocam</mat-icon>
+                  <mat-icon class="evidence-icon"
+                    [matTooltip]="getTooltip(getEvidenceType(evidence.extension))"
+                  (click)="getEvidenceType(evidence.extension) === 'url'? openUrl(evidence): openDialog(evidence.url, getEvidenceType(evidence.extension))">
+                  {{ getIconName(getEvidenceType(evidence.extension), evidence.extension.toLowerCase()) }}
+              </mat-icon>
                 </ng-container>
               </ng-container>
+            </div>
+          <div class="view-all-wrapper" *ngIf="question?.evidence_count > 3">
+            <button class="view-all-link" (click)="allEvidenceClick(question)">
+              {{ 'VIEW_ALL_EVIDNECES' | translate }}
+             </button>
             </div>
           </div>
           

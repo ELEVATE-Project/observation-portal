@@ -1,12 +1,12 @@
-
-<div class="content" *ngIf="loaded">
+@if(loaded){
+  <div class="content">
     <div class="list-title">
       <div class="list-heading">
         <h1 class="heading">{{pageTitle?.title}}</h1>
         <p class="heading-paragraph">{{ description }}</p>
       </div>
-
-      <div class="srch" *ngIf="!observationReportPage">
+      @if(!observationReportPage){
+      <div class="srch">
         <div class="srch-bar">
           <span class="icon">
             <i class="material-icons">search</i>
@@ -21,55 +21,63 @@
             <i class="material-icons">close</i>
           </button>
         </div>
-      </div>
+        </div>
+      }
+
     </div>
-  
-    <div class="observation-list" *ngIf="solutionListCount !== 0">
-
-    <div class="select-filter" *ngIf="observationReportPage">
-      <mat-form-field>
-        <mat-label>{{'ENTITY_FILTER' | translate}}</mat-label>
-        <mat-select (selectionChange)="changeEntityType($event.value)" [(ngModel)]="selectedEntityType">
-          <mat-option *ngFor="let item of entityType" [value]="item">
-            {{ item }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-     </div>
-
-        <div class="grid-container">
-          <div class="grid-item" *ngFor="let solution of solutionList" (click)="navigateTo(solution)">
+    @if(solutionListCount !== 0){
+    <div class="observation-list">
+      @if(observationReportPage){
+      <div class="select-filter">
+        <mat-form-field>
+          <mat-label>{{'ENTITY_FILTER' | translate}}</mat-label>
+          <mat-select (selectionChange)="changeEntityType($event.value)" [(ngModel)]="selectedEntityType">
+          @for(item of entityType;track $index){
+          <mat-option [value]="item">{{ item }}</mat-option>
+          }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      }
+      <div class="grid-container">
+        @for(solution of solutionList;track $index){
+          <div class="grid-item" (click)="navigateTo(solution)">
             <mat-card class="observation-card">
               <mat-card-content>
                 <div class="card-header">
                   <h2 class="observation-name"><b>{{ solution?.name }}</b></h2>
                    @if(surveyPage){
-                    <span [ngClass]="solution?.tagClass" class="label">
-                      {{ solution?.statusLabel }}
-                    </span>
+                    <span [ngClass]="solution?.tagClass" class="label">{{ solution?.statusLabel }}</span>
                    }
                 </div>
-                @if(!surveyPage){
-                <p>{{solution?.description}}</p>
-                }
                 @if(surveyPage){
                   <p>{{solution?.surveyExpiry}}</p>
+                }@else{
+                  <p>{{solution?.description}}</p>
               }
               </mat-card-content>
             </mat-card>
           </div>
+        }
         </div>
     </div>
-    <div *ngIf="solutionListCount === 0" class="no-data-container">
+    }@else{
+    <div class="no-data-container">
       <img src ="assets/images/no_data.jpg" alt="No data" />
     </div>
-
-    <div class="fixed-bottom-buttons" *ngIf="!(solutionListCount === 0 || solutionListCount === initialSolutionData?.length)">
+    }
+    @if(!(solutionListCount === 0 || solutionListCount === initialSolutionData?.length)){
+    <div class="fixed-bottom-buttons">
       <button mat-raised-button color="accent" (click)="loadData()">{{'LOAD_MORE' | translate}}</button>
     </div>
+    }
   </div>
+}@else{
+  <app-spinner></app-spinner>
+}
 
-  <div *ngIf="isEntityFilterModalOpen" class="modal">
+@if(isEntityFilterModalOpen){
+  <div class="modal">
     <div class="modal-content">
       <header class="d-flex align-items-center">
         <h1 class="modal-title">{{'SELECT_ENTITY' | translate}}</h1>
@@ -77,12 +85,12 @@
       </header>
       <div>
         <ul>
-          <li *ngFor="let question of allEntities; let i = index">
-            <input type="checkbox" [(ngModel)]="question.selected" class="modal-input" [id]="'question-' + i" (change)="onEntityChange(i)" > 
-            <label [for]="'question-' + i">
-              {{ question.name }}
-            </label>
+          @for(question of allEntities;track $index){
+          <li>
+            <input type="checkbox" [(ngModel)]="question.selected" class="modal-input" [id]="'question-' + $index" (change)="onEntityChange($index)" > 
+            <label [for]="'question-' + $index">{{ question.name }}</label>
           </li>
+          }
         </ul>
       </div>
       <footer class="question-footer">
@@ -90,7 +98,4 @@
       </footer>
     </div>
   </div>
-
-@if(!loaded){
-  <app-spinner></app-spinner>
 }

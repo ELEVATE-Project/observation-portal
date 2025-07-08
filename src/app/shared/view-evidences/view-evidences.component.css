@@ -1,0 +1,55 @@
+.material-tabs {
+    margin: 1rem 0;
+  }
+  
+  .tab-content {
+    padding: 1rem;
+  }
+  
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  
+  .grid-item {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .remark-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    text-align: justify;
+  }
+  
+
+  mat-icon.customizeIcon {
+    color: var(--primary-color);
+    height: unset !important;
+    width: unset !important;
+    font-size: 36px;
+    cursor: pointer;
+  }
+
+  ::ng-deep .mat-mdc-tab-group, 
+  ::ng-deep .mat-mdc-tab-nav-bar {
+      --mdc-tab-indicator-active-indicator-color: var(--primary-color);
+      --mat-tab-header-disabled-ripple-color: var(--primary-color);
+      --mat-tab-header-pagination-icon-color: var(--primary-color);
+      --mat-tab-header-inactive-label-text-color: var(--primary-color);
+      --mat-tab-header-active-label-text-color: var(--primary-color);
+      --mat-tab-header-active-ripple-color: var(--primary-color);
+      --mat-tab-header-inactive-ripple-color: var(--primary-color);
+      --mat-tab-header-inactive-focus-label-text-color: var(--primary-color);
+      --mat-tab-header-inactive-hover-label-text-color: var(--primary-color);
+      --mat-tab-header-active-focus-label-text-color: var(--primary-color);
+      --mat-tab-header-active-hover-label-text-color: var(--primary-color);
+      --mat-tab-header-active-focus-indicator-color: var(--primary-color);
+      --mat-tab-header-active-hover-indicator-color: var(--primary-color);
+  }

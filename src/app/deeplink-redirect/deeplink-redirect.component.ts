@@ -6,6 +6,7 @@ import { ToastService } from '../services/toast.service';
 import { NetworkServiceService } from 'network-service';
 import { Location } from '@angular/common';
 import { catchError } from 'rxjs/operators';
+import { UtilsService } from '../services/utils.service';
 
 @Component({
   selector: 'app-deeplink-redirect',
@@ -24,7 +25,8 @@ export class DeeplinkRedirectComponent {
     private apiService : ApiService,
     private toastService :ToastService,
     private network:NetworkServiceService,
-    private location: Location
+    private location: Location,
+    private utils:UtilsService
   ) {}
 
   ngOnInit() {
@@ -36,10 +38,6 @@ export class DeeplinkRedirectComponent {
       if(!this.isOnline){
         this.toastService.showToast('NETWORK_OFFLINE','danger')
         return
-      }
-      if (!this.apiService.profileData) {
-        this.router.navigate([`/listing/${this.type}`]);
-        return;
       }
       this.checkLinkType()
     })
@@ -107,7 +105,7 @@ export class DeeplinkRedirectComponent {
   }
 
   async redirectObservation(resp) {
-    await this.router.navigate([`/listing/${this.type}`]);
+    await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
       this.router.navigate([
         'domain',
@@ -165,13 +163,19 @@ export class DeeplinkRedirectComponent {
         )
           .subscribe(async (res: any) => {
             if (res.result === false) {
-              this.toastService.showToast('SURVEY_EXPIRED', 'close');
-              await this.router.navigate([`/listing/${this.type}`]);
+              await this.router.navigate(['surveyStatus'],{
+                queryParams:{
+                  status:'expired'
+                }
+              })
               return;
             }
             if (res.result.status && res.result.status === 'completed') {
-              this.toastService.showToast('SURVEY_COMPLETED', 'close');
-              await this.router.navigate([`/listing/${this.type}`]);
+              await this.router.navigate(['surveyStatus'],{
+                queryParams:{
+                  status:res?.result?.status
+                }
+              })
               return;
             }
             this.navigateToSurvey(res?.result);
@@ -182,12 +186,16 @@ export class DeeplinkRedirectComponent {
   }
 
   async navigateToSurvey(data:any){
-    await this.router.navigate([`/listing/${this.type}`]);
     this.router.navigate(['questionnaire'], {
       queryParams:{
+        index: 0, 
+        submissionId:data?.assessment?.submissionId,
+        solutionId:data?.solution?._id,
         solutionType:this.type
       },
-      state:{data:{...data,isSurvey:true}}
+      state:{data:{...data,isSurvey:true},
+    },
+    replaceUrl:true
     });
   }
 

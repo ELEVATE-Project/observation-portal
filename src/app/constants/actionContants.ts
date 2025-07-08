@@ -21,3 +21,24 @@ export const listingConfig:any ={
       description:'SURVEY_DESC',
     }
 }
+export const dialogConfirmationMap ={
+  observeAgain:{
+    title:'OBSERVE_AGIAN',
+    close:true,
+    message:'OBSERVE_AGIAN_MSG',
+  },
+  downloadPop:{
+    message:'DOWNLOAD_MSG'
+  }
+}
+
+export const surveyStatusMap = {
+  expired:{
+    path:'assets/images/survey-expired.svg',
+    text:'SURVEY_EXPIRED_MSG'
+  },
+  completed:{
+    path:'assets/images/submitted.svg',
+    text:'SURVEY_COMPLETED_MSG'
+  }
+}
