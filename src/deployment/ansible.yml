@@ -35,8 +35,8 @@
 
     - name: Generate environment.ts
       shell: |
-        cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/environments/environment.ts
-        sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/environments/environment.ts
+        cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/assets/environments/environment.ts
+        sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/assets/environments/environment.ts
       register: envConfig
 
     # - debug: msg="envConfig result: {{ envConfig }}"
