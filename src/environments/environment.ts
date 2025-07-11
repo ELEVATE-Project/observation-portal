@@ -8,5 +8,3 @@ export const environment:Environment = {
     surveyBaseURL: window['env' as any]['surveyBaseURL' as any] as unknown as string,
     hostPath: window['env' as any]['hostPath' as any] as unknown as string
 }
-
-// src/assets/envirnoments/environment.ts
