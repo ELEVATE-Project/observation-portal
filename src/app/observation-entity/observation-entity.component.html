@@ -51,10 +51,9 @@
           </div>
         </div>
       </div>
-  
-    <div *ngIf="!filteredEntitiesOne?.length" class="no-data-container">
-      <img src="assets/images/no_data.jpg" alt="No data" />
-    </div>
+    @if(!filteredEntitiesOne?.length){
+      <app-no-data></app-no-data>
+    }
   
   </ng-container>
   

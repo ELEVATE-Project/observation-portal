@@ -60,6 +60,7 @@ import { DownloadsComponent } from './downloads/downloads.component';
 import { SurveyExpiredComponent } from './survey-expired/survey-expired.component';
 import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.component';
 import { GenericPopupComponent } from './shared/generic-popup/generic-popup.component';
+import { NoDataComponent } from './shared/no-data/no-data.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -84,7 +85,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     DownloadsComponent,
     SurveyExpiredComponent,
     ViewEvidencesComponent,
-    GenericPopupComponent
+    GenericPopupComponent,
+    NoDataComponent
   ],
   imports: [
     BrowserModule,
