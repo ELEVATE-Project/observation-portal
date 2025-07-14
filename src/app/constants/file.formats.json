@@ -1,25 +1,91 @@
 {
-    "types": {
-        "image": [
-            "png",
-            "jpg",
-            "jpeg",
-            "image/png",
-            "image/jpg",
-            "image/jpeg"
-        ],
-        "video": [
-            "mp4",
-            "video/mp4"
-        ],
-        "audio": [
-        ],
-        "pdf": [
-            "pdf",
-            "application/pdf"
-        ],
-        "doc":[
+    "types": [
+      {
+        "type": "image",
+        "toolTip": "View image",
+        "icon": "image",
+        "formats": [
+          "png",
+          "jpg",
+          "jpeg",
+          "image/png",
+          "image/jpg",
+          "image/jpeg",
+          "image/heic",
+          "heic",
+          "image/heif",
+          "heif",
+          "image/webp",
+          "webp",
+          "image/hevc",
+          "hevc"
         ]
-    },
+      },
+      {
+        "type": "video",
+        "toolTip": "View video",
+        "icon": "videocam",
+        "formats": [
+          "mp4",
+          "video/mp4",
+          "avi",
+          "video/avi",
+          "flv",
+          "video/flv",
+          "3gp",
+          "video/3gp",
+          "m4v",
+          "video/m4v",
+          "mkv",
+          "video/mkv",
+          "mov",
+          "video/mov",
+          "ogg",
+          "video/ogg",
+          "webm",
+          "video/webm",
+          "wmv",
+          "video/wmv"
+        ]
+      },
+      {
+        "type": "audio",
+        "toolTip": "Play audio",
+        "icon": "audiotrack",
+        "formats": [
+          "mp3",
+          "audio/mp3",
+          "wav",
+          "audio/wav",
+          "mpeg",
+          "audio/mpeg"
+        ]
+      },
+      {
+        "type": "pdf",
+        "toolTip": "Open file",
+        "icon": "picture_as_pdf",
+        "formats": [
+          "pdf",
+          "application/pdf"
+        ]
+      },
+      {
+        "type": "doc",
+        "toolTip": "Open file",
+        "icon": "article",
+        "formats": [
+          "csv",
+          "doc",
+          "docx",
+          "pptx",
+          "txt",
+          "xls",
+          "xlsx",
+          "ppt"
+        ]
+      }
+    ],
     "limit": 50
-}
+  }
+  

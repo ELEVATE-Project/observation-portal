@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import * as fileConstant from '../constants/file.formats.json';
 
 @Injectable({
   providedIn: 'root',
@@ -36,5 +37,16 @@ export class UtilsService {
     const tokenExpiryTime = new Date(tokenDecoded.exp * 1000);
     const currentTime = new Date();
     return currentTime < tokenExpiryTime;
+  }
+  mapEvidences(evidences: any[]): any[] {
+    return evidences.map(evidence => {
+      const match = fileConstant.types.find(type =>
+        type.formats.includes(evidence.extension)
+      );
+  
+      return match
+        ? { ...evidence, type: match.type, toolTip: match.toolTip, icon: match.icon }
+        : evidence;
+    });
   }
 }
