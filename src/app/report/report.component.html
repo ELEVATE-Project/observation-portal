@@ -108,9 +108,9 @@
                 <div *ngFor="let evidence of question?.evidences" class="iconList">
                   <ng-container [ngSwitch]="evidence.extension">
                   <mat-icon class="evidence-icon"
-                  [matTooltip]="getTooltip(getEvidenceType(evidence.extension))"
-                  (click)="getEvidenceType(evidence.extension) === 'url'? openUrl(evidence): openDialog(evidence, getEvidenceType(evidence.extension))">
-                  {{ getIconName(getEvidenceType(evidence.extension), evidence.extension.toLowerCase()) }}
+                  [matTooltip]="evidence.toolTip"
+                  (click)="evidence?.type === 'pdf' || evidence?.type === 'doc'  ? openUrl(evidence.previewUrl): openDialog(evidence)">
+                  {{ evidence.icon }}
                 </mat-icon>
                   </ng-container>
                 </div>
@@ -235,9 +235,9 @@
                   <div *ngFor="let evidence of question?.evidences" class="iconList">
                     <ng-container [ngSwitch]="evidence.extension">
                     <mat-icon class="evidence-icon"
-                    [matTooltip]="getTooltip(getEvidenceType(evidence.extension))"
-                    (click)="getEvidenceType(evidence.extension) === 'url'? openUrl(evidence): openDialog(evidence, getEvidenceType(evidence.extension))">
-                    {{ getIconName(getEvidenceType(evidence.extension), evidence.extension.toLowerCase()) }}
+                    [matTooltip]="evidence.toolTip"
+                    (click)="evidence?.type === 'pdf' || evidence?.type === 'doc' ? openUrl(evidence.previewUrl): openDialog(evidence)">
+                    {{ evidence.icon }}
                   </mat-icon>
                     </ng-container>
                   </div>

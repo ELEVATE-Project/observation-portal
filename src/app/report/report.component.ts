@@ -20,6 +20,7 @@ import { UrlParamsService } from '../services/urlParams.service';
 import { QueryParamsService } from '../services/queryParams.service';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UtilsService } from '../services/utils.service';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -64,6 +65,7 @@ export class ReportComponent implements OnInit {
     private route:ActivatedRoute,
     private queryParamsService: QueryParamsService,
     private dialog: MatDialog,
+    private utils:UtilsService
   ) {}
 
   ngOnInit() {
@@ -109,7 +111,15 @@ export class ReportComponent implements OnInit {
         this.allQuestions = reportSections?.map((question:any) => {
           return { ...question, selected: true };
         });
-        this.reportDetails = this.processSurveyData(this.allQuestions);
+        this.reportDetails = this.processSurveyData(this.allQuestions).map(item => {
+          if (item?.evidences?.length) {
+            return {
+              ...item,
+              evidences: this.utils.mapEvidences(item.evidences)
+            };
+          }
+          return item;
+        });
         this.cdr?.detectChanges();
         this.objectType == 'questions' ? this.renderCharts(this.reportDetails, false) : this.renderCharts(this.reportDetails, true);
         if(this.initialLoad){
@@ -267,12 +277,12 @@ export class ReportComponent implements OnInit {
     return options;
   }
 
-openDialog(url: any, type: string) {
+openDialog(evidence: any) {
     this.dialog.open(SurveyPreviewComponent, {
       width: '400px',
       data: {
-        objectType:type,
-        objectUrl:url.previewUrl
+        objectType:evidence?.type,
+        objectUrl:evidence.previewUrl
       }
     })
   }
@@ -323,7 +333,7 @@ openDialog(url: any, type: string) {
   }
 
   openUrl(evidence: any) {
-    window.open(evidence.previewUrl, '_blank');
+    window.open(evidence, '_blank');
   }
 
   isChartNotEmpty(chart: any, i?:any) {
@@ -365,38 +375,6 @@ openDialog(url: any, type: string) {
     this.router.navigate(['/observation-led-imp'], { state: { improvementProjectSuggestions: this.observationDetails?.improvementProjectSuggestions, programName : this.observationDetails?.programName } });
   }
 
-  getEvidenceType(extension: string): 'image' | 'video' | 'audio' | 'url' | 'unknown' {
-    const ext = extension.toLowerCase();
-    const imageExts = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'hevc'];
-    const videoExts = ['mp4', 'avi', 'flv', '3gp', 'm4v', 'mkv', 'mov', 'ogg', 'webm', 'wmv'];
-    const audioExts = ['mp3', 'wav', 'mpeg'];
-    const urlExts = ['pdf', 'csv', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt'];
-  
-    if (imageExts.includes(ext)) return 'image';
-    if (videoExts.includes(ext)) return 'video';
-    if (audioExts.includes(ext)) return 'audio';
-    if (urlExts.includes(ext)) return 'url';
-    return 'unknown';
-  }
-  
-  getTooltip(type: string): string {
-    switch (type) {
-      case 'image': return 'View image';
-      case 'video': return 'View video';
-      case 'audio': return 'Play audio';
-      case 'url': return 'Open file';
-      default: return 'Unknown file';
-    }
-  }
-  
-  getIconName(type: string, ext: string): string {
-    if (type === 'image') return 'image';
-    if (type === 'video') return 'videocam';
-    if (type === 'audio') return 'audiotrack';
-    if (ext === 'pdf') return 'picture_as_pdf';
-    if (type === 'url') return 'article';
-    return 'insert_drive_file';
-  }
   allEvidenceClick(question:any){
     const queryParams = {
       submissionId: this.submissionId,

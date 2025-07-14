@@ -73,9 +73,9 @@
               <ng-container *ngFor="let evidence of question.evidences">
                 <ng-container [ngSwitch]="evidence.extension">
                   <mat-icon class="evidence-icon"
-                    [matTooltip]="getTooltip(getEvidenceType(evidence.extension))"
-                  (click)="getEvidenceType(evidence.extension) === 'url'? openUrl(evidence): openDialog(evidence, getEvidenceType(evidence.extension))">
-                  {{ getIconName(getEvidenceType(evidence.extension), evidence.extension.toLowerCase()) }}
+                    [matTooltip]="evidence.toolTip"
+                  (click)="evidence?.type === 'pdf' || evidence?.type === 'doc'? openUrl(evidence.url): openDialog(evidence)">
+                  {{ evidence.icon }}
               </mat-icon>
                 </ng-container>
               </ng-container>
