@@ -372,7 +372,7 @@ openDialog(evidence: any) {
   }
 
   navigateToObservationLedImpPage(){
-    this.router.navigate(['/observation-led-imp'], { state: { improvementProjectSuggestions: this.observationDetails?.improvementProjectSuggestions, programName : this.observationDetails?.programName } });
+    this.router.navigate(['/observation-led-imp'], { state: { improvementProjectSuggestions: this.observationDetails?.improvementProjectSuggestions, programName : this.observationDetails?.solutionName } });
   }
 
   allEvidenceClick(question:any){
