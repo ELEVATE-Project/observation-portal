@@ -47,6 +47,7 @@
 .btn-container {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
 }
 
 .btn-container button {
@@ -180,3 +181,4 @@
   .restrict {
     pointer-events: none;
   }
+  
