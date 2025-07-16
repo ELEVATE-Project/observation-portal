@@ -1,27 +1,6 @@
 <ng-container *ngIf="loaded">
-    <div class="list-title">
-      <div>
-        <h1 class="heading">{{solutionName}}</h1>
-        <p class="heading-paragraph">{{ 'SELECT_ENTITY_FROM_LIST' | translate:{ entityType: entityToAdd } }}</p>
-      </div>
   
-      <div class="srch">
-        <div class="srch-bar">
-          <span class="icon">
-            <i class="material-icons">search</i>
-          </span>
-          <input 
-            [(ngModel)]="searchValue" 
-            (input)="handleEntitySearchInput($event)"
-            [placeholder]="'SEARCH_ENTITY_PLACEHOLDER' | translate:{ entity: entityToAdd }"
-            class="search-input search"
-          />
-          <button *ngIf="searchValue" aria-label="Clear" class="clear-btn" (click)="handleEntitySearchInput()">
-            <i class="material-icons">close</i>
-          </button>
-        </div>
-      </div>
-    </div>
+  <app-main-content [headerConfig]="headerConfig" (searchTermChange)="handleEntitySearchInput($event)"></app-main-content>
   
       <div class="add-btn-container">
         <button class="add-entity-btn" (click)="openAllEntityList()" [disabled]="!observationId" [ngClass]="{ 'disabled-button': !observationId }">{{ 'ADD_ENTITY' | translate:{ entity: entityToAdd } }}</button>

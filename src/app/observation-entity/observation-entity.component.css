@@ -149,13 +149,6 @@
     cursor: not-allowed;
   }
 
-  .no-data-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
 
 .srch-bar {
     width: 100%;

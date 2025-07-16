@@ -1,9 +1,4 @@
 
-<div class="list-title">
-    <h1 class="heading">{{entityName}}</h1>
-    <p class="heading-paragraph">{{ 'SELECT_OBSERVATION' | translate }}</p>
-</div>
-
 <div *ngIf="loaded">
   <mat-tab-group mat-stretch-tabs="true" [(selectedIndex)]="selectedTabIndex" class="mb-5" (selectedTabChange)="toggleTabs($event)">
 

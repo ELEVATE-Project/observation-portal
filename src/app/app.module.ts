@@ -61,6 +61,7 @@ import { SurveyExpiredComponent } from './survey-expired/survey-expired.componen
 import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.component';
 import { GenericPopupComponent } from './shared/generic-popup/generic-popup.component';
 import { NoDataComponent } from './shared/no-data/no-data.component';
+import { MainContentComponent } from './shared/main-content/main-content.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -86,7 +87,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     SurveyExpiredComponent,
     ViewEvidencesComponent,
     GenericPopupComponent,
-    NoDataComponent
+    NoDataComponent,
+    MainContentComponent
   ],
   imports: [
     BrowserModule,
