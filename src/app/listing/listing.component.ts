@@ -8,6 +8,7 @@ import { UrlParamsService } from '../services/urlParams.service';
 import { listingConfig} from '../constants/actionContants';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
+import { UtilsService } from '../services/utils.service';
 
 @Component({
   selector: 'app-listing',
@@ -43,7 +44,8 @@ export class ListingComponent implements OnInit {
     private urlParamService:UrlParamsService,
     private route:ActivatedRoute,
     private translate: TranslateService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private utils:UtilsService
   ) {
   }
  
@@ -85,6 +87,9 @@ export class ListingComponent implements OnInit {
   }
 
   async getListData(): Promise<void> {
+    if(!this.apiService?.profileData){
+      this.utils.getProfileDetails()
+    }
     let urlPath:any = this.headerConfig?.showSearch ? urlConfig[this.listType].reportListing : urlConfig[this.listType].listing
     let queryParams;
     switch (this.headerConfig?.title){

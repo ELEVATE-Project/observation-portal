@@ -60,6 +60,9 @@ export class DeeplinkRedirectComponent {
 
 
   checkLinkType(){
+    if(!this.apiService?.profileData){
+      this.utils.getProfileDetails()
+    }
     if (this.type === 'observation') {
       this.handleObservationLink();
     } else if (this.type === 'survey') {

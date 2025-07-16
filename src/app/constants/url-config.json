@@ -24,5 +24,9 @@
         "observationVerifyLink":"/survey/v1/solutions/verifyLink/",
         "observationEvidences": "/ml/observations/mlreports/v1/listAllEvidences"
     },
+    "formListing": {
+        "profileUrl":"/survey/v1/profile/read",
+        "entityConfigUrl" : "/survey/v1/configurations/read"
+    },
     "presignedUrl":"/survey/v1/files/preSignedUrls"
 }

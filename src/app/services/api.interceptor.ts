@@ -55,6 +55,7 @@ export class ApiInterceptor implements HttpInterceptor {
         const allUrls = [
           ...Object.values(urlConfig.survey),
           ...Object.values(urlConfig.observation),
+          ...Object.values(urlConfig.formListing),
           urlConfig.presignedUrl,
         ];
 

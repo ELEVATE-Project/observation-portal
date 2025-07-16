@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import * as fileConstant from '../constants/file.formats.json';
+import { ProfileService } from './profile.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class UtilsService {
 
  cloudStorageUpload?(payload): Observable<any>;
 
-  constructor() {}
+  constructor(private profileService: ProfileService) {}
 
   isEmpty(value: any): boolean {
     if (value == null) {
@@ -48,5 +49,11 @@ export class UtilsService {
         ? { ...evidence, type: match.type, toolTip: match.toolTip, icon: match.icon }
         : evidence;
     });
+  }
+  async getProfileDetails() {
+    const profileData:any = await this.profileService.getProfileAndEntityConfigData()
+    if(profileData){
+      localStorage.setItem('profileData',JSON.stringify(profileData))
+    }
   }
 }

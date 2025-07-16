@@ -7,6 +7,7 @@ import { catchError, finalize } from 'rxjs';
 import { UrlParamsService } from '../services/urlParams.service';
 import { QueryParamsService } from '../services/queryParams.service';
 import { Location } from '@angular/common';
+import { UtilsService } from '../services/utils.service';
 
 @Component({
   selector: 'app-observation-as-task',
@@ -24,7 +25,8 @@ export class ObservationAsTaskComponent implements OnInit {
     private toastService: ToastService,
     private route: ActivatedRoute,
     private queryParamsService: QueryParamsService,
-    private location: Location
+    private location: Location,
+  private utils:UtilsService,
   ) {
   }
 
@@ -52,6 +54,9 @@ export class ObservationAsTaskComponent implements OnInit {
   };
 
   fetchTemplateDetails(solutionId) {
+    if(!this.apiService?.profileData){
+      this.utils.getProfileDetails()
+    }
     this.apiService.post(urlConfig.observation.templateDetails + `${solutionId}`, this.apiService.profileData)
       .pipe(finalize(() => this.loaded = true),
         catchError((err: any) => {
