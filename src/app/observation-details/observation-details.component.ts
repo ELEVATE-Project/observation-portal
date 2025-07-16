@@ -24,7 +24,6 @@ import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.com
 })
 export class ObservationDetailsComponent implements OnInit {
   entityId: any;
-  entityName: any;
   observationId: any;
   observations: any = [];
   observationName: any;
@@ -64,7 +63,6 @@ export class ObservationDetailsComponent implements OnInit {
     this.queryParamsService.parseQueryParams()
     this.urlParamsService.parseRouteParams(this.route)
     this.entityId=this.urlParamsService?.entityId
-    this.entityName = decodeURIComponent(decodeURIComponent(this.queryParamsService?.entityName || ''));
     this.observationId = this.urlParamsService?.observationId;
     this.allowMultipleAssessemts = this.urlParamsService?.allowMultipleAssessemts;
     this.observationInit = true;

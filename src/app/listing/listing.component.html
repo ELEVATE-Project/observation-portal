@@ -1,33 +1,9 @@
 @if(loaded){
   <div class="content">
-    <div class="list-title">
-      <div class="list-heading">
-        <h1 class="heading">{{pageTitle?.title}}</h1>
-        <p class="heading-paragraph">{{ description }}</p>
-      </div>
-      @if(!observationReportPage){
-      <div class="srch">
-        <div class="srch-bar">
-          <span class="icon">
-            <i class="material-icons">search</i>
-          </span>
-          <input 
-            [(ngModel)]="searchTerm" 
-            (keydown)="handleKeyDown($event)" 
-            [placeholder]="'SEARCH_OBSERVATION_PLACEHOLDER' | translate"
-            class="search-input"
-          />
-          <button *ngIf="searchTerm" aria-label="Clear" class="clear-btn" (click)="handleInput()">
-            <i class="material-icons">close</i>
-          </button>
-        </div>
-        </div>
-      }
-
-    </div>
+    <app-main-content [headerConfig]="headerConfig" (searchTermChange)="onSearchChange($event)"></app-main-content>
     @if(solutionListCount !== 0){
     <div class="observation-list">
-      @if(observationReportPage){
+      @if(headerConfig?.showSearch){
       <div class="select-filter">
         <mat-form-field>
           <mat-label>{{'ENTITY_FILTER' | translate}}</mat-label>

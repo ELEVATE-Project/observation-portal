@@ -1,0 +1,27 @@
+<div class="list-title">
+    <div class="list-heading">
+      <h1 class="heading">{{ headerConfig?.title | translate}}</h1>
+      <p class="heading-paragraph">{{ headerConfig?.description | translate : { entityType: headerConfig?.type } }}</p>
+    </div>
+    @if(!headerConfig?.showSearch){
+      <div class="srch">
+        <div class="srch-bar">
+          <span class="icon">
+            <i class="material-icons">search</i>
+          </span>
+          <input
+            [value]="headerConfig.searchTerm"
+            [placeholder]="headerConfig?.placeholder | translate:{ entity: headerConfig?.type }"
+            (keydown)="handleKeyDown($event)"
+            (input)="onInputChange($event)"
+            class="search-input"
+          />
+          @if(headerConfig?.searchTerm){
+            <button aria-label="Clear" class="clear-btn" (click)="clearSearch()">
+              <i class="material-icons">close</i>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>

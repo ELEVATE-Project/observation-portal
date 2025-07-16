@@ -18,7 +18,6 @@ import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.com
 export class ObservationEntityComponent  {
   selectedEntities: any;
   solutionId: any;
-  solutionName: any;
   entityToAdd: string;
   filteredEntities: any;
   filteredEntitiesOne: any;
@@ -30,8 +29,8 @@ export class ObservationEntityComponent  {
   observationId: any;
   searchEntities: any = [];
   loaded = false;
-  searchValue: string = "";
   searchAddEntityValue: string = "";
+  headerConfig:any;
 
   constructor(
     private apiService: ApiService, 
@@ -46,8 +45,15 @@ export class ObservationEntityComponent  {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
     this.entity=this.urlParamsService?.entity;
-    this.solutionName=decodeURIComponent(decodeURIComponent(this.urlParamsService?.name || ''))
     this.entityToAdd=this.urlParamsService?.entityType || "entity";
+    this.headerConfig = {
+      title:decodeURIComponent(decodeURIComponent(this.urlParamsService?.name || '')),
+      description:'SELECT_ENTITY_FROM_LIST',
+      placeholder:'SEARCH_ENTITY_PLACEHOLDER',
+      searchTerm:'',
+      showSearch:false,
+      type:this.entityToAdd
+    }
     this.getEntities();
   }
 
@@ -126,14 +132,13 @@ export class ObservationEntityComponent  {
     this.dialogRef.close();
   }
 
-  handleEntitySearchInput(event?: any) {
-    this.searchValue = event ? event.target.value.toLowerCase() : "";
+  handleEntitySearchInput(value?: any) {
+    this.headerConfig.searchTerm = value
 
     this.filteredEntitiesOne = this.selectedEntities?.entities.filter((item: any) =>
-      item?.name.toLowerCase().includes(this.searchValue)
+      item?.name.toLowerCase().includes(this.headerConfig.searchTerm)
     );
   }
-
   navigateToDetails(data) {
     this.router.navigate([
       'details',
