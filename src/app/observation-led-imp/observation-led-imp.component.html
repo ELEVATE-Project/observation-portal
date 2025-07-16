@@ -13,7 +13,7 @@
           </mat-expansion-panel-header>
           <p class="suggested-projects">Suggested Projects</p>
           <div *ngFor="let project of imp?.improvementProjects">
-          <h4 class="project-tab" (click)="navigateToProjectPlayer(project)">{{project?.name}}</h4>
+          <h4 class="project-tab" (click)="navigateToProjectPlayer(project)">{{project?.title}}</h4>
         </div>
         </mat-expansion-panel>
       </mat-accordion>
