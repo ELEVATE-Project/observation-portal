@@ -59,9 +59,9 @@ export class DeeplinkRedirectComponent {
   };
 
 
-  checkLinkType(){
+  async checkLinkType(){
     if(!this.apiService?.profileData){
-      this.utils.getProfileDetails()
+      await this.utils.getProfileDetails()
     }
     if (this.type === 'observation') {
       this.handleObservationLink();

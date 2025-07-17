@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import * as fileConstant from '../constants/file.formats.json';
 import { ProfileService } from './profile.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class UtilsService {
 
  cloudStorageUpload?(payload): Observable<any>;
 
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService,private apiServie:ApiService) {}
 
   isEmpty(value: any): boolean {
     if (value == null) {
@@ -54,6 +55,7 @@ export class UtilsService {
     const profileData:any = await this.profileService.getProfileAndEntityConfigData()
     if(profileData){
       localStorage.setItem('profileData',JSON.stringify(profileData))
+      this.apiServie.profileData = JSON.parse(localStorage.getItem('profileData'))
     }
   }
 }
