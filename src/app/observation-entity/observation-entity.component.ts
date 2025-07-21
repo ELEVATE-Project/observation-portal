@@ -74,6 +74,7 @@ export class ObservationEntityComponent  {
         if (res.result) {
           this.observationId = res?.result?._id;
           this.selectedEntities = res?.result;
+          this.entityToAdd = res?.result?.entityType;
           this.filteredEntitiesOne = [...this.selectedEntities.entities]
         } else {
           this.toaster.showToast(res.message, 'Close');
