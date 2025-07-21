@@ -74,9 +74,7 @@ export class DeeplinkRedirectComponent {
       this.router.navigate([
         'entityList',
         data?.solutionId,
-        data?.name,
-        data?.type,
-        data?.programId
+        data?.name
       ],{ replaceUrl: true }
       );
     }
