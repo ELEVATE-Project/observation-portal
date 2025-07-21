@@ -40,6 +40,7 @@ export class ListingComponent implements OnInit {
   solutionType:any;
   description:any;
   isOnline:any;
+  profileData:any
   constructor(
     public router: Router,
     private toaster: ToastService,
@@ -75,7 +76,10 @@ export class ListingComponent implements OnInit {
   loadInitialData(): void {
     this.page = 1;
     this.solutionList = [];
-    this.getListData();
+    this.profileData = this.utils.getProfileData()
+    if(this.profileData){
+      this.getListData();
+    }
   }
 
   handleKeyDown(event: KeyboardEvent): void {
