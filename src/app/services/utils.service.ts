@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
+import { GenericDialogComponent } from '../shared/generic-dialog/generic-dialog.component';
+import { Location } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +16,7 @@ export class UtilsService {
 
  cloudStorageUpload?(payload): Observable<any>;
 
-  constructor(private translate: TranslateService) {}
+  constructor(private translate: TranslateService, private dialog: MatDialog, private location: Location) {}
 
   isEmpty(value: any): boolean {
     if (value == null) {
@@ -112,5 +115,47 @@ export class UtilsService {
         resolve(false);
       }
     });
+  }
+
+  getProfileData(){
+    let dialogData = {
+      title: "ALERT",
+      message:"UPDATE_PROFILE_MSG",
+      actionButtons:[
+        { label: "BACK", action: false },
+        { label: "UPDATE_PROFILE", action: true, class: "dialog-primary-button" }
+      ],
+      disableClose: true
+    }
+    let data = JSON.parse(localStorage.getItem('profileData'))
+    if(data && data?.state){
+      return data
+    }else{
+      this.showProfileUpdateAlert(dialogData)
+      return null
+    }
+  }
+
+  async showProfileUpdateAlert(data: any){
+    const popupRef = this.dialog.open(GenericDialogComponent,{
+      width: data.width || "400px",
+      data: data,
+      disableClose: data.disableClose || false
+    })
+    let response = await firstValueFrom(popupRef.afterClosed())
+    let options:any
+    if(response){
+      options = {
+        type: "redirect",
+        pathType: "profile"
+      }
+    }else{
+      options = {
+        type: "redirect",
+        pathType: "home"
+      }
+    }
+    let eventResponse = await this.postMessageListener(options)
+    if(!eventResponse) this.location.back()
   }
 }

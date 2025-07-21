@@ -1,0 +1,19 @@
+<div>
+    <mat-dialog-content>
+        @if(data.title){
+            <div class="dialog-title">{{data.title | translate }}</div>
+        }
+        @if(data.message){
+            <div class="dialog-message">{{data.message | translate }}</div>
+        }
+    </mat-dialog-content>
+    @if(data?.actionButtons?.length){
+        <mat-dialog-actions>
+            <div class="buttons-list">
+                @for(button of data.actionButtons; track $index){
+                    <button mat-flat-button class="{{button?.class || ''}}" (click)="closeDialog(button.action)">{{button.label |translate}}</button>
+                }
+            </div>
+        </mat-dialog-actions>
+    }
+</div>

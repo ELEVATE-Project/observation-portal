@@ -60,6 +60,8 @@ export class DeeplinkRedirectComponent {
 
 
   checkLinkType(){
+    let profileData = this.utils.getProfileData()
+    if(!profileData) return
     if (this.type === 'observation') {
       this.handleObservationLink();
     } else if (this.type === 'survey') {
@@ -124,10 +126,10 @@ export class DeeplinkRedirectComponent {
   }
 
   async handleObservationLink(){
-    if(!this.apiService.profileData){
-      await this.router.navigate([`/listing/${this.type}`]);
-      return
-    }
+    // if(!this.apiService.profileData){
+    //   await this.router.navigate([`/listing/${this.type}`]);
+    //   return
+    // }
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
         this.toastService.showToast(err?.error?.message, 'Close');
@@ -146,10 +148,10 @@ export class DeeplinkRedirectComponent {
   }
 
   async handleSurveyLink() {
-    if(!this.apiService.profileData){
-      await this.router.navigate([`/listing/${this.type}`]);
-      return
-    }
+    // if(!this.apiService.profileData){
+    //   await this.router.navigate([`/listing/${this.type}`]);
+    //   return
+    // }
      this.apiService.post(
         urlConfig.survey.surveyVerifyLink+this.linkId,
           this.apiService?.profileData
