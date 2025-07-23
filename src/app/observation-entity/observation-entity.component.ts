@@ -113,15 +113,16 @@ export class ObservationEntityComponent  {
 
   getSearchEntities() {
     let parentEntityId = this.selectedEntities?.parentEntityKey
-      ? this.apiService.profileData[this.selectedEntities?.parentEntityKey]
-      : '';
-      let url = urlConfig.observation.searchEntities + this.observationId;
-
-      if (parentEntityId) {
-        url += `&parentEntityId=${parentEntityId}`;
-      }
-    this.apiService.post(url, this.apiService.profileData)
-
+    ? this.apiService.profileData[this.selectedEntities?.parentEntityKey]
+    : "";
+  
+  let url = urlConfig.observation.searchEntities + this.observationId;
+  
+  if (parentEntityId) {
+    url += `&parentEntityId=${parentEntityId}`;
+  }
+  
+  this.apiService.post(url, this.apiService.profileData)  
       .subscribe((res: any) => {
         if (res.result) {
           const searchEntities = res?.result[0];
