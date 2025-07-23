@@ -344,7 +344,7 @@
     color: white;
 }
 
-.mat-expansion-panel-body {
+::ng-deep .mat-expansion-panel-body {
   overflow-x: auto !important;
 }
 
