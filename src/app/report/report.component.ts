@@ -103,7 +103,10 @@ export class ReportComponent implements OnInit {
       .subscribe((res: any) => {
         this.resultData = res?.result;
         this.observationDetails = res;
-        this.filterData = submissionId ? this.filterData : this.observationDetails?.filters[0]?.filter?.data;
+        let dropDownFilterData = this.observationDetails?.filters.find(
+          (item) => item?.filter?.type === 'dropdown'
+        );
+        this.filterData = submissionId ? this.filterData : dropDownFilterData;
         this.totalSubmissions = res?.result?.totalSubmissions;
         let reportSections:any = this.scores ? [res?.reportSections[0]] : res?.reportSections;
         this.domainView = this.scores ? res?.reportSections[1]?.chart: "";
@@ -115,7 +118,7 @@ export class ReportComponent implements OnInit {
         this.objectType == 'questions' ? this.renderCharts(this.reportDetails, false) : this.renderCharts(this.reportDetails, true);
         if(this.initialLoad){
           this.initialLoad = false;
-          this.filterData = this.observationDetails?.filters[0]?.filter?.data
+          this.filterData = dropDownFilterData
         }
       });
   }
