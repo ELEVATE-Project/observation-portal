@@ -108,6 +108,7 @@
     font-size: 1.125rem;
     font-weight: bold;
     color: var(--primary-color);
+    word-break: break-word;
   }
   .observation-list {
     padding: 1rem;
