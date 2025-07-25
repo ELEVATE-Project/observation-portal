@@ -266,6 +266,7 @@ export class ObservationDetailsComponent implements OnInit {
     let submissionId = observationDetails?._id;
 
     await this.downloadService.downloadObservation(this.observationId, this.entityId, observationDetails, submissionId)
+    this.toaster.showToast("FORM_DOWNLOADED_SUCCESS_MESSAGE","success")
     this.fetchDownloadedData(false);
   }
 
