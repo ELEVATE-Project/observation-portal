@@ -63,6 +63,8 @@ import { GenericPopupComponent } from './shared/generic-popup/generic-popup.comp
 import { NoDataComponent } from './shared/no-data/no-data.component';
 import { MainContentComponent } from './shared/main-content/main-content.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { ShareLinkPopupComponent } from './shared/share-link-popup/share-link-popup.component';
+import { ShortUrlPipe } from './shared/pipes/short-url.pipe';
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 }
@@ -88,7 +90,9 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ViewEvidencesComponent,
     GenericPopupComponent,
     NoDataComponent,
-    MainContentComponent
+    MainContentComponent,
+    ShareLinkPopupComponent,
+    ShortUrlPipe,
   ],
   imports: [
     BrowserModule,

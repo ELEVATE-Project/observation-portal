@@ -21,6 +21,9 @@ import { QueryParamsService } from '../services/queryParams.service';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../services/utils.service';
+import { Share } from '@capacitor/share';
+import { ShareLinkPopupComponent } from '../shared/share-link-popup/share-link-popup.component';
+import { Clipboard } from '@capacitor/clipboard';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -345,7 +348,7 @@ openDialog(evidence: any) {
     type == 'questions' ? this.loadObservationReport(this.submissionId, false, false) : this.loadObservationReport(this.submissionId, true, false);
   }
 
-  downloadPDF(submissionId: string, criteria: boolean, pdf: boolean) {
+  downloadPDF(submissionId: string, criteria: boolean, pdf: boolean,type:any) {
     this.loaded = false;
     let payload = this.createPayload(submissionId, criteria, pdf);
 
@@ -356,9 +359,42 @@ openDialog(evidence: any) {
           throw new Error('Could not fetch the details');
         })
       )
-      .subscribe((res: any) => {
-        this.openUrl(res?.result?.pdfUrl);
+      .subscribe(async (res: any) => {
+        if(type === 'download'){
+          await this.openUrl(res?.result?.pdfUrl);
+          return;
+        }
+        this.shareReport(res?.result?.pdfUrl)
       });
+  }
+  async shareReport(link){
+    if(this.utils.isMobile()){
+      try {
+        const shareOptions = {
+          title: 'Observation Report',
+          text: `Check out this Observation report`,
+          url: link
+        };
+        await Share.share(shareOptions);
+      } catch (err:any) {
+        this.toaster.showToast(err?.error?.message, 'danger');
+      }
+    }else {
+      this.setOpenForCopyLink(link);
+    }
+  }
+  
+  setOpenForCopyLink(url:any){
+    const dialogRef=this.dialog.open(ShareLinkPopupComponent, {
+          width: '400px',
+          data: url
+    })
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        Clipboard.write({ string: result });
+        this.toaster.showToast('LINK_COPY_SUCCESS', 'success');
+      }
+    });
   }
   generateName(){
     const now = new Date();
