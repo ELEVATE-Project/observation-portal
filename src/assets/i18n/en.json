@@ -87,5 +87,6 @@
     "IMAGES": "Images",
     "VIDEOS": "Videos",
     "DOCUMENTS": "Documents",
-    "AUDIOS": "Audios"
+    "AUDIOS": "Audios",
+    "LINK_COPY_SUCCESS": "Link copied to clipboard"
 }

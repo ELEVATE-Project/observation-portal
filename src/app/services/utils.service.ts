@@ -58,4 +58,8 @@ export class UtilsService {
       this.apiServie.profileData = JSON.parse(localStorage.getItem('profileData'))
     }
   }
+
+  isMobile(){
+    return /iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent);
+  }
 }

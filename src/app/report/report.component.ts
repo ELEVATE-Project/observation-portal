@@ -21,6 +21,7 @@ import { QueryParamsService } from '../services/queryParams.service';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../services/utils.service';
+import { ReportsService } from '../services/reports.service';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -65,7 +66,8 @@ export class ReportComponent implements OnInit {
     private route:ActivatedRoute,
     private queryParamsService: QueryParamsService,
     private dialog: MatDialog,
-    private utils:UtilsService
+    private utils:UtilsService,
+    private reports:ReportsService,
   ) {}
 
   ngOnInit() {
@@ -345,7 +347,7 @@ openDialog(evidence: any) {
     type == 'questions' ? this.loadObservationReport(this.submissionId, false, false) : this.loadObservationReport(this.submissionId, true, false);
   }
 
-  downloadPDF(submissionId: string, criteria: boolean, pdf: boolean) {
+  downloadPDF(submissionId: string, criteria: boolean, pdf: boolean,type:any) {
     this.loaded = false;
     let payload = this.createPayload(submissionId, criteria, pdf);
 
@@ -356,10 +358,15 @@ openDialog(evidence: any) {
           throw new Error('Could not fetch the details');
         })
       )
-      .subscribe((res: any) => {
-        this.openUrl(res?.result?.pdfUrl);
+      .subscribe(async (res: any) => {
+        if(type === 'download'){
+          await this.openUrl(res?.result?.pdfUrl);
+          return;
+        }
+        await this.reports.shareReport(res?.result?.pdfUrl,'observation')
       });
   }
+  
   generateName(){
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, '0');

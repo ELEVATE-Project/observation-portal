@@ -1,0 +1,43 @@
+.dialog-container {
+    max-width: 100%;
+    padding: 1rem;
+}
+  
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .dialog-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    word-break: break-all;
+    flex: 1;
+  }
+  
+  .close-button {
+    color: #666;
+  }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  
+  .btn.secondary-btn {
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+  }
+  
+  .btn.secondary-btn mat-icon {
+    font-size: 20px;
+  }
+  

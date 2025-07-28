@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyFilterComponent } from '../shared/survey-filter/survey-filter.component';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { UtilsService } from '../services/utils.service';
+import { ReportsService } from '../services/reports.service';
 
 @Component({
   selector: 'app-survey-reports',
@@ -23,24 +24,22 @@ export class SurveyReportsComponent implements OnInit {
   surveyName!: string;
   objectKeys = Object.keys;
   submissionId: any;
-  solutionId:any
+  solutionId:any;
+  pdf:any=false;
   constructor(
     private apiService: ApiService,
     private dialog: MatDialog,
     private router:ActivatedRoute, 
     private utils:UtilsService,
     public route: Router,
+    private reports:ReportsService
   ) {}
 
   ngOnInit() {
     this.router.params.subscribe(param => {
       this.submissionId = param['id'];
       this.solutionId=param['solutionId']
-      this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{
-        "survey": true,
-        "submissionId": this.submissionId,
-        "pdf": false
-      })
+      this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{})
       .subscribe((res:any) => { 
         this.surveyName = res.message.surveyName
         this.allQuestions = res.message.report;
@@ -56,6 +55,16 @@ export class SurveyReportsComponent implements OnInit {
       })
     })
   
+  }
+  surveyReportPdf(type:any){
+    this.apiService.post(urlConfig.survey.reports+`${this.submissionId}&pdf=true`,{})
+    .subscribe(async (res:any) => { 
+      if(type === 'download'){
+        await this.openUrl(res?.message?.pdfLink);
+        return;
+      }
+      await this.reports.shareReport(res?.message?.pdfLink,'survey')
+    });
   }
 
   processSurveyData(data: any[]): any[] {
