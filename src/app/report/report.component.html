@@ -8,7 +8,7 @@
      </div>
     <div class="report-container">
       <div class="select-wrapper">
-        <mat-form-field class="custom-select" *ngIf="isMultiple == 'true' && filterData?.filter.type === 'dropdown'">
+        <mat-form-field class="custom-select" *ngIf="filterData?.filter.type === 'dropdown'">
           <mat-label>{{"SELECT_SUBMISSION"|translate}}</mat-label>
           <mat-select (selectionChange)="onSelectionChange($event.value)">
             <mat-option *ngFor="let item of filterData?.filter?.data" [value]="item._id">
