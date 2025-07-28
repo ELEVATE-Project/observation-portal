@@ -21,9 +21,7 @@ import { QueryParamsService } from '../services/queryParams.service';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../services/utils.service';
-import { Share } from '@capacitor/share';
-import { ShareLinkPopupComponent } from '../shared/share-link-popup/share-link-popup.component';
-import { Clipboard } from '@capacitor/clipboard';
+import { ReportsService } from '../services/reports.service';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -68,7 +66,8 @@ export class ReportComponent implements OnInit {
     private route:ActivatedRoute,
     private queryParamsService: QueryParamsService,
     private dialog: MatDialog,
-    private utils:UtilsService
+    private utils:UtilsService,
+    private reports:ReportsService,
   ) {}
 
   ngOnInit() {
@@ -364,38 +363,10 @@ openDialog(evidence: any) {
           await this.openUrl(res?.result?.pdfUrl);
           return;
         }
-        this.shareReport(res?.result?.pdfUrl)
+        await this.reports.shareReport(res?.result?.pdfUrl,'observation')
       });
   }
-  async shareReport(link){
-    if(this.utils.isMobile()){
-      try {
-        const shareOptions = {
-          title: 'Observation Report',
-          text: `Check out this Observation report`,
-          url: link
-        };
-        await Share.share(shareOptions);
-      } catch (err:any) {
-        this.toaster.showToast(err?.error?.message, 'danger');
-      }
-    }else {
-      this.setOpenForCopyLink(link);
-    }
-  }
   
-  setOpenForCopyLink(url:any){
-    const dialogRef=this.dialog.open(ShareLinkPopupComponent, {
-          width: '400px',
-          data: url
-    })
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        Clipboard.write({ string: result });
-        this.toaster.showToast('LINK_COPY_SUCCESS', 'success');
-      }
-    });
-  }
   generateName(){
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, '0');
