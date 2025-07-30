@@ -152,8 +152,7 @@ export class ObservationEntityComponent  {
   }
 
   handleEntitySearchInput(value?: any) {
-    this.headerConfig.searchTerm = value
-
+    this.headerConfig.searchTerm = value;
     this.filteredEntitiesOne = this.selectedEntities?.entities.filter((item: any) =>
       item?.name.toLowerCase().includes(this.headerConfig.searchTerm)
     );
