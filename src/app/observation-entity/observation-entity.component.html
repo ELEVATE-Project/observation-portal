@@ -52,13 +52,13 @@
                     <span class="icon">
                       <i class="material-icons">search</i>
                     </span>
-                    <input 
-                      [(ngModel)]="searchAddEntityValue" 
-                      (input)="handleSearchInput($event)"
-                      [placeholder]="'SEARCH_ENTITY_PLACEHOLDER' | translate: { entity: selectedEntities?.entityType || 'items' }"
-                      class="search-input"
-                    />
-                    <button *ngIf="searchAddEntityValue" aria-label="Clear" class="clear-btn" (click)="handleSearchInput()">
+                    <input
+  [(ngModel)]="searchAddEntityValue"
+  (input)="searchInputChanged.next(searchAddEntityValue)"
+  [placeholder]="'SEARCH_ENTITY_PLACEHOLDER' | translate: { entity: selectedEntities?.entityType || 'items' }"
+  class="search-input"
+/>
+                    <button *ngIf="searchAddEntityValue" aria-label="Clear" class="clear-btn" (click)="getSearchEntities()">
                       <i class="material-icons">close</i>
                     </button>
                   </div>

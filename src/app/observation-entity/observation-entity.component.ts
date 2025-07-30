@@ -9,6 +9,8 @@ import { catchError, finalize } from 'rxjs';
 import { MatSelectionListChange } from '@angular/material/list';
 import { UrlParamsService } from '../services/urlParams.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 @Component({
   selector: 'app-observation-entity',
   standalone: false,
@@ -31,6 +33,8 @@ export class ObservationEntityComponent  {
   loaded = false;
   searchAddEntityValue: string = "";
   headerConfig:any;
+  searchInputChanged: Subject<string> = new Subject<string>();
+
 
   constructor(
     private apiService: ApiService, 
@@ -55,6 +59,11 @@ export class ObservationEntityComponent  {
       type:this.entityToAdd
     }
     this.getEntities();
+    this.searchInputChanged
+    .pipe(debounceTime(800))
+    .subscribe((searchValue: string) => {
+      this.getSearchEntities(searchValue);
+    });
   }
 
   getEntities() {
@@ -111,12 +120,13 @@ export class ObservationEntityComponent  {
       })
   }
 
-  getSearchEntities() {
+  getSearchEntities(searchValue:any="") {
+    this.searchAddEntityValue = searchValue;
     let parentEntityId = this.selectedEntities?.parentEntityKey
     ? this.apiService.profileData[this.selectedEntities?.parentEntityKey]
     : "";
   
-  let url = urlConfig.observation.searchEntities + this.observationId;
+  let url = urlConfig.observation.searchEntities + this.observationId + `&search=${searchValue}`;
   
   if (parentEntityId) {
     url += `&parentEntityId=${parentEntityId}`;
@@ -221,13 +231,5 @@ export class ObservationEntityComponent  {
         this.addedEntities = this.addedEntities.filter(id => id !== entityId);
       }
     });
-  }
-  
-  handleSearchInput(event?: any): void {
-    const searchValue = event?.target?.value?.toLowerCase() || "";
-    this.searchAddEntityValue = searchValue;
-    this.filteredEntities = this.searchEntities?.filter((item: any) =>
-      item?.name?.toLowerCase().includes(searchValue)
-    ) || [];
   }
 }
