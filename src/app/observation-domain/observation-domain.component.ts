@@ -126,19 +126,11 @@ export class ObservationDomainComponent implements OnInit {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
 
-  navigateToDetails(data,sectionIndex,entityIndex,notApplicable) {
+  async navigateToDetails(data,sectionIndex,entityIndex,notApplicable) {
     if(notApplicable){
       return;
     }
-    this.stateData ? this.router.navigate(['questionnaire'], {
-      queryParams: {
-        solutionType: this.stateData?.solutionType
-      },
-      state: { data: {
-        ...this.stateData,
-        isSurvey:false
-      }}
-    }) :
+    this.stateData ? this.statenavigation():
       this.router.navigate(['questionnaire'], {
         queryParams: { 
           observationId: this.observationId,  
@@ -154,7 +146,18 @@ export class ObservationDomainComponent implements OnInit {
         }}
       });
   }
-
+  async statenavigation(){
+    await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+    this.router.navigate(['questionnaire'], {
+      queryParams: {
+        solutionType: this.stateData?.solutionType
+      },
+      state: { data: {
+        ...this.stateData,
+        isSurvey:false
+      }},replaceUrl:true
+    })
+  }
   notApplicable(entity,selectedIndex) {
     this.remark = "";
     const dialogRefEcm = this.dialog.open(this.ECMModel);
@@ -217,6 +220,7 @@ export class ObservationDomainComponent implements OnInit {
       if (event.data?.type === 'START') {
         const stateData = event.data.data;
           if(stateData?.solution?.isRubricDriven){
+            await this.router.navigate(['/listing/observation'],{replaceUrl:true});
             this.router.navigate([
             'entityList',
             stateData?.solution?._id,
