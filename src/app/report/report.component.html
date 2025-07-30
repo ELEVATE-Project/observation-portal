@@ -28,7 +28,11 @@
       <div class="buttons-right" *ngIf="reportDetails?.length > 0;">
         <button (click)="openFilter()" class="apply-filter" *ngIf="!domainView">{{"FILTERS" | translate}}</button>
         <button class="apply-filter"
-          (click)="downloadPDF(submissionId, observationType === 'questions' ? false : true, true)">{{"EXPORT_PDF"|translate}}</button>
+          (click)="downloadPDF(submissionId, observationType === 'questions' ? false : true, true,'download')">{{"EXPORT_PDF"|translate}}</button>
+          <button class="apply-filter" 
+        (click)="downloadPDF(submissionId, observationType === 'questions' ? false : true, true,'share')">
+           {{'SHARE_PDF'| translate}}
+        </button>
       </div>
       
      <div *ngIf="reportDetails?.length > 0; else noData">

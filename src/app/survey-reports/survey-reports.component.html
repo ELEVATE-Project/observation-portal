@@ -1,9 +1,19 @@
 <div class="report-container">
     <div class="header-container">
         <h1 class="survey-title">{{surveyName}}</h1>
-        <button class="filter-button" (click)="openFilterDialog()">
+        <div class="button-container">
+          <button (click)="openFilterDialog()">
             <mat-icon>tune</mat-icon>
-        </button>
+          </button>
+          <button (click)="surveyReportPdf('download')">
+            <mat-icon>picture_as_pdf</mat-icon>
+            <span>{{"EXPORT_PDF"|translate}}</span>
+          </button>
+          <button (click)="surveyReportPdf('share')">
+            <mat-icon>share</mat-icon>
+            <span>{{'SHARE_PDF'| translate}}</span>
+          </button>
+        </div>
     </div>
 
     <hr class="custom-divider" />

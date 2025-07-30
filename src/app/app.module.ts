@@ -1,4 +1,4 @@
-import { NgModule,CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
+import { NgModule,CUSTOM_ELEMENTS_SCHEMA, isDevMode  } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -62,7 +62,9 @@ import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.c
 import { GenericPopupComponent } from './shared/generic-popup/generic-popup.component';
 import { NoDataComponent } from './shared/no-data/no-data.component';
 import { MainContentComponent } from './shared/main-content/main-content.component';
-
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { ShareLinkPopupComponent } from './shared/share-link-popup/share-link-popup.component';
+import { ShortUrlPipe } from './shared/pipes/short-url.pipe';
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 }
@@ -88,7 +90,9 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ViewEvidencesComponent,
     GenericPopupComponent,
     NoDataComponent,
-    MainContentComponent
+    MainContentComponent,
+    ShareLinkPopupComponent,
+    ShortUrlPipe,
   ],
   imports: [
     BrowserModule,
@@ -132,6 +136,10 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: true,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     DatePipe,
