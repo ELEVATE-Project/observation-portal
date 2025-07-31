@@ -85,7 +85,7 @@
           <li *ngFor="let question of allEntities; let i = index">
             <input 
             type="radio" 
-            [(ngModel)]="question.selected" 
+            [(ngModel)]="selectedEntityName" 
             class="modal-input" 
             [id]="'question-' + i" 
             [value]="question.name"

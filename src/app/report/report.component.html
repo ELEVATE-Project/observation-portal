@@ -17,7 +17,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="buttons-left">
+      <div class="buttons-left" *ngIf="isData">
         <button [ngClass]="{'border-bottom-button': observationType === 'questions'}"
           (click)="toggleObservationType('questions')" class="switch-buttons">{{'QUESTIONS' | translate}}</button>
         <button [ngClass]="{'border-bottom-button': observationType === 'criteria'}"
@@ -286,7 +286,7 @@
   </main>
 
 <ng-template #noData>
-  @if(loaded){
+  @if(isData){
     <p class="no-data-found">{{"NO_DATA_MSG" |translate}}</p>
   }
 </ng-template>
