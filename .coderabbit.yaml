@@ -1,7 +1,5 @@
 reviews:
   enabled: true
-  review_status: true # show the status message
+  review_status: true
   branches:
-    - main
-    - release-3.4.0
-    - dev
+    - diksha-release-1.0.0
