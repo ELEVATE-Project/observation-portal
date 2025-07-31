@@ -1,0 +1,7 @@
+reviews:
+  enabled: true
+  review_status: true # show the status message
+  branches:
+    - main
+    - release-3.4.0
+    - dev
