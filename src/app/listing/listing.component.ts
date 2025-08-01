@@ -64,7 +64,6 @@ export class ListingComponent implements OnInit {
     this.page = 1;
     this.solutionList = [];
     this.solutionListCount = 0;
-    this.loaded =false
     this.getListData();
   }
 

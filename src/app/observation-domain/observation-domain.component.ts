@@ -57,6 +57,7 @@ export class ObservationDomainComponent implements OnInit {
   }
 
   async ngOnInit() {
+   setTimeout(async () => {
     window.addEventListener('message', this.handleMessage);
     this.stateData = history.state?.data;
     if(this.stateData){
@@ -67,11 +68,14 @@ export class ObservationDomainComponent implements OnInit {
     this.entityId = this.urlParamsService?.entityId;
     this.id = this.urlParamsService?.solutionId;
     this.submissionId = this.urlParamsService?.solutionId;
+
     this.isQuestionerDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
 
       this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "downloadObservation");
+      
       if (this.isQuestionerDataInIndexDb?.data) {
         this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
+          
       }
 
       if (Array.isArray(this.isDataInDownloadsIndexDb) && this.isDataInDownloadsIndexDb.length > 0) {
@@ -91,6 +95,7 @@ export class ObservationDomainComponent implements OnInit {
         this.observationDownloaded = false;
       }
     }
+   }, 500);
   }
 
   mapDataToVariables(observationData) {

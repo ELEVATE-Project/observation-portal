@@ -12,8 +12,8 @@
           <input
             [value]="headerConfig.searchTerm"
             [placeholder]="headerConfig?.placeholder | translate:{ entity: headerConfig?.type }"
-            (keydown)="handleKeyDown($event)"
-            (input)="onInputChange($event)"
+            [(ngModel)]="searchAddEntityValue"
+            (input)="searchInputChanged.next(searchAddEntityValue)"
             class="search-input"
           />
           @if(headerConfig?.searchTerm){
