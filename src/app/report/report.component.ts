@@ -89,7 +89,6 @@ export class ReportComponent implements OnInit {
     this.totalSubmissions = [];
     this.allQuestions = [];
     this.reportDetails = [];
-    this.loaded = true;
     this.isData = false;
     let payload = this.createPayload(submissionId, criteria, pdf);
 

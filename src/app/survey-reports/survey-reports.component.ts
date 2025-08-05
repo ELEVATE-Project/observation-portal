@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyFilterComponent } from '../shared/survey-filter/survey-filter.component';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { UtilsService } from '../services/utils.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-survey-reports',
@@ -23,7 +24,8 @@ export class SurveyReportsComponent implements OnInit {
   surveyName!: string;
   objectKeys = Object.keys;
   submissionId: any;
-  solutionId:any
+  solutionId:any;
+  loaded:any=false;
   constructor(
     private apiService: ApiService,
     private dialog: MatDialog,
@@ -36,11 +38,12 @@ export class SurveyReportsComponent implements OnInit {
     this.router.params.subscribe(param => {
       this.submissionId = param['id'];
       this.solutionId=param['solutionId']
+      this.loaded=false;
       this.apiService.post(urlConfig.survey.reportUrl,{
         "survey": true,
         "submissionId": this.submissionId,
         "pdf": false
-      })
+      }).pipe(finalize(()=>this.loaded = true))
       .subscribe((res:any) => { 
         this.surveyName = res.solutionName
         this.allQuestions = res.reportSections;
