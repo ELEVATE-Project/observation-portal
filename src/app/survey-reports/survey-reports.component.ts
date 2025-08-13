@@ -7,6 +7,7 @@ import { SurveyFilterComponent } from '../shared/survey-filter/survey-filter.com
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { UtilsService } from '../services/utils.service';
 import { ReportsService } from '../services/reports.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-survey-reports',
@@ -26,6 +27,8 @@ export class SurveyReportsComponent implements OnInit {
   submissionId: any;
   solutionId:any;
   pdf:any=false;
+  loaded:any=false;
+
   constructor(
     private apiService: ApiService,
     private dialog: MatDialog,
@@ -39,7 +42,8 @@ export class SurveyReportsComponent implements OnInit {
     this.router.params.subscribe(param => {
       this.submissionId = param['id'];
       this.solutionId=param['solutionId']
-      this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{})
+      this.loaded=false;
+      this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{}).pipe(finalize(()=>this.loaded = true))
       .subscribe((res:any) => { 
         this.surveyName = res.message.surveyName
         this.allQuestions = res.message.report;
