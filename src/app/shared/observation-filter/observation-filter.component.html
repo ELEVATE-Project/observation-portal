@@ -1,0 +1,52 @@
+<!-- <div class="modal-content">
+    <header class="modal-header">
+      <h1 class="modal-title">{{ 'SELECT_QUESTIONS_FILTER' | translate }}</h1>
+      <mat-icon class="close-btn" (click)="onClose()">close</mat-icon>
+    </header>
+  
+    <div class="modal-body">
+      <ul class="question-list">
+        <li *ngFor="let question of allQuestions; let i = index">
+          <mat-checkbox [(ngModel)]="question.selected" [id]="'question-' + i">
+            {{ observationType === 'questions' ? question?.question : question?.criteriaName }}
+          </mat-checkbox>
+        </li>
+      </ul>
+    </div>
+  
+    <footer class="modal-footer">
+      <button class="apply-filter" (click)="applyFilter()">
+        {{"APPLY_FILTERS" | translate}}
+      </button>
+    </footer>
+  </div> -->
+  
+  <div class="custom-dialog-backdrop">
+    <div class="custom-dialog">
+      <div class="dialog-header">
+        <h3>{{ 'SELECT_QUESTIONS_FILTER' | translate }}</h3>
+        <button mat-icon-button class="close-button" (click)="onClose()" aria-label="Close">
+            <mat-icon>close</mat-icon>
+          </button>
+      </div>
+
+      <hr class="custom-divider" />
+
+      <div class="dialog-body">
+        <ul class="question-list">
+          <li *ngFor="let question of allQuestions">
+            <label>
+              <input type="checkbox" [(ngModel)]="question.selected" />
+              {{ observationType === 'questions' ? question?.question : question?.criteriaName }}
+            </label>
+          </li>
+        </ul>
+      </div>
+  
+      <div class="dialog-footer">
+        <button class="btn outlined" (click)="resetFilter()">{{"RESET_FILTER" | translate}}</button>
+        <button class="btn primary" (click)="applyFilter()">{{ "APPLY_FILTER" | translate}}</button>
+      </div>
+    </div>
+  </div>
+  
