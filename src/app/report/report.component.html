@@ -8,16 +8,16 @@
      </div>
     <div class="report-container">
       <div class="select-wrapper">
-        <mat-form-field class="custom-select" *ngIf="isMultiple == 'true'">
+        <mat-form-field class="custom-select" *ngIf="filterData?.filter.type === 'dropdown'">
           <mat-label>{{"SELECT_SUBMISSION"|translate}}</mat-label>
           <mat-select (selectionChange)="onSelectionChange($event.value)">
-            <mat-option *ngFor="let item of filterData" [value]="item._id">
+            <mat-option *ngFor="let item of filterData?.filter?.data" [value]="item._id">
               {{ item.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="buttons-left">
+      <div class="buttons-left" *ngIf="isData">
         <button [ngClass]="{'border-bottom-button': observationType === 'questions'}"
           (click)="toggleObservationType('questions')" class="switch-buttons">{{'QUESTIONS' | translate}}</button>
         <button [ngClass]="{'border-bottom-button': observationType === 'criteria'}"
@@ -285,9 +285,9 @@
   </main>
 
 <ng-template #noData>
-@if(loaded){
+@if(isData){
   <p class="no-data-found">{{"NO_DATA_MSG" |translate}}</p>
-}  
+}
 </ng-template>
 
 <app-spinner *ngIf="!loaded"></app-spinner>
