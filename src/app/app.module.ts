@@ -65,6 +65,7 @@ import { MainContentComponent } from './shared/main-content/main-content.compone
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ShareLinkPopupComponent } from './shared/share-link-popup/share-link-popup.component';
 import { ShortUrlPipe } from './shared/pipes/short-url.pipe';
+import { ObservationFilterComponent } from './shared/observation-filter/observation-filter.component';
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 }
@@ -93,6 +94,7 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     MainContentComponent,
     ShareLinkPopupComponent,
     ShortUrlPipe,
+    ObservationFilterComponent,
   ],
   imports: [
     BrowserModule,

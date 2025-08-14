@@ -259,28 +259,6 @@
         {{"CLICK_HERE_TO_IMPROVE" | translate}}
       </button>
        </div>
-      <div *ngIf="isFilterModalOpen" class="modal">
-        <div class="modal-content">
-          <header class="d-flex align-items-center">
-            <h1 class="modal-title">{{'SELECT_QUESTIONS_FILTER'|translate}}</h1>
-            <mat-icon class="close-btn" (click)="closeFilter()">close</mat-icon>
-          </header>
-          <div>
-            <ul>
-              <li *ngFor="let question of allQuestions; let i = index">
-                <input type="checkbox" [(ngModel)]="question.selected" class="modal-input" [id]="'question-' + i">
-                <label [for]="'question-' + i">
-                  {{ observationType === 'questions' ? question?.question : question?.criteriaName }}
-                </label>
-              </li>
-            </ul>
-          </div>
-          <footer class="question-footer">
-            <button (click)="applyFilter()" class="apply-filter">{{"APPLY_FILTERS" | translate}}</button>
-          </footer>
-        </div>
-      </div>
-
     </div>
   </main>
 

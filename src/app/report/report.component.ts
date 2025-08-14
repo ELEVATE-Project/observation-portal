@@ -22,6 +22,7 @@ import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../services/utils.service';
 import { ReportsService } from '../services/reports.service';
+import { ObservationFilterComponent } from '../shared/observation-filter/observation-filter.component';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -36,7 +37,6 @@ export class ReportComponent implements OnInit {
   objectURL: any;
   objectType!: string;
   isModalOpen: boolean = false;
-  isFilterModalOpen: boolean = false;
   filteredQuestions: any[] = [];
   allQuestions: any[] = [];
   observationDetails: any;
@@ -297,16 +297,24 @@ openDialog(evidence: any) {
   }
 
   openFilter() {
-    this.isFilterModalOpen = true;
+     const dialogRef = this.dialog.open(ObservationFilterComponent, {
+          width: '400px',
+          data: { 
+            allQuestions: this.allQuestions,
+            observationType:this.observationType
+           }  
+        });
+      
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.filteredQuestions=result
+           this.applyFilter()
+          }
+        });
   }
 
-  closeFilter() {
-    this.isFilterModalOpen = false;
-  }
+ 
 
-  updateFilteredQuestions() {
-    this.filteredQuestions = this.allQuestions.filter(question => question.selected);
-  }
 
   checkAnswerValue(answer: any): string | number {
     if (typeof answer === 'string') {
@@ -316,7 +324,6 @@ openDialog(evidence: any) {
   }
 
   applyFilter(reset: boolean = false) {
-    this.updateFilteredQuestions();
 
     const questionsToProcess = this.filteredQuestions.length > 0 ? this.filteredQuestions : this.allQuestions;
     this.reportDetails = this.processSurveyData(questionsToProcess);
@@ -326,9 +333,6 @@ openDialog(evidence: any) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }
 
-    if (reset || this.filteredQuestions.length > 0) {
-      this.closeFilter();
-    }
   }
 
   resetFilter() {
