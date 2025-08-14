@@ -79,7 +79,7 @@ export class SurveyReportsComponent implements OnInit {
           return answer;
         }
 
-        if (answer == null || (typeof answer === 'string' && answer.trim() === '')) {
+        if (!answer || (typeof answer === 'string' && answer.trim() === '')) {
           return 'No response is available';
         }
     
