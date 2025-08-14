@@ -1,27 +1,4 @@
-<!-- <div class="modal-content">
-    <header class="modal-header">
-      <h1 class="modal-title">{{ 'SELECT_QUESTIONS_FILTER' | translate }}</h1>
-      <mat-icon class="close-btn" (click)="onClose()">close</mat-icon>
-    </header>
-  
-    <div class="modal-body">
-      <ul class="question-list">
-        <li *ngFor="let question of allQuestions; let i = index">
-          <mat-checkbox [(ngModel)]="question.selected" [id]="'question-' + i">
-            {{ observationType === 'questions' ? question?.question : question?.criteriaName }}
-          </mat-checkbox>
-        </li>
-      </ul>
-    </div>
-  
-    <footer class="modal-footer">
-      <button class="apply-filter" (click)="applyFilter()">
-        {{"APPLY_FILTERS" | translate}}
-      </button>
-    </footer>
-  </div> -->
-  
-  <div class="custom-dialog-backdrop">
+ <div class="custom-dialog-backdrop">
     <div class="custom-dialog">
       <div class="dialog-header">
         <h3>{{ 'SELECT_QUESTIONS_FILTER' | translate }}</h3>
