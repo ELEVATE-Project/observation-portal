@@ -73,20 +73,28 @@ export class SurveyReportsComponent implements OnInit {
 
   processSurveyData(data: any[]): any[] {
     const mapAnswersToLabels = (answers: any[], optionsAvailable: any[]) => {
-      return answers.map((answer: any) => {
+      return (answers || []).map((answer: any) => {
+      
         if (typeof answer === 'number') {
           return answer;
         }
-  
-        const trimmedAnswer = answer.trim();
-        if (trimmedAnswer === '') {
-          return 'No response is available'; 
+
+        if (!answer || (typeof answer === 'string' && answer.trim() === '')) {
+          return 'No response is available';
         }
-  
-        const option = optionsAvailable?.find((opt: { value: any }) => opt.value === trimmedAnswer);
+    
+        if (typeof answer !== 'string') {
+          return answer;
+        }
+    
+        const trimmedAnswer = answer.trim();
+        const option = optionsAvailable?.find(
+          (opt: { value: any }) => opt.value === trimmedAnswer
+        );
         return option ? option.label : trimmedAnswer;
       });
     };
+    
   
     const processInstanceQuestions = (instance: any) => {
       const processedInstance = { ...instance };
