@@ -319,5 +319,4 @@ export class ListingComponent implements OnInit {
     element.tagClass = statusInfo.tagClass;
     element.statusLabel = statusInfo.statusLabel;
   }
- 
 }
