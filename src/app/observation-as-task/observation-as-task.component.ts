@@ -31,6 +31,7 @@ export class ObservationAsTaskComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    Consolee.logg("testing code rabbit.ai")
     window.addEventListener('message', this.fetchStateDataFromQuestionerPlayer);
     this.queryParamsService.parseQueryParams();
     this.urlParamsService.parseRouteParams(this.route);
