@@ -15,7 +15,12 @@
         </mat-form-field>
       </div>
       }
-      <div class="grid-container">
+      <div class="grid-container"
+      infinite-scroll
+     [infiniteScrollDistance]="2"
+     [infiniteScrollThrottle]="300"
+     (scrolled)="loadData()"
+      >
         @for(solution of solutionList;track $index){
           <div class="grid-item" (click)="navigateTo(solution)">
             <mat-card class="observation-card">
@@ -39,11 +44,6 @@
     </div>
     }@else{
       <app-no-data></app-no-data>
-    }
-    @if(!(solutionListCount === 0 || solutionListCount === initialSolutionData?.length)){
-    <div class="fixed-bottom-buttons">
-      <button mat-raised-button color="accent" (click)="loadData()">{{'LOAD_MORE' | translate}}</button>
-    </div>
     }
   </div>
 }@else{
