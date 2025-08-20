@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom ,Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import * as fileConstant from '../constants/file.formats.json';
 import { ProfileService } from './profile.service';
 import { ApiService } from './api.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileAlterPopupComponent } from '../shared/profile-alter-popup/profile-alter-popup.component';
+import { Location } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +18,7 @@ export class UtilsService {
 
  cloudStorageUpload?(payload): Observable<any>;
 
-  constructor(private profileService: ProfileService,private apiServie:ApiService) {}
+  constructor(private profileService: ProfileService,private apiServie:ApiService,private dialog: MatDialog,private location:Location) {}
 
   isEmpty(value: any): boolean {
     if (value == null) {
@@ -56,6 +59,31 @@ export class UtilsService {
     if(profileData){
       localStorage.setItem('profileData',JSON.stringify(profileData))
       this.apiServie.profileData = JSON.parse(localStorage.getItem('profileData'))
+    }else {
+      await this.showProfileUpdateAlert();
+    }
+  }
+  
+  async showProfileUpdateAlert(){
+    let data:any = {
+      title: "ALERT",
+      message:"UPDATE_PROFILE_MSG",
+      actionButtons:[
+        { label: "BACK", action: false },
+        { label: "UPDATE_PROFILE", action: true, class: "dialog-primary-button" }
+      ],
+      disableClose: true
+    }
+    const popupRef = this.dialog.open(ProfileAlterPopupComponent,{
+      width: data.width || "400px",
+      data: data,
+      disableClose: data.disableClose || false
+    })
+    let response = await firstValueFrom(popupRef.afterClosed())
+    if(response){
+      this.location.back()
+    }else{
+      this.location.back()
     }
   }
 
