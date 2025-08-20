@@ -15,68 +15,49 @@ export class DownloadService {
   ) {
   }
 
-  async setDownloadsDataInIndexDb(observationData, submissionId) {
+  async setDownloadsDataInIndexDb(dataObjectToStore, submissionId, storeName) {
     const data = {
       key: submissionId,
-      data: [observationData]
+      data: storeName === "observation" ? [dataObjectToStore] : dataObjectToStore
     }
     try {
-      await this.dbDownloadService.addDownloadsData(data);
+      await this.dbDownloadService.addDownloadsData(data, storeName);
     } catch (error) {
       console.error("Failed to store data in IndexedDB", error);
     }
   }
 
-  async checkAndMapIndexDbDataToVariables(submissionId) {
-    let indexdbData = await this.dbDownloadService.getDownloadsData(submissionId);
-    let currentObservation = {
-      data: indexdbData?.data
-
-    };
-    return currentObservation;
-  }
-
-
   async checkAndFetchDownloadsData(submissionId, type) {
-    let indexdbData = await this.dbDownloadService.getDownloadsData(submissionId, type);
+    let indexdbData = await this.dbDownloadService.getDownloadsDataByKeyId(submissionId, type);
     let data= indexdbData?.data
     return data;
   }
 
-  async downloadObservation( observationId, entityId, observationDetails, submissionId) {
+  async checkAndFetchDownloadsDatas(type) {
+    let indexdbData = await this.dbDownloadService.getAllDownloadsDatas( type);
+    return indexdbData;
+  }
 
-    const newItem = {
-      title: observationDetails?.observationName,
-      subTitle: observationDetails?.program?.name,
-      route: `/details/${observationId}/${entityId}/${observationDetails?.allowMultipleAssessemts}`,
-      metaData: {
-        isRubric: observationDetails?.isRubricDriven,
-        observationId: observationId,
-        submissionId: submissionId,
-        entityId: entityId,
-        observationName: observationDetails?.title,
-        observationCreatedDate: observationDetails?.createdAt,
-        status: observationDetails?.status
-      }
-    };
+  async downloadData( storeName:any, dataObjectToStore:any) {
 
-    let existingData: any[] = await this.dbDownloadService.getAllDownloadsData();
-    let matchedEntry = existingData.find(entry => entry.key === observationId);
+
+    let existingData: any[] = await this.dbDownloadService.getAllDownloadsDatas(storeName);
+    let matchedEntry = existingData.find(entry => entry.key === dataObjectToStore?.id);
     if (matchedEntry) {
       const existingIndex = matchedEntry.data.findIndex(
         (item: any) => 
-          item.metaData.submissionId === submissionId &&
-          item.metaData.entityId === entityId
+          item.metaData.submissionId === dataObjectToStore?.submissionId &&
+          item.metaData.entityId === dataObjectToStore?.entityId
       );
 
       if (existingIndex !== -1) {
-        matchedEntry.data[existingIndex] = newItem;
+        matchedEntry.data[existingIndex] = dataObjectToStore;
       } else {
-        matchedEntry.data.push(newItem);
+        matchedEntry.data.push(dataObjectToStore);
       }
-      await this.dbDownloadService.updateData(matchedEntry);
+      await this.dbDownloadService.updateData(matchedEntry, storeName);
     } else {
-      await this.setDownloadsDataInIndexDb(newItem, observationId);
+      await this.setDownloadsDataInIndexDb(dataObjectToStore, dataObjectToStore?.id, storeName);
     }
   }
 }

@@ -15,6 +15,7 @@ import { NetworkServiceService } from 'network-service';
 import {TranslateService} from '@ngx-translate/core';
 import { dialogConfirmationMap } from '../constants/actionContants';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
+import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
 
 @Component({
   selector: 'app-observation-details',
@@ -55,7 +56,9 @@ export class ObservationDetailsComponent implements OnInit {
     private downloadService: DownloadService,
     private dbDownloadService: DbDownloadService,
     private network: NetworkServiceService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+    
   ) {
   }
 
@@ -145,8 +148,9 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
     let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(data?._id);
 
     if (!isDataInIndexDb?.data) {
-      await this.offlineData.getFullObservationData(this.observationId,this.entityId,data?._id,data?.submissionNumber);
+      await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,data?._id,data?.submissionNumber,"");
     }
+
 
     if (data?.isRubricDriven) {
       this.router.navigate([
@@ -162,8 +166,9 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
         }
       });
     } else {
+      let evidenceCode = data?.evidenceCode || data?.evidencesStatus[0]?.code;
       this.router.navigate(['questionnaire'], {
-        queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, evidenceCode: data?.evidencesStatus[0]?.code, index: 0,submissionId:data?._id
+        queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, evidenceCode: evidenceCode, index: 0,submissionId:data?._id
         }
       });
     }
@@ -264,8 +269,21 @@ async downloadObservation(observationDetail) {
     ...observationDetail,
     allowMultipleAssessemts: this.allowMultipleAssessemts
   };
-  let submissionId = observationDetails?._id;
-  await this.downloadService.downloadObservation(this.observationId, this.entityId, observationDetails, submissionId)
+  const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
+    observationDetail,
+    this.observationId,
+    this.entityId,
+    this.allowMultipleAssessemts,
+    observationDetail?._id
+  );
+
+  let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(observationDetails?._id);
+
+  if (!isDataInIndexDb?.data) {
+    await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,observationDetails?._id,observationDetails?.submissionNumber,"");
+  }
+
+  await this.downloadService.downloadData("observation", newItem);
   this.fetchDownloadedData(false);
 }
 
@@ -276,22 +294,23 @@ updateDownloadedSubmissions() {
 }
 
 async fetchDownloadedData(mapData) {
-  this.allObservationDownloadedDataInIndexDb = await this.dbDownloadService.getAllDownloadsData();
+  this.allObservationDownloadedDataInIndexDb = await this.dbDownloadService.getAllDownloadsDatas("observation");
   this.isQuestionerDataInIndexDb = this.allObservationDownloadedDataInIndexDb.find(
     item => item.key === this.observationId
   );
   this.dbKeys = this.isQuestionerDataInIndexDb?.data || [];
   this.updateDownloadedSubmissions();
-
   if (mapData) {
-    this.observations = this.isQuestionerDataInIndexDb?.data.map(item => ({
+    this.observations = this.isQuestionerDataInIndexDb?.data.map((item:any) => ({
       title: item.metaData.observationName,
       createdAt: item.metaData.observationCreatedDate,
       isRubricDriven: item.metaData.isRubric,
       _id: item.metaData.submissionId,
       status: item.metaData.status,
       observationId: item.metaData.observationId,
-      entityId: item.metaData.entityId
+      entityId: item.metaData.entityId,
+      submissionNumber: item.metaData.submissionNumber,
+      evidenceCode: item.metaData.evidenceCode
     }));
     this.observationInit = false;
     this.isRubricDriven = this.isQuestionerDataInIndexDb?.data[0]?.isRubric;
