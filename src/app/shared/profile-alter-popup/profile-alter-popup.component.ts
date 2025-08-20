@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   selector: 'app-profile-alter-popup',
   standalone: false,
   templateUrl: './profile-alter-popup.component.html',
-  styleUrl: './profile-alter-popup.component.css'
+  styleUrls: ['./profile-alter-popup.component.css']
 })
 export class ProfileAlterPopupComponent {
   constructor(  public dialogRef: MatDialogRef<ProfileAlterPopupComponent>,@Inject(MAT_DIALOG_DATA) public data: any){}
