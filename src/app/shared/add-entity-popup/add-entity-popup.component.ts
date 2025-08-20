@@ -7,6 +7,7 @@ import * as urlConfig from '../../constants/url-config.json';
 import { Subject } from 'rxjs';
 import { debounceTime, finalize } from 'rxjs/operators';
 import { MatSelectionListChange } from '@angular/material/list';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-add-entity-popup',
@@ -40,7 +41,9 @@ export class AddEntityPopupComponent {
     this.searchAddEntityValue ="";
     this.getSearchEntities();
     this.searchInputChanged
-      .pipe(debounceTime(800))
+      .pipe(debounceTime(800),
+      takeUntilDestroyed(this.destroyRef)
+    )
       .subscribe((searchValue: string) => {
         this.getSearchEntities(searchValue);
       });
