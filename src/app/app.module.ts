@@ -66,6 +66,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { ShareLinkPopupComponent } from './shared/share-link-popup/share-link-popup.component';
 import { ShortUrlPipe } from './shared/pipes/short-url.pipe';
 import { ObservationFilterComponent } from './shared/observation-filter/observation-filter.component';
+import { DownloadButtonComponent } from './shared/download-button/download-button.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-popup.component';
 
@@ -98,6 +99,7 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ShareLinkPopupComponent,
     ShortUrlPipe,
     ObservationFilterComponent,
+    DownloadButtonComponent,
     AddEntityPopupComponent,
   ],
   imports: [

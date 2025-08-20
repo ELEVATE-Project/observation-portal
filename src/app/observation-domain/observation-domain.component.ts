@@ -11,6 +11,7 @@ import { DownloadService } from '../services/download.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DbService } from '../services/db.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
+import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
 @Component({
   selector: 'app-observation-domain',
   standalone: false,
@@ -50,7 +51,9 @@ export class ObservationDomainComponent implements OnInit {
     private offlineData:offlineSaveObservation,
     private downloadService: DownloadService,
     private translate:TranslateService,
-     private db: DbService
+    private db: DbService,
+    private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+     
   ) {
     const passedData = this.router.getCurrentNavigation()?.extras.state;
     this.observationDetails = passedData;
@@ -213,7 +216,23 @@ export class ObservationDomainComponent implements OnInit {
 
   }
   async downloadObservation() {
-    await this.downloadService.downloadObservation(this.observationId, this.entityId, this.observationDetails, this.submissionId)
+
+    const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
+      this.observationDetails,
+      this.observationId,
+      this.entityId,
+      this.observationDetails?.allowMultipleAssessemts,
+      this.observationDetails?._id
+    );
+
+    let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.observationDetails?._id);
+
+    if (!isDataInIndexDb?.data) {
+      await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,this.observationDetails?._id,this.observationDetails?.submissionNumber,"");
+
+    }
+
+    await this.downloadService.downloadData("observation", newItem)
     this.observationDownloaded = true;
   }
   downloadPop() {

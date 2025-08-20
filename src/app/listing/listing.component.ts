@@ -9,6 +9,11 @@ import { listingConfig} from '../constants/actionContants';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { UtilsService } from '../services/utils.service';
+import { DownloadService } from '../services/download.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
+import { offlineSaveObservation } from '../services/offlineSaveObservation.service';
+import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
 
 @Component({
   selector: 'app-listing',
@@ -37,6 +42,9 @@ export class ListingComponent implements OnInit {
   description:any;
   headerConfig:any;
   selectedEntityName:any;
+  observationDownloaded: boolean = false;
+    isDataInDownloadsIndexDb: any = [];
+    submissionId: any;
 
   constructor(
     public router: Router,
@@ -46,11 +54,16 @@ export class ListingComponent implements OnInit {
     private route:ActivatedRoute,
     private translate: TranslateService,
     private datePipe: DatePipe,
-    private utils:UtilsService
+    private utils:UtilsService,
+    private downloadService: DownloadService,
+        private dialog: MatDialog,
+        private offlineData:offlineSaveObservation,
+        private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+
   ) {
   }
  
-  ngOnInit(): void {
+  async ngOnInit() {
     this.urlParamService.parseRouteParams(this.route)
     this.setHeader()
     this.surveyPage = this.headerConfig?.title === 'Survey'
@@ -132,6 +145,7 @@ export class ListingComponent implements OnInit {
             });
           }
           this.initialSolutionData = this.solutionList;
+          this.checkDataInDB()
         } else {
           this.toaster.showToast(res?.message, 'Close');
         }
@@ -319,4 +333,53 @@ export class ListingComponent implements OnInit {
     element.tagClass = statusInfo.tagClass;
     element.statusLabel = statusInfo.statusLabel;
   }
+
+  downloadPop(solution: any, index: number) {
+    const dialogRef = this.dialog.open(GenericPopupComponent, {
+      width: '400px',
+      data: {
+        message: 'DOWNLOAD_MSG',
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        this.downloadSurvey(solution, index);
+      }
+    });
+  }
+  
+
+  async downloadSurvey(solution: any, index: number) {
+    try {
+      const newItem = this.downloadDataPayloadCreationService.buildSurveyItem(solution);
+  
+      const check = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
+      if (!check?.data) {
+        await this.offlineData.getFullQuestionerData(
+          "survey", "", "", solution?.submissionId, 0, solution?.solutionId
+        );
+      }
+  
+      await this.downloadService.downloadData("survey", newItem);
+  
+      this.solutionList[index].downloaded = true;
+    } catch (e) {
+      this.solutionList[index].downloaded = false;
+    }
+  }
+  
+
+    async checkDataInDB(){
+      const storedSurveys = await this.downloadService.checkAndFetchDownloadsDatas("survey") || [];
+      this.solutionList = this.solutionList.map((solution: any) => {
+        const isDownloaded = storedSurveys.some(
+          (item: any) =>
+            item.data?.metaData?.solutionId === solution?._id &&
+            item.data?.metaData?.submissionId === solution?.submissionId
+        );
+        return { ...solution, downloaded: isDownloaded };
+      });
+    }
+    
 }

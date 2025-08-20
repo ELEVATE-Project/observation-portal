@@ -1,0 +1,7 @@
+<div class="download-wrapper" [ngClass]="{ 'downloaded': downloaded }">
+    <button mat-icon-button (click)="onClick($event)" class="download-btn"
+    [matTooltip]="downloaded ? ('DOWNLOADED' | translate) : ('DOWNLOAD' | translate)">
+      <mat-icon>{{ downloaded ? 'check' : 'arrow_downward' }}</mat-icon>
+    </button>
+  </div>
+  
