@@ -12,7 +12,7 @@ import { MatSelectionListChange } from '@angular/material/list';
   selector: 'app-add-entity-popup',
   standalone: false,
   templateUrl: './add-entity-popup.component.html',
-  styleUrl: './add-entity-popup.component.css'
+  styleUrls: ['./add-entity-popup.component.css']
 })
 export class AddEntityPopupComponent {
   selectedEntities: any;
