@@ -341,12 +341,14 @@ export class ListingComponent implements OnInit {
         message: 'DOWNLOAD_MSG',
       }
     });
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'yes') {
-        this.downloadSurvey(solution, index)
+        this.downloadSurvey(solution, index);
       }
     });
   }
+  
 
     async downloadSurvey(solution: any, index: number) {
     this.solutionList[index].downloaded = true;
