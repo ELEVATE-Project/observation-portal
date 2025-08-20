@@ -1,4 +1,4 @@
 window["env"] = {
     production: true,
-    surveyBaseURL: '<surveyBaseURL>'
+    surveyBaseURL: '<surveyBaseURL>',
 }
