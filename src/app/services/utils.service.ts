@@ -61,9 +61,10 @@ export class UtilsService {
       this.apiServie.profileData = JSON.parse(localStorage.getItem('profileData'))
     }else {
       await this.showProfileUpdateAlert();
+      return;
     }
   }
-  
+
   async showProfileUpdateAlert(){
     let data:any = {
       title: "ALERT",

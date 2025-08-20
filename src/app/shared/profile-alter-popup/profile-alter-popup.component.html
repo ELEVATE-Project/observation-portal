@@ -1,9 +1,9 @@
 <div>
     <mat-dialog-content>
-        @if(data.title){
+        @if(data?.title){
             <div class="dialog-title">{{data.title | translate }}</div>
         }
-        @if(data.message){
+        @if(data?.message){
             <div class="dialog-message">{{data.message | translate }}</div>
         }
     </mat-dialog-content>
