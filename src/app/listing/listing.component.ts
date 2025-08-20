@@ -335,18 +335,18 @@ export class ListingComponent implements OnInit {
   }
 
   downloadPop(solution: any, index: number) {
-    const dialogRef = this.dialog.open(GenericPopupComponent,{
-    width: '400px',
-    data: {
-    message: 'DOWNLOAD_MSG',
-    }
+    const dialogRef = this.dialog.open(GenericPopupComponent, {
+      width: '400px',
+      data: {
+        message: 'DOWNLOAD_MSG',
+      }
     });
     dialogRef.afterClosed().subscribe(result => {
-    if (result === 'yes') {
-    this.downloadSurvey(solution, index)
-    }
+      if (result === 'yes') {
+        this.downloadSurvey(solution, index)
+      }
     });
-    }
+  }
 
     async downloadSurvey(solution: any, index: number) {
     this.solutionList[index].downloaded = true;
