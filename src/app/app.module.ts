@@ -67,6 +67,7 @@ import { ShareLinkPopupComponent } from './shared/share-link-popup/share-link-po
 import { ShortUrlPipe } from './shared/pipes/short-url.pipe';
 import { ObservationFilterComponent } from './shared/observation-filter/observation-filter.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-popup.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -97,6 +98,7 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ShareLinkPopupComponent,
     ShortUrlPipe,
     ObservationFilterComponent,
+    AddEntityPopupComponent,
   ],
   imports: [
     BrowserModule,

@@ -6,11 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, finalize } from 'rxjs';
-import { MatSelectionListChange } from '@angular/material/list';
 import { UrlParamsService } from '../services/urlParams.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { AddEntityPopupComponent } from '../shared/add-entity-popup/add-entity-popup.component';
 @Component({
   selector: 'app-observation-entity',
   standalone: false,
@@ -21,19 +19,14 @@ export class ObservationEntityComponent  {
   selectedEntities: any;
   solutionId: any;
   entityToAdd: string;
-  filteredEntities: any;
   filteredEntitiesOne: any;
   entity:any;
   addedEntities: string[] = [];
   entities = new FormControl();
-  @ViewChild('searchEntityModal') searchEntityModal: TemplateRef<any>;
   dialogRef: any;
   observationId: any;
-  searchEntities: any = [];
   loaded = false;
-  searchAddEntityValue: string = "";
   headerConfig:any;
-  searchInputChanged: Subject<string> = new Subject<string>();
 
 
   constructor(
@@ -59,11 +52,6 @@ export class ObservationEntityComponent  {
       type:this.entityToAdd
     }
     this.getEntities();
-    this.searchInputChanged
-    .pipe(debounceTime(800))
-    .subscribe((searchValue: string) => {
-      this.getSearchEntities(searchValue);
-    });
   }
 
   getEntities() {
@@ -89,22 +77,20 @@ export class ObservationEntityComponent  {
   }
 
   openAllEntityList() {
-    this.filteredEntities =[];
-    this.searchAddEntityValue ="";
-    this.getSearchEntities();
-    this.dialogRef = this.dialog.open(this.searchEntityModal, {
-      width: '80%',
-      height: 'auto',
-      enterAnimationDuration: 300,
-      exitAnimationDuration: 150,
-      disableClose: true,
-    })
-
-    this.dialogRef.afterClosed().subscribe((selectedIds: any[]) => {
-      if (selectedIds) {
-        this.updateEntities(selectedIds);
-      }
-    });
+    const dialogRef = this.dialog.open(AddEntityPopupComponent, {
+          width: '80%',
+          height: 'auto',
+          data: { 
+            entityToAdd: this.entityToAdd,
+            observationId:this.observationId
+          }  
+        });
+      
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.updateEntities(result);
+          }
+        });
   }
 
   updateEntities(selectedEntities) {
@@ -118,37 +104,6 @@ export class ObservationEntityComponent  {
       }, (err: any) => {
         this.toaster.showToast(err.error.message, 'Close');
       })
-  }
-
-  getSearchEntities(searchValue:any="") {
-    this.searchAddEntityValue = searchValue;
-    let parentEntityId = this.selectedEntities?.parentEntityKey
-    ? this.apiService.profileData[this.selectedEntities?.parentEntityKey]
-    : "";
-  
-  let url = urlConfig.observation.searchEntities + this.observationId + `&search=${searchValue}`;
-  
-  if (parentEntityId) {
-    url += `&parentEntityId=${parentEntityId}`;
-  }
-  
-  this.apiService.post(url, this.apiService.profileData)  
-      .subscribe((res: any) => {
-        if (res.result) {
-          const searchEntities = res?.result[0];
-          this.searchEntities = searchEntities?.data;
-          this.filteredEntities = [...searchEntities?.data]
-
-        } else {
-          this.toaster.showToast(res.message, 'Close');
-        }
-      }, (err: any) => {
-        this.toaster.showToast(err.error.message, 'Close');
-      })
-  }
-
-  closeDialog() {
-    this.dialogRef.close();
   }
 
   handleEntitySearchInput(value?: any) {
@@ -171,9 +126,6 @@ export class ObservationEntityComponent  {
     });
   }
 
-  submitDialog() {
-    this.dialogRef.close(this.addedEntities);
-  }
 
   deleteEntity(id) {
     const dialogRef = this.dialog.open(GenericPopupComponent,{
@@ -203,32 +155,5 @@ export class ObservationEntityComponent  {
       }
     });
   }
-
-  isEntityInFilteredEntitiesOne(entity: any): boolean {
-    return this.selectedEntities?.entities?.some(
-      (filteredEntity: any) => filteredEntity._id === entity._id
-    ) ?? false;
-  }
   
-  isEntitySelected(entity: any): boolean {
-    return (
-      this.selectedEntities?.entities?.some(
-        (filteredEntity: any) => filteredEntity._id === entity._id
-      ) ||
-      this.addedEntities.includes(entity._id)
-    );
-  }
-  
-  onSelectionChange(event: MatSelectionListChange): void {
-    event?.options.forEach(option => {
-      const entityId = option.value;
-      if (option.selected) {
-        if (!this.addedEntities.includes(entityId)) {
-          this.addedEntities.push(entityId);
-        }
-      } else {
-        this.addedEntities = this.addedEntities.filter(id => id !== entityId);
-      }
-    });
-  }
 }
