@@ -33,7 +33,7 @@ export class DownloadDataPayloadCreationService {
         submissionNumber: observation?.submissionNumber,
         observationCreatedDate: observation?.createdAt,
         status: observation?.status,
-        evidenceCode: observation?.evidencesStatus[0]?.code 
+        evidenceCode: observation?.evidencesStatus?.[0]?.code 
       }
     };
   }

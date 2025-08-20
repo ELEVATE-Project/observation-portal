@@ -218,10 +218,6 @@ img {
   border: 0.063rem solid #696969;
 }
 
-::ng-deep .mat-mdc-option {
-  --mat-option-selected-state-label-text-color: var(--color-primary);
-}
-
 ::ng-deep .mat-primary .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after,
 ::ng-deep .mat-primary .mat-pseudo-checkbox-indeterminate.mat-pseudo-checkbox-minimal::after {
   color: var(--color-primary);

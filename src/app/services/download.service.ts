@@ -1,30 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
-import { ToastService } from './toast.service';
-import * as urlConfig from '../constants/url-config.json';
-import { catchError, finalize } from 'rxjs';
 import { DbDownloadService } from './dbDownload.service';
 @Injectable({
   providedIn: 'root'
 })
 export class DownloadService {
   constructor(
-    private apiService: ApiService,
-    private toaster: ToastService,
     private dbDownloadService: DbDownloadService
   ) {
-  }
-
-  async setDownloadsDataInIndexDb(dataObjectToStore, submissionId, storeName) {
-    const data = {
-      key: submissionId,
-      data: storeName === "observation" ? [dataObjectToStore] : dataObjectToStore
-    }
-    try {
-      await this.dbDownloadService.addDownloadsData(data, storeName);
-    } catch (error) {
-      console.error("Failed to store data in IndexedDB", error);
-    }
   }
 
   async checkAndFetchDownloadsData(submissionId, type) {
@@ -38,18 +20,31 @@ export class DownloadService {
     return indexdbData;
   }
 
-  async downloadData( storeName:any, dataObjectToStore:any) {
-
-
-    let existingData: any[] = await this.dbDownloadService.getAllDownloadsDatas(storeName);
-    let matchedEntry = existingData.find(entry => entry.key === dataObjectToStore?.id);
+  async setDownloadsDataInIndexDb(dataObjectToStore:any, submissionId:any, storeName:any) {
+    const data = {
+      key: submissionId,
+      data: [dataObjectToStore] 
+    };
+    try {
+      await this.dbDownloadService.addDownloadsData(data, storeName);
+    } catch (error) {
+      console.error("Failed to store data in IndexedDB", error);
+    }
+  }
+  
+  async downloadData(storeName: any, dataObjectToStore: any) {
+    const existingData: any[] = await this.dbDownloadService.getAllDownloadsDatas(storeName);
+    const matchedEntry = existingData.find(entry => entry.key === dataObjectToStore?.id);
+  
     if (matchedEntry) {
+      matchedEntry.data = Array.isArray(matchedEntry.data) ? matchedEntry.data : [matchedEntry.data];
+  
       const existingIndex = matchedEntry.data.findIndex(
-        (item: any) => 
-          item.metaData.submissionId === dataObjectToStore?.submissionId &&
-          item.metaData.entityId === dataObjectToStore?.entityId
+        (item: any) =>
+          item?.metaData?.submissionId === dataObjectToStore?.submissionId &&
+          item?.metaData?.entityId === dataObjectToStore?.entityId
       );
-
+  
       if (existingIndex !== -1) {
         matchedEntry.data[existingIndex] = dataObjectToStore;
       } else {
@@ -60,4 +55,5 @@ export class DownloadService {
       await this.setDownloadsDataInIndexDb(dataObjectToStore, dataObjectToStore?.id, storeName);
     }
   }
+  
 }

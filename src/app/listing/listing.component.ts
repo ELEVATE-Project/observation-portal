@@ -350,31 +350,36 @@ export class ListingComponent implements OnInit {
   }
   
 
-    async downloadSurvey(solution: any, index: number) {
-    this.solutionList[index].downloaded = true;
-    const newItem = this.downloadDataPayloadCreationService.buildSurveyItem(solution);
-
-    let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
-
-    if (!isDataInIndexDb?.data) {
-      await this.offlineData.getFullQuestionerData("survey","","",solution?.submissionId,0, solution?.solutionId);
+  async downloadSurvey(solution: any, index: number) {
+    try {
+      const newItem = this.downloadDataPayloadCreationService.buildSurveyItem(solution);
+  
+      const check = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
+      if (!check?.data) {
+        await this.offlineData.getFullQuestionerData(
+          "survey", "", "", solution?.submissionId, 0, solution?.solutionId
+        );
+      }
+  
+      await this.downloadService.downloadData("survey", newItem);
+  
+      this.solutionList[index].downloaded = true;
+    } catch (e) {
+      this.solutionList[index].downloaded = false;
     }
-
-    await this.downloadService.downloadData("survey", newItem)
-
-    }
+  }
+  
 
     async checkDataInDB(){
       const storedSurveys = await this.downloadService.checkAndFetchDownloadsDatas("survey") || [];
-
       this.solutionList = this.solutionList.map((solution: any) => {
         const isDownloaded = storedSurveys.some(
           (item: any) =>
             item.data?.metaData?.solutionId === solution?._id &&
             item.data?.metaData?.submissionId === solution?.submissionId
         );
-    
         return { ...solution, downloaded: isDownloaded };
       });
     }
+    
 }

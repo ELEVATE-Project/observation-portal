@@ -14,7 +14,7 @@ export class offlineSaveObservation {
     private db: DbService
   ) {
   }
-  getFullQuestionerData(type,observationId, entityId, submissionId,submissionNumber,solutionId): Promise<void> {
+  getFullQuestionerData(type: 'observation' | 'survey', observationId: string, entityId: string, submissionId: string,submissionNumber: string | number, solutionId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       let apiUrl = '';
 

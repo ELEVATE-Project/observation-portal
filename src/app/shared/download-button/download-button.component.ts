@@ -6,7 +6,7 @@ import { GenericPopupComponent } from '../generic-popup/generic-popup.component'
   selector: 'app-download-button',
   standalone: false,
   templateUrl: './download-button.component.html',
-  styleUrl: './download-button.component.css'
+  styleUrls: ['./download-button.component.css']
 })
 export class DownloadButtonComponent {
   @Input() downloaded = false;

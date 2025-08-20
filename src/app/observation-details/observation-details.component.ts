@@ -166,9 +166,9 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
         }
       });
     } else {
-      let evidenceCode = data?.evidenceCode || data?.evidencesStatus[0]?.code;
+      const evidenceCode = data?.evidenceCode ?? data?.evidencesStatus?.[0]?.code;
       this.router.navigate(['questionnaire'], {
-        queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, evidenceCode: evidenceCode, index: 0,submissionId:data?._id
+        queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, evidenceCode, index: 0,submissionId:data?._id
         }
       });
     }
