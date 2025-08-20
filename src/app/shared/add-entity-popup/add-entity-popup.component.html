@@ -32,7 +32,7 @@
                           *ngFor="let entity of filteredEntities"
                           [value]="entity?._id"
                           [selected]="isEntitySelected(entity)"
-                          [disabled]="entity?.selected || isEntityInFilteredEntitiesOne(entity)">
+                          [disabled]="isEntityInFilteredEntitiesOne(entity)">
                           {{ entity?.name }}
                       </mat-list-option>
               </mat-selection-list>
@@ -43,15 +43,14 @@
     </mat-dialog-content>
 
     <mat-dialog-actions class="dialog-actions">
-      <button mat-dialog-close (click)="closeDialog()" class="btn secondary-btn">
+      <button mat-dialog-close class="btn secondary-btn">
         {{'CANCEL' | translate}}
       </button>
       <button
       color="primary" class="btn primary-btn"
-        [mat-dialog-close]="'yes'"
+        [mat-dialog-close]="addedEntities"
         [ngClass]="{ 'disabled-button': !addedEntities?.length }"
-        [disabled]="!addedEntities?.length"
-        (click)="submitDialog()">
+        [disabled]="!addedEntities?.length">
         {{'ADD' | translate}}
       </button>
     </mat-dialog-actions>

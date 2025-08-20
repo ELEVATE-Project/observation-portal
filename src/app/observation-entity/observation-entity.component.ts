@@ -82,7 +82,8 @@ export class ObservationEntityComponent  {
           height: 'auto',
           data: { 
             entityToAdd: this.entityToAdd,
-            observationId:this.observationId
+            observationId:this.observationId,
+            selectedEntities:this.selectedEntities
           }  
         });
       

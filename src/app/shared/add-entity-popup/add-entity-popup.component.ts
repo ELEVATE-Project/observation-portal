@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { ToastService } from 'src/app/services/toast.service';
@@ -27,10 +27,12 @@ export class AddEntityPopupComponent {
   constructor(public dialogRef: MatDialogRef<AddEntityPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private toaster: ToastService,
-    private apiService: ApiService, 
+    private apiService: ApiService,
+    private destroyRef: DestroyRef,
 ){
   this.entityToAdd = data.entityToAdd;
-  this.observationId=data.observationId
+  this.observationId=data.observationId;
+  this.selectedEntities=data.selectedEntities;
 }
 
   ngOnInit() {
@@ -60,9 +62,9 @@ export class AddEntityPopupComponent {
   this.apiService.post(url, this.apiService.profileData).pipe(finalize(() => this.loaded = false))
       .subscribe((res: any) => {
         if (res.result) {
-          const searchEntities = res?.result[0];
-          this.searchEntities = searchEntities?.data;
-          this.filteredEntities = [...searchEntities?.data]
+          const searchEntities = res?.result?.[0]?.data ?? [];
+          this.searchEntities = searchEntities;
+          this.filteredEntities = [...searchEntities];
         } else {
           this.toaster.showToast(res.message, 'Close');
         }
@@ -97,14 +99,6 @@ export class AddEntityPopupComponent {
       ) ||
       this.addedEntities.includes(entity._id)
     );
-  }
-
-  submitDialog() {
-    this.dialogRef.close(this.addedEntities);
-  }
-
-  closeDialog() {
-    this.dialogRef.close();
   }
 
 }
