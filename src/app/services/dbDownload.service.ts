@@ -48,8 +48,34 @@ export class DbDownloadService {
     });
   }
 
+
+    private ensureStore(storeName: string) {
+      if (!this.db.objectStoreNames.contains(storeName)) {
+        const version = this.db.version + 1;
+        this.db.close();
+        const request = indexedDB.open(this.observationDbName, version);
+  
+        request.onupgradeneeded = (event: any) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(storeName)) {
+            db.createObjectStore(storeName, { keyPath: 'key' });
+          }
+        };
+  
+        return new Promise<void>((resolve, reject) => {
+          request.onsuccess = (event: any) => {
+            this.db = event.target.result;
+            resolve();
+          };
+          request.onerror = (event: any) => reject(event.target.error);
+        });
+      }
+      return Promise.resolve();
+    }
+
   async addDownloadsData(data: any, storeName:any) {
     await this.observationDbInitialized;
+    await this.ensureStore(storeName);
     const transaction = this.db.transaction([storeName], 'readwrite');
     const store = transaction.objectStore(storeName);
     store.add(data);
@@ -57,6 +83,7 @@ export class DbDownloadService {
 
   async getDownloadsDataByKeyId(key: any, storeName:any): Promise<any> {
     await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
   
     return new Promise((resolve, reject) => {
@@ -83,6 +110,7 @@ export class DbDownloadService {
 
   async getAllDownloadsDatas(storeName:any): Promise<any> {
     await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
   
     return new Promise((resolve, reject) => {
@@ -107,31 +135,22 @@ export class DbDownloadService {
     });
   }
   
+  async updateData(data: any, storeName: string) {
+    await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
-  updateData(data: any, storeName:any) {
     const transaction = this.db.transaction([storeName], 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.put(data);
-    request.onsuccess = (event) => {};
-    request.onerror = (event) => {
-      console.error('Error updating Data: ');
-    };
-    return
+    transaction.objectStore(storeName).put(data);
   }
 
-  deleteData(key: any, storeName:any) {
+  async deleteData(key: any, storeName: string) {
+    await this.observationDbInitialized;
+    await this.ensureStore(storeName);
+
     const transaction = this.db.transaction([storeName], 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.delete(key);
+    const request = transaction.objectStore(storeName).delete(key);
 
-    request.onsuccess = (event) => {
-      this.toaster.showToast("Content deleted from device")
-    };
-
-    request.onerror = (event) => {
-      console.error('Error deleting item: ',);
-    };
+    request.onsuccess = () => this.toaster.showToast("Content deleted from device");
+    request.onerror = () => console.error('Error deleting item');
   }
-
-
 }

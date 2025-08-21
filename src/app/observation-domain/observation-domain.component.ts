@@ -217,20 +217,25 @@ export class ObservationDomainComponent implements OnInit {
   }
   async downloadObservation() {
 
-    const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
-      this.observationDetails,
-      this.observationId,
-      this.entityId,
-      this.observationDetails?.allowMultipleAssessemts,
-      this.observationDetails?._id
-    );
-
-    let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.observationDetails?._id);
+    let isDataInIndexDb:any = await this.offlineData.checkAndMapIndexDbDataToVariables(this.observationDetails?._id);
 
     if (!isDataInIndexDb?.data) {
       await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,this.observationDetails?._id,this.observationDetails?.submissionNumber,"");
 
     }
+    else {
+      isDataInIndexDb = isDataInIndexDb.data;
+    }
+    const subTitle = isDataInIndexDb?.assessment?.description;
+
+    const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
+      this.observationDetails,
+      this.observationId,
+      this.entityId,
+      this.observationDetails?.allowMultipleAssessemts,
+      this.observationDetails?._id,
+      subTitle
+    );
 
     await this.downloadService.downloadData("observation", newItem)
     this.observationDownloaded = true;

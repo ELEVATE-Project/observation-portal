@@ -265,27 +265,43 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
     }
 }
 async downloadObservation(observationDetail) {
-  let observationDetails = {
+  const observationDetails = {
     ...observationDetail,
     allowMultipleAssessemts: this.allowMultipleAssessemts
   };
+
+  let isDataInIndexDb: any = await this.offlineData.checkAndMapIndexDbDataToVariables(
+    observationDetails?._id
+  );
+
+  if (!isDataInIndexDb?.data) {
+    isDataInIndexDb = await this.offlineData.getFullQuestionerData(
+      "observation",
+      this.observationId,
+      this.entityId,
+      observationDetails?._id,
+      observationDetails?.submissionNumber,
+      ""
+    );
+  } else {
+    isDataInIndexDb = isDataInIndexDb.data;
+  }
+
+  const subTitle = isDataInIndexDb?.assessment?.description;
+
   const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
     observationDetail,
     this.observationId,
     this.entityId,
     this.allowMultipleAssessemts,
-    observationDetail?._id
+    observationDetail?._id,
+    subTitle
   );
-
-  let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(observationDetails?._id);
-
-  if (!isDataInIndexDb?.data) {
-    await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,observationDetails?._id,observationDetails?.submissionNumber,"");
-  }
 
   await this.downloadService.downloadData("observation", newItem);
   this.fetchDownloadedData(false);
 }
+
 
 updateDownloadedSubmissions() {
   this.submissionIdSet = new Set(

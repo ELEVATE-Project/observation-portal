@@ -370,20 +370,21 @@ export class ListingComponent implements OnInit {
   }
   
 
-    async checkDataInDB(){
-      const storedSurveys = await this.downloadService.checkAndFetchDownloadsDatas("survey") || [];
-      this.solutionList = this.solutionList.map((solution: any) => {
-        const isDownloaded = storedSurveys.some(
-          (item: any) =>
-            Array.isArray(item.data) &&
-            item.data.some(
-              (d: any) =>
-                d?.metaData?.solutionId === solution?._id &&
-                d?.metaData?.submissionId === solution?.submissionId
-            )
+  async checkDataInDB() {
+    const storedSurveys = await this.downloadService.checkAndFetchDownloadsDatas("survey") || [];
+    this.solutionList = this.solutionList.map((solution: any) => {
+      const isDownloaded = storedSurveys.some((item: any) => {
+        const entries = Array.isArray(item?.data) ? item.data : [item?.data].filter(Boolean);
+        return entries.some(
+          (d: any) =>
+            d?.metaData?.solutionId === solution?._id &&
+            d?.metaData?.submissionId === solution?.submissionId
         );
-        return { ...solution, downloaded: isDownloaded };
       });
-    }
+  
+      return { ...solution, downloaded: isDownloaded };
+    });
+  }
+  
     
 }

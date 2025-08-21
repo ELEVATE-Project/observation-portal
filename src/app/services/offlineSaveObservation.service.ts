@@ -14,7 +14,7 @@ export class offlineSaveObservation {
     private db: DbService
   ) {
   }
-  getFullQuestionerData(type: 'observation' | 'survey', observationId: string, entityId: string, submissionId: string,submissionNumber: string | number, solutionId: string): Promise<void> {
+  getFullQuestionerData(type: 'observation' | 'survey', observationId: string, entityId: string, submissionId: string,submissionNumber: string | number, solutionId: string): Promise<any> {
     return new Promise((resolve, reject) => {
       let apiUrl = '';
 
@@ -35,7 +35,7 @@ export class offlineSaveObservation {
         .subscribe(async (res: any) => {
           if (res?.result) {
             await this.setDataInIndexDb(res?.result, submissionId);
-            resolve();
+            resolve(res.result);
           } else {
             this.toaster.showToast(res?.message, 'danger');
             reject(res?.message);
