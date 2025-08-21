@@ -8,6 +8,7 @@ export class DbDownloadService {
   private observationDbVersion = 3
   private db!: IDBDatabase
   private observationDbInitialized: Promise<void>;
+  private ensureStorePromises = new Map<string, Promise<void>>();
 
   constructor(
     private toaster: ToastService,
@@ -49,29 +50,42 @@ export class DbDownloadService {
   }
 
 
-    private ensureStore(storeName: string) {
-      if (!this.db.objectStoreNames.contains(storeName)) {
-        const version = this.db.version + 1;
-        this.db.close();
-        const request = indexedDB.open(this.observationDbName, version);
-  
-        request.onupgradeneeded = (event: any) => {
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains(storeName)) {
-            db.createObjectStore(storeName, { keyPath: 'key' });
-          }
-        };
-  
-        return new Promise<void>((resolve, reject) => {
-          request.onsuccess = (event: any) => {
-            this.db = event.target.result;
-            resolve();
-          };
-          request.onerror = (event: any) => reject(event.target.error);
-        });
-      }
-      return Promise.resolve();
+  private ensureStore(storeName: string): Promise<void> {
+    if (this.ensureStorePromises.has(storeName)) {
+      return this.ensureStorePromises.get(storeName)!;
     }
+  
+    if (!this.db.objectStoreNames.contains(storeName)) {
+      const version = this.db.version + 1;
+      this.db.close();
+      const request = indexedDB.open(this.observationDbName, version);
+  
+      request.onupgradeneeded = (event: any) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName, { keyPath: 'key' });
+        }
+      };
+  
+      const p = new Promise<void>((resolve, reject) => {
+        request.onsuccess = (event: any) => {
+          this.db = event.target.result;
+          this.ensureStorePromises.delete(storeName);
+          resolve();
+        };
+        request.onerror = (event: any) => {
+          this.ensureStorePromises.delete(storeName);
+          reject(event.target.error);
+        };
+      });
+  
+      this.ensureStorePromises.set(storeName, p);
+      return p;
+    }
+  
+    return Promise.resolve();
+  }
+  
 
   async addDownloadsData(data: any, storeName:any) {
     await this.observationDbInitialized;

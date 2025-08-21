@@ -216,30 +216,46 @@ export class ObservationDomainComponent implements OnInit {
 
   }
   async downloadObservation() {
-
-    let isDataInIndexDb:any = await this.offlineData.checkAndMapIndexDbDataToVariables(this.observationDetails?._id);
-
+    const submissionId = this.observationDetails?._id ?? this.submissionId;
+  
+    let isDataInIndexDb: any = await this.offlineData.checkAndMapIndexDbDataToVariables(submissionId);
+  
     if (!isDataInIndexDb?.data) {
-      await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,this.observationDetails?._id,this.observationDetails?.submissionNumber,"");
-
-    }
-    else {
+      const fetched = await this.offlineData.getFullQuestionerData(
+        "observation",
+        this.observationId,
+        this.entityId,
+        submissionId,
+        this.observationDetails?.submissionNumber,
+        ""
+      );
+  
+      // normalize to same structure
+      isDataInIndexDb =
+        fetched?.data ??
+        (await this.offlineData.checkAndMapIndexDbDataToVariables(submissionId))?.data;
+    } else {
       isDataInIndexDb = isDataInIndexDb.data;
     }
-    const subTitle = isDataInIndexDb?.assessment?.description;
-
+  
+    const subTitle =
+      isDataInIndexDb?.assessment?.description ??
+      this.observationDetails?.description ??
+      "";
+  
     const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
       this.observationDetails,
       this.observationId,
       this.entityId,
       this.observationDetails?.allowMultipleAssessemts,
-      this.observationDetails?._id,
+      submissionId,
       subTitle
     );
-
-    await this.downloadService.downloadData("observation", newItem)
+  
+    await this.downloadService.downloadData("observation", newItem);
     this.observationDownloaded = true;
   }
+  
   downloadPop() {
       const dialogRef = this.dialog.open(GenericPopupComponent,{
         width: '400px',

@@ -264,42 +264,50 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
       this.getObservationsByStatus(['completed']);
     }
 }
-async downloadObservation(observationDetail) {
-  const observationDetails = {
-    ...observationDetail,
-    allowMultipleAssessemts: this.allowMultipleAssessemts
-  };
+async downloadObservation(observationDetail: any) {
+  try {
+    const observationDetails = {
+      ...observationDetail,
+      allowMultipleAssessemts: this.allowMultipleAssessemts
+    };
 
-  let isDataInIndexDb: any = await this.offlineData.checkAndMapIndexDbDataToVariables(
-    observationDetails?._id
-  );
+    let observationData: any = await this.offlineData.checkAndMapIndexDbDataToVariables(
+      observationDetails?._id
+    );
 
-  if (!isDataInIndexDb?.data) {
-    isDataInIndexDb = await this.offlineData.getFullQuestionerData(
-      "observation",
+    observationData = observationData?.data
+      ? observationData.data
+      : await this.offlineData.getFullQuestionerData(
+          "observation",
+          this.observationId,
+          this.entityId,
+          observationDetails?._id,
+          observationDetails?.submissionNumber,
+          ""
+        );
+
+    const subTitle =
+      observationData?.assessment?.description ??
+      observationDetail?.program?.name ??
+      "";
+
+    const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
+      observationDetail,
       this.observationId,
       this.entityId,
-      observationDetails?._id,
-      observationDetails?.submissionNumber,
-      ""
+      this.allowMultipleAssessemts,
+      observationDetail?._id,
+      subTitle
     );
-  } else {
-    isDataInIndexDb = isDataInIndexDb.data;
+
+    await this.downloadService.downloadData("observation", newItem);
+    this.fetchDownloadedData(false);
+  } catch (err) {
+    this.toaster.showToast(
+      this.translate.instant("DOWNLOAD_FAILED"),
+      "Close"
+    );
   }
-
-  const subTitle = isDataInIndexDb?.assessment?.description;
-
-  const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
-    observationDetail,
-    this.observationId,
-    this.entityId,
-    this.allowMultipleAssessemts,
-    observationDetail?._id,
-    subTitle
-  );
-
-  await this.downloadService.downloadData("observation", newItem);
-  this.fetchDownloadedData(false);
 }
 
 
