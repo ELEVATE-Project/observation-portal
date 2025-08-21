@@ -264,28 +264,52 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
       this.getObservationsByStatus(['completed']);
     }
 }
-async downloadObservation(observationDetail) {
-  let observationDetails = {
-    ...observationDetail,
-    allowMultipleAssessemts: this.allowMultipleAssessemts
-  };
-  const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
-    observationDetail,
-    this.observationId,
-    this.entityId,
-    this.allowMultipleAssessemts,
-    observationDetail?._id
-  );
+async downloadObservation(observationDetail: any) {
+  try {
+    const observationDetails = {
+      ...observationDetail,
+      allowMultipleAssessemts: this.allowMultipleAssessemts
+    };
 
-  let isDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(observationDetails?._id);
+    let observationData: any = await this.offlineData.checkAndMapIndexDbDataToVariables(
+      observationDetails?._id
+    );
 
-  if (!isDataInIndexDb?.data) {
-    await this.offlineData.getFullQuestionerData("observation",this.observationId,this.entityId,observationDetails?._id,observationDetails?.submissionNumber,"");
+    observationData = observationData?.data
+      ? observationData.data
+      : await this.offlineData.getFullQuestionerData(
+          "observation",
+          this.observationId,
+          this.entityId,
+          observationDetails?._id,
+          observationDetails?.submissionNumber,
+          ""
+        );
+
+    const subTitle =
+      observationData?.assessment?.description ??
+      observationDetail?.program?.name ??
+      "";
+
+    const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
+      observationDetail,
+      this.observationId,
+      this.entityId,
+      this.allowMultipleAssessemts,
+      observationDetail?._id,
+      subTitle
+    );
+
+    await this.downloadService.downloadData("observation", newItem);
+    this.fetchDownloadedData(false);
+  } catch (err) {
+    this.toaster.showToast(
+      this.translate.instant("DOWNLOAD_FAILED"),
+      "Close"
+    );
   }
-
-  await this.downloadService.downloadData("observation", newItem);
-  this.fetchDownloadedData(false);
 }
+
 
 updateDownloadedSubmissions() {
   this.submissionIdSet = new Set(

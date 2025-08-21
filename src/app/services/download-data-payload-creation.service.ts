@@ -18,10 +18,10 @@ export class DownloadDataPayloadCreationService {
     };
   }
 
-  buildObservationItem(observation: any, observationId: string, entityId: string, allowMultiple: boolean, submissionId: string) {
+  buildObservationItem(observation: any, observationId: string, entityId: string, allowMultiple: boolean, submissionId: string, subTitle:string) {
     return {
       title: observation?.observationName,
-      subTitle: observation?.program?.name,
+      subTitle: subTitle,
       route: `/details/${observationId}/${entityId}/${allowMultiple}`,
       id: observationId,
       metaData: {
