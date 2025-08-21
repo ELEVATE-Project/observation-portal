@@ -375,8 +375,12 @@ export class ListingComponent implements OnInit {
       this.solutionList = this.solutionList.map((solution: any) => {
         const isDownloaded = storedSurveys.some(
           (item: any) =>
-            item.data?.metaData?.solutionId === solution?._id &&
-            item.data?.metaData?.submissionId === solution?.submissionId
+            Array.isArray(item.data) &&
+            item.data.some(
+              (d: any) =>
+                d?.metaData?.solutionId === solution?._id &&
+                d?.metaData?.submissionId === solution?.submissionId
+            )
         );
         return { ...solution, downloaded: isDownloaded };
       });

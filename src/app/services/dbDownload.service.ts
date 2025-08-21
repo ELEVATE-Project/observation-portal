@@ -5,7 +5,7 @@ import { ToastService } from './toast.service';
 })
 export class DbDownloadService {
   private observationDbName = 'downloads'
-  private observationDbVersion = 2
+  private observationDbVersion = 3
   private db!: IDBDatabase
   private observationDbInitialized: Promise<void>;
 

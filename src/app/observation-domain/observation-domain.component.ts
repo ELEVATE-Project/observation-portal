@@ -74,7 +74,7 @@ export class ObservationDomainComponent implements OnInit {
 
     this.isQuestionerDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
 
-      this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "downloadObservation");
+      this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "observation");
       
       if (this.isQuestionerDataInIndexDb?.data) {
         this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
