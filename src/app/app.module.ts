@@ -69,6 +69,7 @@ import { ObservationFilterComponent } from './shared/observation-filter/observat
 import { DownloadButtonComponent } from './shared/download-button/download-button.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-popup.component';
+import { ProfileAlterPopupComponent } from './shared/profile-alter-popup/profile-alter-popup.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -101,6 +102,7 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ObservationFilterComponent,
     DownloadButtonComponent,
     AddEntityPopupComponent,
+    ProfileAlterPopupComponent
   ],
   imports: [
     BrowserModule,
