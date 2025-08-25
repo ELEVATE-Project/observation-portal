@@ -46,7 +46,7 @@ export class SurveyReportsComponent implements OnInit {
       this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{}).pipe(finalize(()=>this.loaded = true))
       .subscribe((res:any) => { 
         this.surveyName = res.message.surveyName
-        let reportSections:any  = res.message.report;
+        let reportSections:any [] = Array.isArray(res?.message?.report) ? res.message.report : [];
         this.allQuestions = reportSections?.map((question:any) => {
           return { ...question, selected: true };
         });
