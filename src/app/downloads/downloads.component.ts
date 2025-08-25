@@ -56,12 +56,14 @@ export class DownloadsComponent {
   }
 
   navigateTo(route?: string, type?: string) {
+    const url = route.trim();
     if (!route) return;
   
     if (type === 'projects') {
-      window.location.href = route;
+      window.location.href = url;
+      return;
     } else {
-      this.router.navigateByUrl(route);
+      this.router.navigateByUrl(url);
     }
   }
   
