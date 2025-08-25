@@ -115,6 +115,11 @@ mat-chip {
   color: var(--color-dark) !important;
 }
 
+mat-chip.multiselect-chip {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
 .matrix-container {
   display: flex;
   flex-direction: column;
