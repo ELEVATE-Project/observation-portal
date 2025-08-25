@@ -56,8 +56,8 @@ export class DownloadsComponent {
   }
 
   navigateTo(route?: string, type?: string) {
-    const url = route.trim();
     if (!route) return;
+    const url = route.trim();
   
     if (type === 'projects') {
       window.location.href = url;
