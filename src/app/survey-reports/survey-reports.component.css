@@ -209,3 +209,13 @@ transition: background-color 0.2s ease, color 0.2s ease;
 background-color: var(--color-dark);
 color: white;
 }
+
+.view-all-link {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.view-all-link:hover {
+  background-color: var(--color-dark);  
+  color: white;
+}
