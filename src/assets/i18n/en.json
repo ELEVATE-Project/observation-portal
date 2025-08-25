@@ -88,5 +88,9 @@
     "VIDEOS": "Videos",
     "DOCUMENTS": "Documents",
     "AUDIOS": "Audios",
-    "LINK_COPY_SUCCESS": "Link copied to clipboard"
+    "LINK_COPY_SUCCESS": "Link copied to clipboard",
+    "ALERT": "Alert",
+    "UPDATE_PROFILE_MSG": "Please update your profile to access the feature",
+    "BACK": "Back",
+    "UPDATE_PROFILE": "Update Profile"
 }
