@@ -1,6 +1,8 @@
 .download-wrapper {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    flex-direction: column; 
   }
   
   .download-btn {
@@ -32,4 +34,10 @@
   
   .download-wrapper.downloaded mat-icon {
     color: #4caf50;
+  }
+
+  .download-text {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #333;
   }
