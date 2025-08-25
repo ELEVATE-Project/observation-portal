@@ -112,7 +112,7 @@ mat-chip {
   padding: 4px 10px;
   border-radius: 16px;
   background-color: whitesmoke !important;
-  color: white;
+  color: var(--color-dark) !important;
 }
 
 .matrix-container {
