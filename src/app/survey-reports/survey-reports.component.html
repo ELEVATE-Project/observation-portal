@@ -46,10 +46,11 @@
     
             <div *ngSwitchCase="'multiselect'" class="response-chip">
               <mat-chip-list>
-                <mat-chip *ngFor="let answer of question.answers" 
-                         style="background-color: var(--color-primary); color: white;">
-                  {{ answer }}
-                </mat-chip>
+                <div *ngFor="let answer of question.answers">
+                  @if(answer){
+                    <mat-chip class="multiselect-chip">{{answer}}</mat-chip>
+                  }
+                </div>
               </mat-chip-list>
             </div>
     
