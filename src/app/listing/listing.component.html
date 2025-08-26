@@ -28,17 +28,16 @@
               <div class="card-header">
                 <h2 class="observation-name"><b>{{ solution?.name }}</b></h2>
                 @if(surveyPage){
-                <div class="buttons">
-  
-                  <span [ngClass]="solution?.tagClass" class="label">{{ solution?.statusLabel }}</span>
                   <app-download-button [downloaded]="solution?.downloaded"
                     (confirmedDownload)="downloadSurvey(solution, $index)">
                   </app-download-button>
-                </div>
                 }
               </div>
               @if(surveyPage){
-              <p>{{solution?.surveyExpiry}}</p>
+                <div class="buttons">
+                  <p>{{solution?.surveyExpiry}}</p>
+                  <span [ngClass]="solution?.tagClass" class="label">{{ solution?.statusLabel }}</span>
+                </div>
               }@else{
               <p>{{solution?.description}}</p>
               }

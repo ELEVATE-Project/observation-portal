@@ -55,9 +55,18 @@ export class DownloadsComponent {
     }));
   }
 
-  navigateTo(route?: string) {
-    if (route) this.router.navigateByUrl(route);
+  navigateTo(route?: string, type?: string) {
+    if (!route) return;
+    const url = route.trim();
+  
+    if (type === 'projects') {
+      window.location.href = url;
+      return;
+    } else {
+      this.router.navigateByUrl(url);
+    }
   }
+  
 
   deleteData(key: string, type: string) {
     const dialogRef = this.dialog.open(this.confirmDialogModel);

@@ -1,13 +1,10 @@
-import { NgModule,CUSTOM_ELEMENTS_SCHEMA, isDevMode  } from '@angular/core';
+import { NgModule,CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {
-  MatNativeDateModule,
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
+  MatNativeDateModule
 } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ListingComponent } from './listing/listing.component';
@@ -70,6 +67,7 @@ import { DownloadButtonComponent } from './shared/download-button/download-butto
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-popup.component';
 import { ProfileAlterPopupComponent } from './shared/profile-alter-popup/profile-alter-popup.component';
+import { CleanAnswersPipe } from './pipes/clean-answers.pipe';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -102,7 +100,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ObservationFilterComponent,
     DownloadButtonComponent,
     AddEntityPopupComponent,
-    ProfileAlterPopupComponent
+    ProfileAlterPopupComponent,
+    CleanAnswersPipe
   ],
   imports: [
     BrowserModule,
@@ -132,11 +131,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     MatGridListModule,
     MatToolbarModule,
     MatTabsModule,
-    BrowserModule,
-    AppRoutingModule,
     MatMenuModule,
     MatSelectModule,
-    FormsModule,
     MatExpansionModule,
     MatChipsModule,
     InfiniteScrollModule,

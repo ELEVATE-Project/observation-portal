@@ -68,7 +68,7 @@
                   <label>{{ question?.answers }}</label>
                 </div>
                 <div *ngSwitchCase="'multiselect'">
-                  <span *ngFor="let answer of question?.answers" class="chip">{{ answer }}</span>
+                  <span *ngFor="let answer of question?.answers  | cleanAnswers" class="chip">{{ answer }}</span>
                 </div>
                 <div *ngSwitchCase="'number'">
                   <label>{{ question?.answers }}</label>
@@ -195,7 +195,7 @@
                     <label>{{ question?.answers }}</label>
                   </div>
                   <div *ngSwitchCase="'multiselect'">
-                    <span *ngFor="let answer of question?.answers" class="chip">{{ answer }}</span>
+                    <span *ngFor="let answer of question?.answers | cleanAnswers" class="chip">{{ answer }}</span>
                   </div>
                   <div *ngSwitchCase="'number'">
                     <label>{{ question?.answers }}</label>

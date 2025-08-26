@@ -15,7 +15,7 @@
               <div *ngFor="let item of downloadsData[filter.value]">
                 <div class="grid-item">
                   <mat-card class="observation-card"
-                            (click)="navigateTo(item.data?.route)">
+                            (click)="navigateTo(item.data?.route, filter?.value)">
                     <mat-card-content>
                       <div>
                         <h2 class="observation-name">
