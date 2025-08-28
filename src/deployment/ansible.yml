@@ -29,7 +29,7 @@
 
     - name: Clone observation-portal repo
       git:
-        repo: https://github.com/ELEVATE-Project/observation-portal
+        repo: https://github.com/farhanp1502/observation-portal
         dest: "{{project_path}}"
         version: "{{gitBranch}}"
         force: yes
@@ -45,6 +45,34 @@
         cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/environments/environment.ts &&
         sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/environments/environment.ts
       register: envConfig
+
+    - debug: msg=" cred {{ envConfig }} "
+
+    - name: Change directory
+
+      shell: chdir {{project_path}}
+
+    - name: Change directory
+
+      shell: cd {{project_path}}
+
+    - name: Fetch pm2 config file
+
+      shell: "curl --location --request GET '{{ vaultAddress }}observationPortalPm2Config' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data.data' > '{{ project_path }}/pm2.config.json'"
+
+      register: pm2
+
+    - name: Remove dist folder
+
+      shell: rm -rf dist
+
+    - name: Build angular portal
+
+      shell: cd {{project_path}} && ng build --configuration production
+
+    - name: Start pm2
+
+      shell: cd {{project_path}} && pm2 start pm2.config.json
 
     # - name: Convert JSON to window["env"] format and store in environment.ts
     #   shell: cat {{ root_path }}/data2.json | {{ project_path }}/src/scripts/json2env.sh > {{ project_path }}/.env
