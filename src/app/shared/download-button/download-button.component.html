@@ -1,10 +1,10 @@
 <div class="download-wrapper" [ngClass]="{ 'downloaded': downloaded }">
-    <button mat-icon-button (click)="onClick($event)" class="download-btn"
+  <button mat-raised-button class="download-btn"
+    (click)="onClick($event)"
     [matTooltip]="downloaded ? ('DOWNLOADED' | translate) : ('DOWNLOAD' | translate)">
-      <mat-icon>{{ downloaded ? 'check' : 'arrow_downward' }}</mat-icon>
-    </button>
-    <p class="download-text">
+    <mat-icon class="download-icon">{{ downloaded ? 'check' : 'arrow_downward' }}</mat-icon>
+    <span class="download-label">
       {{ downloaded ? ('DOWNLOADED' | translate) : ('DOWNLOAD' | translate) }}
-    </p>
-  </div>
-  
+    </span>
+  </button>
+</div>

@@ -1,43 +1,30 @@
 .download-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-direction: column; 
-  }
-  
-  .download-btn {
-    background-color: #fff;
-    border: 0.063rem solid #ddd;
-    border-radius: 50%;
-    width: 2.813rem;
-    height: 2.813rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .download-btn mat-icon {
-    font-size: 1.25rem;
-    color: #1976d2;
-  }
-  
-  .download-btn:hover {
-    background-color: #f0f0f0;
-    transform: scale(1.05);
-  }
-  
-  .download-wrapper.downloaded .download-btn {
-    background-color: #e8f5e9;
-    border-color: #4caf50;
-  }
-  
-  .download-wrapper.downloaded mat-icon {
-    color: #4caf50;
-  }
-
-  .download-text {
-    margin: 0;
-    font-size: 0.875rem;
-    color: #333;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem; 
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  font-size: 0.9rem;
+}
+.download-icon {
+  font-size: 1.25rem;
+}
+.download-wrapper:not(.downloaded) .download-btn {
+  background-color: #1976d2;
+  color: #fff;
+}
+.download-wrapper:not(.downloaded) .download-btn:hover {
+  background-color: #1565c0;
+}
+.download-wrapper.downloaded .download-btn {
+  background-color: #e8f5e9;
+  color: #4caf50;
+  border: 0.063rem solid #4caf50;
+}
