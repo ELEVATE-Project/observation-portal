@@ -46,7 +46,10 @@ export class SurveyReportsComponent implements OnInit {
       this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{}).pipe(finalize(()=>this.loaded = true))
       .subscribe((res:any) => { 
         this.surveyName = res.message.surveyName
-        this.allQuestions = res.message.report;
+        let reportSections:any [] = Array.isArray(res?.message?.report) ? res.message.report : [];
+        this.allQuestions = reportSections?.map((question:any) => {
+          return { ...question, selected: true };
+        });
         this.reportDetails = this.processSurveyData(this.allQuestions).map(item => {
           if (item?.evidences?.length) {
             return {
@@ -80,7 +83,7 @@ export class SurveyReportsComponent implements OnInit {
         }
 
         if (!answer || (typeof answer === 'string' && answer.trim() === '')) {
-          return 'No response is available';
+          return false;
         }
     
         if (typeof answer !== 'string') {
