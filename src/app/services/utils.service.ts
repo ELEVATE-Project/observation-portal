@@ -117,7 +117,7 @@ export class UtilsService {
     });
   }
 
-  getProfileData(){
+  async getProfileData(){
     let dialogData = {
       title: "ALERT",
       message:"UPDATE_PROFILE_MSG",
@@ -127,7 +127,8 @@ export class UtilsService {
       ],
       disableClose: true
     }
-    let data = JSON.parse(localStorage.getItem('profileData'))
+    await new Promise(resolve => setTimeout(resolve, 100));
+    let data = await JSON.parse(localStorage.getItem('profileData'))
     if(data && data?.state){
       return data
     }else{
