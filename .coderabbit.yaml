@@ -1,0 +1,5 @@
+reviews:
+  enabled: true
+  review_status: true
+  branches:
+    - diksha-release-1.0.0 

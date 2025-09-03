@@ -55,6 +55,7 @@ export class ReportComponent implements OnInit {
   scores:any;
   domainView:any;
   initialLoad:boolean = true;
+  isData:any;
 
   constructor(
     public router: Router,
@@ -88,13 +89,14 @@ export class ReportComponent implements OnInit {
     this.totalSubmissions = [];
     this.allQuestions = [];
     this.reportDetails = [];
-    this.loaded = true;
-
+    this.isData = false;
     let payload = this.createPayload(submissionId, criteria, pdf);
 
     this.apiService.post(urlConfig.survey.reportUrl, payload)
       .pipe(
-        finalize(() =>this.loaded = true),
+        finalize(() =>{
+          this.isData=true
+          this.loaded = true}),
         catchError((err) => {
           this.toaster.showToast(err?.error?.message, 'danger', 5000)
           throw new Error('Could not fetch the details');

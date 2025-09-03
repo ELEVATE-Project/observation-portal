@@ -41,6 +41,7 @@ export class ListingComponent implements OnInit {
   description:any;
   isOnline:any;
   profileData:any
+  selectedEntityName:any;
   constructor(
     public router: Router,
     private toaster: ToastService,
@@ -212,6 +213,15 @@ export class ListingComponent implements OnInit {
   }
 
   openFilter() {
+    if (this.allEntities?.length > 0) {
+      this.allEntities = this.allEntities.map((entity, index) => ({
+        ...entity,
+        selected: index === 0
+      }));
+      this.selectedEntityName = this.allEntities[0].name;
+      this.isAnyEntitySelected = true;
+    }
+  
     this.isEntityFilterModalOpen = true;
   }
 
@@ -233,11 +243,9 @@ export class ListingComponent implements OnInit {
 
   onEntityChange(selectedIndex: number): void {
     this.allEntities.forEach((entity, index) => {
-      if (index !== selectedIndex) {
-        entity.selected = false;
-      }
+      entity.selected = index === selectedIndex;
     });
-    this.isAnyEntitySelected = this.allEntities.some(entity => entity.selected);
+    this.isAnyEntitySelected = true;
   }
   assignStatusAndClasses(element: any) {
     const statusMappings = {
