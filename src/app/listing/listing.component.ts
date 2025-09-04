@@ -74,10 +74,10 @@ export class ListingComponent implements OnInit {
     });
   }
   
-  loadInitialData(): void {
+  async loadInitialData() {
     this.page = 1;
     this.solutionList = [];
-    this.profileData = this.utils.getProfileData()
+    this.profileData = await this.utils.getProfileData()
     if(this.profileData){
       this.getListData();
     }
@@ -123,7 +123,7 @@ export class ListingComponent implements OnInit {
     const [urlPath, queryItems] = [config.urlPath(), config.queryParams()];
     this.apiService.post(
       urlPath + queryItems,
-      this.apiService?.profileData
+      this.profileData
     ).pipe(
       finalize(() => this.loaded = true),
       catchError((err: any) => {

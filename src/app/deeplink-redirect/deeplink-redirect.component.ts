@@ -18,6 +18,7 @@ export class DeeplinkRedirectComponent {
   type:any;
   linkId:any;
   isOnline:any;
+  profileData:any
 
   constructor(
     private route: ActivatedRoute, 
@@ -59,9 +60,9 @@ export class DeeplinkRedirectComponent {
   };
 
 
-  checkLinkType(){
-    let profileData = this.utils.getProfileData()
-    if(!profileData) return
+  async checkLinkType(){
+    this.profileData = await this.utils.getProfileData()
+    if(!this.profileData) return
     if (this.type === 'observation') {
       this.handleObservationLink();
     } else if (this.type === 'survey') {
@@ -81,7 +82,7 @@ export class DeeplinkRedirectComponent {
     , 100);
   }
   fetchTemplateDetails(data){
-    this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
+    this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.profileData).pipe(catchError((err: any) => {
       this.toastService.showToast(err?.error?.message, 'Close');
       throw Error(err);
     })
@@ -130,7 +131,7 @@ export class DeeplinkRedirectComponent {
     //   await this.router.navigate([`/listing/${this.type}`]);
     //   return
     // }
-    this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
+    this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.profileData).pipe(
       catchError((err: any) => {
         this.toastService.showToast(err?.error?.message, 'Close');
         throw Error(err);
@@ -154,7 +155,7 @@ export class DeeplinkRedirectComponent {
     // }
      this.apiService.post(
         urlConfig.survey.surveyVerifyLink+this.linkId,
-          this.apiService?.profileData
+          this.profileData
         ).pipe(
           catchError((err: any) => {
             this.toastService.showToast(err?.error?.message, 'Close');
