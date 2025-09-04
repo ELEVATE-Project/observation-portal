@@ -29,7 +29,7 @@
 
     - name: Clone observation-portal repo
       git:
-        repo: https://github.com/farhanp1502/observation-portal
+        repo: https://github.com/ELEVATE-Project/observation-portal
         dest: "{{project_path}}"
         version: "{{gitBranch}}"
         force: yes
