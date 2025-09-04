@@ -74,24 +74,3 @@
 
       shell: cd {{project_path}} && pm2 start pm2.config.json
 
-    # - name: Convert JSON to window["env"] format and store in environment.ts
-    #   shell: cat {{ root_path }}/data2.json | {{ project_path }}/src/scripts/json2env.sh > {{ project_path }}/.env
-    #   register: envConfig
-    # - debug: msg="envConfig result: {{ envConfig }}"
-
-    # - name: Fetch pm2 config file
-    #   shell: "curl --location --request GET '{{ vaultAddress }}observationPortalPm2Config' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data.data' > '{{ project_path }}/pm2.config.json'"
-    #   register: pm2
-
-    # - name: Remove old build folder
-    #   shell: rm -rf {{project_path}}/dist
-
-    # - name: Build Angular app
-    #   shell: cd {{project_path}} && ng build --configuration production
-
-    # - name: Delete old pm2 process
-    #   command: pm2 delete elevate-obs
-    #   ignore_errors: yes
-
-    # - name: Start pm2 with config
-    #   shell: cd {{project_path}} && pm2 start "npx ng serve --port 9191 --host 0.0.0.0 --disable-host-check" --name elevate-obs
