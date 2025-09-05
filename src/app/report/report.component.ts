@@ -108,10 +108,9 @@ export class ReportComponent implements OnInit {
       .subscribe((res: any) => {
         this.resultData = res?.result?.result;
         this.observationDetails = res?.result;
-        let dropDownFilterData:any;
-        if(this.observationDetails?.filters){
-          dropDownFilterData = this.observationDetails?.filters.find((item) => item?.filter?.type === 'dropdown');
-        }
+        const dropDownFilterData = this.observationDetails?.filters?.find(
+          (item: any) => item?.filter?.type === 'dropdown'
+        ) ?? null;
         this.filterData = submissionId ? this.filterData : dropDownFilterData;
 
         this.totalSubmissions = res?.result?.totalSubmissions;
