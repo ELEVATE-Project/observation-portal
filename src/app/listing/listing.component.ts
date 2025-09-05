@@ -135,15 +135,17 @@ export class ListingComponent implements OnInit {
           this.solutionListCount = res?.result?.count;
           this.headerConfig?.showSearch && (this.entityType = res?.result?.entityType);
           this.solutionList = [...this.solutionList, ...res?.result?.data];
-          if(this.surveyPage){
             this.solutionList.forEach((element: any) => {
               element.endDate = this.formatDate(element.endDate);
-              this.checkAndUpdateExpiry(element);
               this.assignStatusAndClasses(element);
+              
+          if(this.surveyPage){
+            this.checkAndUpdateExpiry(element);
               this.calculateExpiryDetails(element);
               this.solutionExpiryStatus(element);
-            });
           }
+
+            });
           this.initialSolutionData = this.solutionList;
           this.checkDataInDB()
         } else {
@@ -329,9 +331,9 @@ export class ListingComponent implements OnInit {
       'expired': { tagClass: 'tag-expired', statusLabel: 'Expired' }
     };
   
-    const statusInfo = (statusMappings as any)[element.status] || { tagClass: 'tag-not-started', statusLabel: 'Not Started' };
-    element.tagClass = statusInfo.tagClass;
-    element.statusLabel = statusInfo.statusLabel;
+    const statusInfo = statusMappings[element.status];
+    element.tagClass = statusInfo?.tagClass ?? '';
+    element.statusLabel = statusInfo?.statusLabel ?? '';
   }
 
   downloadPop(solution: any, index: number) {
@@ -386,4 +388,5 @@ export class ListingComponent implements OnInit {
     });
   }
   
+    
 }
