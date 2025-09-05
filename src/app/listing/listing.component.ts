@@ -63,7 +63,7 @@ export class ListingComponent implements OnInit {
   ) {
   }
  
-  async ngOnInit() {
+  ngOnInit(): void {
     this.urlParamService.parseRouteParams(this.route)
     this.setHeader()
     this.surveyPage = this.headerConfig?.title === 'Survey'
@@ -199,7 +199,7 @@ export class ListingComponent implements OnInit {
           data?.observationId,
           data?.entities[0]?._id,
           data?.entityType,
-          false,
+          data?.allowMultipleAssessemts,
           data?.isRubricDriven
         ]);
       } else {
@@ -387,4 +387,5 @@ export class ListingComponent implements OnInit {
       return { ...solution, downloaded: isDownloaded };
     });
   }
+  
 }

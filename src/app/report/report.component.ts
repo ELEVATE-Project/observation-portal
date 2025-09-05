@@ -108,7 +108,11 @@ export class ReportComponent implements OnInit {
       .subscribe((res: any) => {
         this.resultData = res?.result?.result;
         this.observationDetails = res?.result;
-        this.filterData = submissionId ? this.filterData : this.observationDetails?.filters[0]?.filter?.data;
+        const dropDownFilterData = this.observationDetails?.filters?.find(
+          (item: any) => item?.filter?.type === 'dropdown'
+        ) ?? null;
+        this.filterData = submissionId ? this.filterData : dropDownFilterData;
+
         this.totalSubmissions = res?.result?.totalSubmissions;
         this.observationId = res?.result?.observationId;
         let reportSections:any = this.scores ? [res?.result?.reportSections[0]] : res?.result?.reportSections;
@@ -129,10 +133,7 @@ export class ReportComponent implements OnInit {
         this.objectType == 'questions' ? this.renderCharts(this.reportDetails, false) : this.renderCharts(this.reportDetails, true);
         if(this.initialLoad){
           this.initialLoad = false;
-          let filter = this.filterData = this.observationDetails?.filters[0]?.filter?.data;
-          if(filter?.length > 1){
-            this.isMultiple = 'true';
-          }
+          this.filterData = dropDownFilterData
         }
       });
   }
