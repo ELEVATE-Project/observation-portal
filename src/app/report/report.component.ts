@@ -223,20 +223,20 @@ export class ReportComponent implements OnInit {
       const question = flattenedReportDetails[index];
       if (!question?.chart?.data) return;
   
-     
       const isHorizontal = question.chart.type === 'horizontalBar';
       const chartType = isHorizontal ? 'bar' : question.chart.type;
   
-      
-      const chartOptions = this.getChartOptions(chartType, isHorizontal);
+      const baseOptions = this.getChartOptions(chartType, isHorizontal);
   
-     
-      Object.assign(chartOptions, this.normalizeBackendOptions(question.chart.options, isHorizontal));
+      const backendOptions = this.normalizeBackendOptions(question.chart.options, isHorizontal);
+      const mergedOptions = this.deepMerge(baseOptions, backendOptions);
   
-     
       const datasets = question.chart.data.datasets.map((ds: any) => ({
         ...ds
       }));
+
+      const existing = Chart.getChart(canvas as HTMLCanvasElement);
+if (existing) existing.destroy();
   
       new Chart(canvas, {
         type: chartType,
@@ -244,24 +244,49 @@ export class ReportComponent implements OnInit {
           labels: question.chart.data.labels,
           datasets
         },
-        options: chartOptions
+        options: mergedOptions
       });
     });
   }
+
+  private deepMerge(target: any, source: any): any {
+    if (!source || typeof source !== 'object') return target;
+  
+    const out = Array.isArray(target) ? [...target] : { ...target };
+  
+    for (const key of Object.keys(source)) {
+      const s = source[key];
+      const t = (out as any)[key];
+  
+      if (Array.isArray(s)) {
+        (out as any)[key] = s.slice();
+      } else if (s && typeof s === 'object') {
+        (out as any)[key] = this.deepMerge(
+          t && typeof t === 'object' ? t : {},
+          s
+        );
+      } else {
+        (out as any)[key] = s;
+      }
+    }
+  
+    return out;
+  }
+  
   
 
   private normalizeBackendOptions(backendOptions: any, isHorizontal: boolean) {
-    const options: any = { ...backendOptions };
+    const options: any = backendOptions ? { ...backendOptions } : {};
   
     if (backendOptions?.scales) {
-      if (backendOptions.scales.xAxes) {
-        options.scales.x = backendOptions.scales.xAxes[0];
-        delete options.scales.xAxes;
-      }
-      if (backendOptions.scales.yAxes) {
-        options.scales.y = backendOptions.scales.yAxes[0];
-        delete options.scales.yAxes;
-      }
+      const { xAxes, yAxes, ...rest } = backendOptions.scales;
+      options.scales = { ...rest };
+  
+      const x = Array.isArray(xAxes) ? xAxes[0] : xAxes;
+      const y = Array.isArray(yAxes) ? yAxes[0] : yAxes;
+  
+      if (x) options.scales.x = x;
+      if (y) options.scales.y = y;
     }
   
     if (isHorizontal) {
@@ -270,6 +295,7 @@ export class ReportComponent implements OnInit {
   
     return options;
   }
+  
   
   
 
