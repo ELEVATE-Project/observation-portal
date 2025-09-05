@@ -212,37 +212,80 @@ export class ReportComponent implements OnInit {
     }
   }
 
-
   renderCharts(reportDetails: any[], isCriteria: boolean = false) {
     const flattenedReportDetails = isCriteria ? reportDetails.flat() : reportDetails;
     const canvases = document.querySelectorAll('.chart-canvas');
-
+  
     canvases.forEach((canvas, index) => {
-      if (canvas instanceof HTMLCanvasElement) {
-        const question = flattenedReportDetails[index];
-        if (question?.chart) {
-          const chartType = question?.chart?.type === 'horizontalBar' ? 'bar' : question?.chart?.type;
-          const chartOptions = this.getChartOptions(chartType, question?.chart?.type === 'horizontalBar');
-          chartOptions.datasets = [{
-            barThickness: 15,
-            maxBarThickness: 20,
-          }];
-
-          new Chart(canvas, {
-            type: chartType,
-            data: question?.chart?.data,
-            options: chartOptions
-          });
-        }
-      } else {
-        console.warn(`Element at index ${index} is not a canvas!`);
-      }
+      if (!(canvas instanceof HTMLCanvasElement)) return;
+  
+      const question = flattenedReportDetails[index];
+      if (!question?.chart?.data) return;
+  
+     
+      const isHorizontal = question.chart.type === 'horizontalBar';
+      const chartType = isHorizontal ? 'bar' : question.chart.type;
+  
+      
+      const chartOptions = this.getChartOptions(chartType, isHorizontal);
+  
+     
+      Object.assign(chartOptions, this.normalizeBackendOptions(question.chart.options, isHorizontal));
+  
+     
+      const datasets = question.chart.data.datasets.map((ds: any) => ({
+        ...ds
+      }));
+  
+      new Chart(canvas, {
+        type: chartType,
+        data: {
+          labels: question.chart.data.labels,
+          datasets
+        },
+        options: chartOptions
+      });
     });
   }
+  
+
+  private normalizeBackendOptions(backendOptions: any, isHorizontal: boolean) {
+    const options: any = { ...backendOptions };
+  
+    if (backendOptions?.scales) {
+      if (backendOptions.scales.xAxes) {
+        options.scales.x = backendOptions.scales.xAxes[0];
+        delete options.scales.xAxes;
+      }
+      if (backendOptions.scales.yAxes) {
+        options.scales.y = backendOptions.scales.yAxes[0];
+        delete options.scales.yAxes;
+      }
+    }
+  
+    if (isHorizontal) {
+      options.indexAxis = 'y';
+    }
+  
+    return options;
+  }
+  
+  
 
   private getChartOptions(chartType: string, isHorizontalBar: boolean): any {
     const options: any = {
+      indexAxis: 'y',
       maintainAspectRatio: true,
+      responsive: true,
+      scales: {
+        x: { stacked: true },
+        y: {
+          stacked: true,
+          ticks: { autoSkip: false },
+          categoryPercentage: 0.6,
+          barPercentage: 0.8
+        }
+      },
       plugins: {
         datalabels: {
           display: true,
