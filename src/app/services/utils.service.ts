@@ -127,11 +127,16 @@ export class UtilsService {
       ],
       disableClose: true
     }
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     let data = await JSON.parse(localStorage.getItem('profileData'))
+    if(data){
+      dialogData['message'] = "Data present"
+    }
     if(data && data?.state){
+      dialogData['message'] = "Data and state present"
       return data
     }else{
+      dialogData['message'] = "No data"
       this.showProfileUpdateAlert(dialogData)
       return null
     }
