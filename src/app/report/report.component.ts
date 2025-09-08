@@ -213,37 +213,106 @@ export class ReportComponent implements OnInit {
     }
   }
 
-
   renderCharts(reportDetails: any[], isCriteria: boolean = false) {
     const flattenedReportDetails = isCriteria ? reportDetails.flat() : reportDetails;
     const canvases = document.querySelectorAll('.chart-canvas');
-
+  
     canvases.forEach((canvas, index) => {
-      if (canvas instanceof HTMLCanvasElement) {
-        const question = flattenedReportDetails[index];
-        if (question?.chart) {
-          const chartType = question?.chart?.type === 'horizontalBar' ? 'bar' : question?.chart?.type;
-          const chartOptions = this.getChartOptions(chartType, question?.chart?.type === 'horizontalBar');
-          chartOptions.datasets = [{
-            barThickness: 15,
-            maxBarThickness: 20,
-          }];
+      if (!(canvas instanceof HTMLCanvasElement)) return;
+  
+      const question = flattenedReportDetails[index];
+      if (!question?.chart?.data) return;
+  
+      const isHorizontal = question.chart.type === 'horizontalBar';
+      const chartType = isHorizontal ? 'bar' : question.chart.type;
+  
+      const baseOptions = this.getChartOptions(chartType, isHorizontal);
+  
+      const backendOptions = this.normalizeBackendOptions(question.chart.options, isHorizontal);
+      const mergedOptions = this.deepMerge(baseOptions, backendOptions);
+  
+      const datasets = question.chart.data.datasets.map((ds: any) => ({
+        ...ds
+      }));
 
-          new Chart(canvas, {
-            type: chartType,
-            data: question?.chart?.data,
-            options: chartOptions
-          });
-        }
-      } else {
-        console.warn(`Element at index ${index} is not a canvas!`);
-      }
+      const existing = Chart.getChart(canvas as HTMLCanvasElement);
+if (existing) existing.destroy();
+  
+      new Chart(canvas, {
+        type: chartType,
+        data: {
+          labels: question.chart.data.labels,
+          datasets
+        },
+        options: mergedOptions
+      });
     });
   }
 
+  private deepMerge(target: any, source: any): any {
+    if (!source || typeof source !== 'object') return target;
+  
+    const out = Array.isArray(target) ? [...target] : { ...target };
+  
+    for (const key of Object.keys(source)) {
+      const s = source[key];
+      const t = (out as any)[key];
+  
+      if (Array.isArray(s)) {
+        (out as any)[key] = s.slice();
+      } else if (s && typeof s === 'object') {
+        (out as any)[key] = this.deepMerge(
+          t && typeof t === 'object' ? t : {},
+          s
+        );
+      } else {
+        (out as any)[key] = s;
+      }
+    }
+  
+    return out;
+  }
+  
+  
+
+  private normalizeBackendOptions(backendOptions: any, isHorizontal: boolean) {
+    const options: any = backendOptions ? { ...backendOptions } : {};
+  
+    if (backendOptions?.scales) {
+      const { xAxes, yAxes, ...rest } = backendOptions.scales;
+      options.scales = { ...rest };
+  
+      const x = Array.isArray(xAxes) ? xAxes[0] : xAxes;
+      const y = Array.isArray(yAxes) ? yAxes[0] : yAxes;
+  
+      if (x) options.scales.x = x;
+      if (y) options.scales.y = y;
+    }
+  
+    if (isHorizontal) {
+      options.indexAxis = 'y';
+    }
+  
+    return options;
+  }
+  
+  
+  
+
   private getChartOptions(chartType: string, isHorizontalBar: boolean): any {
     const options: any = {
+      indexAxis: 'y',
       maintainAspectRatio: true,
+      responsive: true,
+      scales: {
+        x: { stacked: true },
+        y: {
+          stacked: true,
+          ticks: { autoSkip: false },
+          categoryPercentage: 0.6,
+          barPercentage: 0.8
+        }
+      },
       plugins: {
         datalabels: {
           display: true,
