@@ -61,7 +61,8 @@ export class DeeplinkRedirectComponent {
 
   async checkLinkType(){
     if(!this.apiService?.profileData){
-      await this.utils.getProfileDetails()
+      await this.utils.backTologin()
+      return;
     }
     if (this.type === 'observation') {
       this.handleObservationLink();
@@ -108,7 +109,7 @@ export class DeeplinkRedirectComponent {
   }
 
   async redirectObservation(resp) {
-    await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
+    // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
       this.router.navigate([
         'domain',
@@ -116,14 +117,14 @@ export class DeeplinkRedirectComponent {
         resp?.assessment?.name,
         resp?.solution?._id
       ],{
-        state:{data:{...resp,solutionType:this.type,isSurvey:false}}
+        state:{data:{...resp,solutionType:this.type,isSurvey:false}}, replaceUrl: true
       });
     } else {
       this.router.navigate(['questionnaire'], {
         queryParams:{
           solutionType:this.type,
         },
-        state:{ data:{...resp,isSurvey:false}}
+        state:{ data:{...resp,isSurvey:false}}, replaceUrl: true
       });
     }
   }
@@ -142,7 +143,9 @@ export class DeeplinkRedirectComponent {
       }
     },(err:any)=>{
       this.toastService.showToast('MSG_INVALID_LINK',"danger")
-      this.router.navigate([`/listing/${this.type}`]);
+      this.router.navigate([`/listing/${this.type}`],{
+        replaceUrl: true
+      });
     })
   }
 
@@ -161,7 +164,8 @@ export class DeeplinkRedirectComponent {
               await this.router.navigate(['surveyStatus'],{
                 queryParams:{
                   status:'expired'
-                }
+                },
+                replaceUrl: true
               })
               return;
             }
@@ -169,14 +173,17 @@ export class DeeplinkRedirectComponent {
               await this.router.navigate(['surveyStatus'],{
                 queryParams:{
                   status:res?.result?.status
-                }
+                },
+                replaceUrl: true
               })
               return;
             }
             this.navigateToSurvey(res?.result);
           },(err:any)=>{
             this.toastService.showToast('MSG_INVALID_LINK',"danger")
-            this.router.navigate([`/listing/${this.type}`]);
+            this.router.navigate([`/listing/${this.type}`],{
+              replaceUrl: true
+            });
           })
   }
 

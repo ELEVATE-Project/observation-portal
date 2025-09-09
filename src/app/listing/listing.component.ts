@@ -101,7 +101,8 @@ export class ListingComponent implements OnInit {
 
   async getListData(): Promise<void> {
     if(!this.apiService?.profileData){
-      await this.utils.getProfileDetails()
+      await this.utils.backTologin()
+      return;
     }
     let urlPath:any = this.headerConfig?.showSearch ? urlConfig[this.listType].reportListing : urlConfig[this.listType].listing
     let queryParams;
