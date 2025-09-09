@@ -30,6 +30,9 @@
                 @if(surveyPage){
                   <span [ngClass]="solution?.tagClass" class="label">{{ solution?.statusLabel }}</span>
                 }
+                @else{
+                  <span [ngClass]="solution?.tagClass" class="label" *ngIf="solution?.statusLabel == 'Not Started'">{{ solution?.statusLabel }}</span>
+                }
               </div>
               @if(surveyPage){
                 <div class="buttons">
@@ -40,7 +43,6 @@
                 </div>
               }@else{
               <p>{{solution?.description}}</p>
-              <span [ngClass]="solution?.tagClass" class="label" *ngIf="solution?.statusLabel == 'Not Started'">{{ solution?.statusLabel }}</span>
               }
             </mat-card-content>
           </mat-card>
