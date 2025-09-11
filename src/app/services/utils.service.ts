@@ -127,7 +127,7 @@ export class UtilsService {
       ],
       disableClose: true
     }
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 100));
     let data = await JSON.parse(localStorage.getItem('profileData'))
     if(data && data?.state){
       return data

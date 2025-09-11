@@ -57,6 +57,11 @@ export class ListingComponent implements OnInit {
     })
   }
   ngOnInit(): void {
+    setTimeout(() => {
+      let scrollTop = window.pageYOffset;
+      window.scrollTo(0, scrollTop + 1);
+      window.scrollTo(0, scrollTop);
+    }, 0);
     this.urlParamService.parseRouteParams(this.route)
     this.setPageTitle()
     this.reportPage = this.pageTitle === 'Observation';
