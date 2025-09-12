@@ -60,7 +60,7 @@ export class ObservationEntityComponent  {
         if (res.result) {
           this.observationId = res?.result?._id;
           this.selectedEntities = res?.result;
-          this.filteredEntitiesOne = [...this.selectedEntities.entities];
+          this.filteredEntitiesOne = [...(this.selectedEntities?.entities ?? [])];
           this.entityToAdd=res?.result?.entityType || "entity";
           this.setHeaderConfig();
         } else {
