@@ -111,9 +111,9 @@ export class ApiInterceptor implements HttpInterceptor {
       localStorage.removeItem('headers');
       
       this.toaster.showToast('Session expired, please log in again.', 'warning');
-      
+      const baseUrl = window.location.origin;
       this.ngZone.run(() => {
-        window.location.href = '/';
+        window.location.href = baseUrl || '/';
       });
     }
 
