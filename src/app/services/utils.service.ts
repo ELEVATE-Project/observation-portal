@@ -122,7 +122,6 @@ export class UtilsService {
       title: "ALERT",
       message:"UPDATE_PROFILE_MSG",
       actionButtons:[
-        { label: "BACK", action: false },
         { label: "UPDATE_PROFILE", action: true, class: "dialog-primary-button" }
       ],
       disableClose: true
