@@ -113,7 +113,7 @@ export class ApiInterceptor implements HttpInterceptor {
       this.toaster.showToast('Session expired, please log in again.', 'warning');
       
       this.ngZone.run(() => {
-        this.router.navigate(['/']);
+        window.location.href = '/';
       });
     }
 
