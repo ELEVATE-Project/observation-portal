@@ -9,6 +9,7 @@ import { catchError, finalize } from 'rxjs';
 import { UrlParamsService } from '../services/urlParams.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 import { AddEntityPopupComponent } from '../shared/add-entity-popup/add-entity-popup.component';
+import { UtilsService } from '../services/utils.service';
 @Component({
   selector: 'app-observation-entity',
   standalone: false,
@@ -36,12 +37,16 @@ export class ObservationEntityComponent  {
     private dialog: MatDialog,
     private urlParamsService:UrlParamsService,
     private route: ActivatedRoute,
+    private utils:UtilsService,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
     this.entity=this.urlParamsService?.entity;
+    if(!this.apiService?.profileData){
+       await this.utils.getProfileDetails()
+    }
     this.getEntities();
   }
 
