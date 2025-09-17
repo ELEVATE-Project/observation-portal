@@ -150,7 +150,8 @@ export class DeeplinkRedirectComponent {
           this.apiService?.profileData
         ).pipe(
           catchError((err: any) => {
-            this.toastService.showToast(err?.error?.message, 'Close');
+            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+            this.router.navigate([`/listing/${this.type}`]);
             throw Error(err);
           })
         )
@@ -172,9 +173,6 @@ export class DeeplinkRedirectComponent {
               return;
             }
             this.navigateToSurvey(res?.result);
-          },(err:any)=>{
-            this.toastService.showToast('MSG_INVALID_LINK',"danger")
-            this.router.navigate([`/listing/${this.type}`]);
           })
   }
 
