@@ -44,8 +44,17 @@ export class ObservationEntityComponent  {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
     this.entity=this.urlParamsService?.entity;
-    if(!this.apiService?.profileData){
-       await this.utils.getProfileDetails()
+    try {
+      if (!this.apiService?.profileData) {
+        await this.utils.getProfileDetails();
+      }
+    } catch (err: any) {
+      this.toaster.showToast(
+        err?.error?.message ?? 'PROFILE FETCH FAILED',
+        'danger'
+      );
+      this.loaded = true;
+      return; 
     }
     this.getEntities();
   }

@@ -7,7 +7,7 @@ import { NetworkServiceService } from 'network-service';
 import { Location } from '@angular/common';
 import { catchError } from 'rxjs/operators';
 import { UtilsService } from '../services/utils.service';
-
+import { EMPTY } from 'rxjs';
 @Component({
   selector: 'app-deeplink-redirect',
   standalone: false,
@@ -86,7 +86,7 @@ export class DeeplinkRedirectComponent {
   fetchTemplateDetails(data){
     this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
       this.toastService.showToast(err?.error?.message, 'Close');
-      throw Error(err);
+      return EMPTY;
     })
   ).subscribe((res:any) => {
       if (res?.result) {
@@ -133,7 +133,7 @@ export class DeeplinkRedirectComponent {
       catchError((err: any) => {
         this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
         this.router.navigate([`/listing/${this.type}`]);
-        throw Error(err);
+        return EMPTY;
       })
     ).subscribe((res:any)=>{
       if(res && res?.result){
@@ -152,7 +152,7 @@ export class DeeplinkRedirectComponent {
           catchError((err: any) => {
             this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
             this.router.navigate([`/listing/${this.type}`]);
-            throw Error(err);
+            return EMPTY;
           })
         )
           .subscribe(async (res: any) => {
