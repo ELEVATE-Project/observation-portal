@@ -141,9 +141,9 @@ export class ReportComponent implements OnInit {
   createPayload(submissionId: string, criteria: boolean, pdf: boolean): any {
     let filter;
      if(pdf){
-      filter = {
-        questionId: this.filteredQuestions.map(item => item?.order)
-      };
+      filter = criteria
+      ? { criteria: this.filteredQuestions.map(item => item?.criteriaId) }
+      : { questionId: this.filteredQuestions.map(item => item?.order) };
      }
     return {
       submissionId,
