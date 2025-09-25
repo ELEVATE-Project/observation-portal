@@ -28,7 +28,7 @@ Setting up the CLI and Prerequisites
 
 Before setting up the project for development or deployment, ensure the following prerequisites are installed:
 
-1. **Install Node.js v18.20.8 and npm v10.8.2** (if not already installed)
+1. **Install Node.js v20.19.4 and npm 10.7.0** (if not already installed)
    - Download and install from https://nodejs.org
    - Verify installation:
      ```bash
