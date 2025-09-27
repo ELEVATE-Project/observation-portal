@@ -7,7 +7,7 @@ import { NetworkServiceService } from 'network-service';
 import { Location } from '@angular/common';
 import { catchError } from 'rxjs/operators';
 import { UtilsService } from '../services/utils.service';
-
+import { EMPTY } from 'rxjs';
 @Component({
   selector: 'app-deeplink-redirect',
   standalone: false,
@@ -87,7 +87,7 @@ export class DeeplinkRedirectComponent {
   fetchTemplateDetails(data){
     this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
       this.toastService.showToast(err?.error?.message, 'Close');
-      throw Error(err);
+      return EMPTY;
     })
   ).subscribe((res:any) => {
       if (res?.result) {
@@ -132,8 +132,9 @@ export class DeeplinkRedirectComponent {
   async handleObservationLink(){
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
-        this.toastService.showToast(err?.error?.message, 'Close');
-        throw Error(err);
+        this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+        this.router.navigate([`/listing/${this.type}`]);
+        return EMPTY;
       })
     ).subscribe((res:any)=>{
       if(res && res?.result){
@@ -141,11 +142,6 @@ export class DeeplinkRedirectComponent {
       }else{
         this.location.back()
       }
-    },(err:any)=>{
-      this.toastService.showToast('MSG_INVALID_LINK',"danger")
-      this.router.navigate([`/listing/${this.type}`],{
-        replaceUrl: true
-      });
     })
   }
 
@@ -155,8 +151,9 @@ export class DeeplinkRedirectComponent {
           this.apiService?.profileData
         ).pipe(
           catchError((err: any) => {
-            this.toastService.showToast(err?.error?.message, 'Close');
-            throw Error(err);
+            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+            this.router.navigate([`/listing/${this.type}`]);
+            return EMPTY;
           })
         )
           .subscribe(async (res: any) => {
@@ -179,11 +176,6 @@ export class DeeplinkRedirectComponent {
               return;
             }
             this.navigateToSurvey(res?.result);
-          },(err:any)=>{
-            this.toastService.showToast('MSG_INVALID_LINK',"danger")
-            this.router.navigate([`/listing/${this.type}`],{
-              replaceUrl: true
-            });
           })
   }
 

@@ -325,16 +325,18 @@ export class ListingComponent implements OnInit {
   }
   assignStatusAndClasses(element: any) {
     const statusMappings = {
-      'active': { tagClass: 'tag-not-started', statusLabel: 'Not Started' },
-      'draft': { tagClass: 'tag-in-progress', statusLabel: 'In Progress' },
-      'started': { tagClass: 'tag-in-progress', statusLabel: 'In Progress' },
-      'completed': { tagClass: 'tag-completed', statusLabel: 'Completed' },
-      'expired': { tagClass: 'tag-expired', statusLabel: 'Expired' }
+      'active': { tagClass: 'tag-not-started', statusLabel: 'Not Started', statusCode :'Not_Started' },
+      'draft': { tagClass: 'tag-in-progress', statusLabel: 'In Progress', statusCode :'In_Progress' },
+      'started': { tagClass: 'tag-in-progress', statusLabel: 'In Progress', statusCode :'In_Progress' },
+      'completed': { tagClass: 'tag-completed', statusLabel: 'Completed', statusCode :'Completed' },
+      'expired': { tagClass: 'tag-expired', statusLabel: 'Expired', statusCode :'Expired' }
     };
   
     const statusInfo = statusMappings[element.status];
     element.tagClass = statusInfo?.tagClass ?? '';
     element.statusLabel = statusInfo?.statusLabel ?? '';
+    element.statusCode = statusInfo?.statusCode ?? '';
+
   }
 
   downloadPop(solution: any, index: number) {

@@ -9,6 +9,7 @@ import { catchError, finalize } from 'rxjs';
 import { UrlParamsService } from '../services/urlParams.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 import { AddEntityPopupComponent } from '../shared/add-entity-popup/add-entity-popup.component';
+import { UtilsService } from '../services/utils.service';
 @Component({
   selector: 'app-observation-entity',
   standalone: false,
@@ -36,25 +37,29 @@ export class ObservationEntityComponent  {
     private dialog: MatDialog,
     private urlParamsService:UrlParamsService,
     private route: ActivatedRoute,
+    private utils:UtilsService,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
     this.entity=this.urlParamsService?.entity;
-    this.entityToAdd=this.urlParamsService?.entityType || "entity";
-    this.headerConfig = {
-      title:decodeURIComponent(decodeURIComponent(this.urlParamsService?.name || '')),
-      description:'SELECT_ENTITY_FROM_LIST',
-      placeholder:'SEARCH_ENTITY_PLACEHOLDER',
-      searchTerm:'',
-      showSearch:false,
-      type:this.entityToAdd
+    try {
+      if (!this.apiService?.profileData) {
+        await this.utils.getProfileDetails();
+      }
+    } catch (err: any) {
+      this.toaster.showToast(
+        err?.error?.message ?? 'PROFILE FETCH FAILED',
+        'danger'
+      );
+      this.loaded = true;
+      return; 
     }
     this.getEntities();
   }
 
-  getEntities() {
+   getEntities() {
     this.selectedEntities = [];
     this.observationId = "";
     this.apiService.post(urlConfig.observation.getSelectedEntities + this.solutionId, this.apiService.profileData)
@@ -69,7 +74,9 @@ export class ObservationEntityComponent  {
         if (res.result) {
           this.observationId = res?.result?._id;
           this.selectedEntities = res?.result;
-          this.filteredEntitiesOne = [...this.selectedEntities.entities]
+          this.filteredEntitiesOne = [...(this.selectedEntities?.entities ?? [])];
+          this.entityToAdd=res?.result?.entityType || "entity";
+          this.setHeaderConfig();
         } else {
           this.toaster.showToast(res.message, 'Close');
         }
@@ -155,6 +162,17 @@ export class ObservationEntityComponent  {
           })
       }
     });
+  }
+
+  setHeaderConfig(){
+    this.headerConfig = {
+      title:decodeURIComponent(decodeURIComponent(this.urlParamsService?.name || '')),
+      description:'SELECT_ENTITY_FROM_LIST',
+      placeholder:'SEARCH_ENTITY_PLACEHOLDER',
+      searchTerm:'',
+      showSearch:false,
+      type:this.entityToAdd
+    }
   }
   
 }

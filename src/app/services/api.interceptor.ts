@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -12,6 +12,7 @@ import { ApiService } from './api.service';
 import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from './toast.service';
 import { UtilsService } from './utils.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {
@@ -21,7 +22,9 @@ export class ApiInterceptor implements HttpInterceptor {
   constructor(
     private apiService: ApiService,
     private toaster: ToastService,
-    private utilService: UtilsService
+    private utilService: UtilsService,
+    private router: Router,
+    private ngZone: NgZone
   ) {
     this.setupNetworkStatusListener();
   }
@@ -102,6 +105,18 @@ export class ApiInterceptor implements HttpInterceptor {
     if (!this.onlineStatus) {
       return throwError(() => new Error('User is offline'));
     }
+
+    if (error.status == 401) {
+      localStorage.removeItem('accToken');
+      localStorage.removeItem('headers');
+      
+      this.toaster.showToast('Session expired, please log in again.', 'warning');
+      const baseUrl = window.location.origin;
+      this.ngZone.run(() => {
+        window.location.href = baseUrl || '/';
+      });
+    }
+
     return throwError(() => error);
   }
 }
