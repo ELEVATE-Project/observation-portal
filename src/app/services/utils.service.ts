@@ -54,7 +54,6 @@ export class UtilsService {
         : evidence;
     });
   }
-
   async getProfileDetails() {
     const profileData:any = await this.profileService.getProfileAndEntityConfigData()
     if(profileData){
