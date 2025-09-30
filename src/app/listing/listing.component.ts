@@ -5,7 +5,7 @@ import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from '../services/toast.service';
 import { ApiService } from '../services/api.service';
 import { UrlParamsService } from '../services/urlParams.service';
-import { listingConfig} from '../constants/actionContants';
+import { listingConfig, statusMappings} from '../constants/actionContants';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { UtilsService } from '../services/utils.service';
@@ -135,18 +135,18 @@ export class ListingComponent implements OnInit {
         if (res?.status === 200) {
           this.solutionListCount = res?.result?.count;
           this.headerConfig?.showSearch && (this.entityType = res?.result?.entityType);
-          this.solutionList = [...this.solutionList, ...res?.result?.data];
-            this.solutionList.forEach((element: any) => {
-              element.endDate = this.formatDate(element.endDate);
-              this.assignStatusAndClasses(element);
-              
-          if(this.surveyPage){
-            this.checkAndUpdateExpiry(element);
-              this.calculateExpiryDetails(element);
+          let list:any = res?.result?.data ;
+          list.forEach((element: any) => {
+            element.endDate = element.endDate ? new Date(element.endDate).toDateString() : '';
+            Object.assign(element, statusMappings[element.status] ?? { tagClass: '', statusLabel: '' });
+            if(this.surveyPage){
+              const diffDays = element.endDate ? Math.ceil((new Date(element.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)): 0;
+              element.daysUntilExpiry = Math.max(diffDays, 0);
+              element.isExpiringSoon = diffDays > 0 && diffDays <= 2 ? true : false;
               this.solutionExpiryStatus(element);
-          }
-
-            });
+            }
+          });
+          this.solutionList = [...this.solutionList, ...list];
           this.initialSolutionData = this.solutionList;
           this.checkDataInDB()
         } else {
@@ -259,85 +259,18 @@ export class ListingComponent implements OnInit {
   }
 
   solutionExpiryStatus(element: any): void {
-    let message = '';
-    if (element?.status === 'expired') {
-      const formattedEndDate = this.datePipe.transform(element?.endDate, 'mediumDate');
-      message = `${this.translate.instant('EXPIRED_ON')} ${formattedEndDate}`;
-    } else if (element?.endDate && element.isExpiringSoon) {
-      message = `${this.translate.instant('EXPIRED_IN')} ${element.daysUntilExpiry} days`;
-    } else if (element?.completedDate) {
-      const formattedCompletedDate = this.datePipe.transform(element?.completedDate, 'mediumDate');
-      message = `${this.translate.instant('COMPLETED_ON')} ${formattedCompletedDate}`;
-    } else if (element?.endDate) {
-      const formattedEndDate = this.datePipe.transform(element?.endDate, 'mediumDate');
-      message = `${this.translate.instant('VALID_TILL')} ${formattedEndDate}`;
-    }
-    element.surveyExpiry = message;
-  }
-  
-  
-  formatDate(endDate: string): string {
-    if (!endDate) {
-      return '';
-    }
-    const date = new Date(endDate);
-    const localTime = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    return localTime.toDateString();
-  }
-  checkAndUpdateExpiry(element: any) {
-    const expiryDate = new Date(element.endDate);
-    const currentDate = new Date();
-
-    expiryDate.setHours(0, 0, 0, 0);
-    currentDate.setHours(0, 0, 0, 0);
-
-    if (currentDate > expiryDate) {
-      element.status = 'expired';
-    }
-  }
-  calculateExpiryDetails(element: any) {
-    if (element.endDate) {
-      element.isExpiringSoon = this.isExpiringSoon(element.endDate);
-      element.daysUntilExpiry = this.getDaysUntilExpiry(element.endDate);
-    } else {
-      element.isExpiringSoon = false;
-      element.daysUntilExpiry = 0;
-    }
-  }
-  isExpiringSoon(endDate: string | Date): boolean {
-    const currentDate = new Date();
-    const expiryDate = new Date(endDate);
-  
-    const diffTime = expiryDate.getTime() - currentDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-    return diffDays <= 2 && diffDays > 0;
+    const format = (date: any) => this.datePipe.transform(date, 'mediumDate');
+    const t = this.translate.instant.bind(this.translate);
+    element.surveyExpiry = element.status === 'expired' ? `${t('EXPIRED_ON')} ${format(element.endDate)}` 
+        : element.endDate && element.isExpiringSoon
+        ? `${t('EXPIRED_IN')} ${element.daysUntilExpiry} days`
+        : element.completedDate
+        ? `${t('COMPLETED_ON')} ${format(element.completedDate)}`
+        : element.endDate
+        ? `${t('VALID_TILL')} ${format(element.endDate)}`
+        : '';
   }
 
-  getDaysUntilExpiry(endDate: string | Date): number {
-    const currentDate = new Date();
-    const expiryDate = new Date(endDate);
-  
-    const diffTime = expiryDate.getTime() - currentDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-    return Math.max(diffDays, 0);
-  }
-  assignStatusAndClasses(element: any) {
-    const statusMappings = {
-      'active': { tagClass: 'tag-not-started', statusLabel: 'Not Started', statusCode :'Not_Started' },
-      'draft': { tagClass: 'tag-in-progress', statusLabel: 'In Progress', statusCode :'In_Progress' },
-      'started': { tagClass: 'tag-in-progress', statusLabel: 'In Progress', statusCode :'In_Progress' },
-      'completed': { tagClass: 'tag-completed', statusLabel: 'Completed', statusCode :'Completed' },
-      'expired': { tagClass: 'tag-expired', statusLabel: 'Expired', statusCode :'Expired' }
-    };
-  
-    const statusInfo = statusMappings[element.status];
-    element.tagClass = statusInfo?.tagClass ?? '';
-    element.statusLabel = statusInfo?.statusLabel ?? '';
-    element.statusCode = statusInfo?.statusCode ?? '';
-
-  }
 
   downloadPop(solution: any, index: number) {
     const dialogRef = this.dialog.open(GenericPopupComponent, {
