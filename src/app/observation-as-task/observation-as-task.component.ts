@@ -55,8 +55,7 @@ export class ObservationAsTaskComponent implements OnInit {
 
   async fetchTemplateDetails(solutionId) {
     if(!this.apiService?.profileData){
-      await this.utils.backTologin()
-      return;
+      await this.utils.getProfileDetails()
     }
     this.apiService.post(urlConfig.observation.templateDetails + `${solutionId}`, this.apiService.profileData)
       .pipe(finalize(() => this.loaded = true),

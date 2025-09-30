@@ -101,8 +101,7 @@ export class ListingComponent implements OnInit {
 
   async getListData(): Promise<void> {
     if(!this.apiService?.profileData){
-      await this.utils.backTologin()
-      return;
+      await this.utils.getProfileDetails()
     }
     let urlPath:any = this.headerConfig?.showSearch ? urlConfig[this.listType].reportListing : urlConfig[this.listType].listing
     let queryParams;
@@ -323,5 +322,5 @@ export class ListingComponent implements OnInit {
       return { ...solution, downloaded: isDownloaded };
     });
   }
-  
+
 }

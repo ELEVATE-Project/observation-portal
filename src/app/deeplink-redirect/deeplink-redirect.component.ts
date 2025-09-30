@@ -61,8 +61,7 @@ export class DeeplinkRedirectComponent {
 
   async checkLinkType(){
     if(!this.apiService?.profileData){
-      await this.utils.backTologin()
-      return;
+      await this.utils.getProfileDetails()
     }
     if (this.type === 'observation') {
       this.handleObservationLink();
@@ -109,7 +108,7 @@ export class DeeplinkRedirectComponent {
   }
 
   async redirectObservation(resp) {
-    // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
+    await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
       this.router.navigate([
         'domain',
