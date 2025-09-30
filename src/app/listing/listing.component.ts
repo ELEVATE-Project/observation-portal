@@ -139,7 +139,7 @@ export class ListingComponent implements OnInit {
             element.endDate = element.endDate ? new Date(element.endDate).toDateString() : '';
             Object.assign(element, statusMappings[element.status] ?? { tagClass: '', statusLabel: '' });
             if(this.surveyPage){
-              const diffDays = element.endDate ? Math.ceil((new Date(element.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)): 0;
+              const diffDays = element.endDate ? this.getDateDiff(element.endDate) : 0;
               element.daysUntilExpiry = Math.max(diffDays, 0);
               element.isExpiringSoon = diffDays > 0 && diffDays <= 2 ? true : false;
               this.solutionExpiryStatus(element);
@@ -269,6 +269,13 @@ export class ListingComponent implements OnInit {
         ? `${t('VALID_TILL')} ${format(element.endDate)}`
         : '';
   }
+  getDateDiff(endDateStr: string): number {
+    const endDate = new Date(endDateStr);
+    const today = new Date();
+    endDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    return Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  };
 
 
   downloadPop(solution: any, index: number) {
