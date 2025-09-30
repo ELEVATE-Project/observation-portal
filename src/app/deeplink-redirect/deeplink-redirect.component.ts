@@ -116,14 +116,14 @@ export class DeeplinkRedirectComponent {
         resp?.assessment?.name,
         resp?.solution?._id
       ],{
-        state:{data:{...resp,solutionType:this.type,isSurvey:false}}
+        state:{data:{...resp,solutionType:this.type,isSurvey:false}}, replaceUrl: true
       });
     } else {
       this.router.navigate(['questionnaire'], {
         queryParams:{
           solutionType:this.type,
         },
-        state:{ data:{...resp,isSurvey:false}}
+        state:{ data:{...resp,isSurvey:false}}, replaceUrl: true
       });
     }
   }
@@ -160,7 +160,8 @@ export class DeeplinkRedirectComponent {
               await this.router.navigate(['surveyStatus'],{
                 queryParams:{
                   status:'expired'
-                }
+                },
+                replaceUrl: true
               })
               return;
             }
@@ -168,7 +169,8 @@ export class DeeplinkRedirectComponent {
               await this.router.navigate(['surveyStatus'],{
                 queryParams:{
                   status:res?.result?.status
-                }
+                },
+                replaceUrl: true
               })
               return;
             }

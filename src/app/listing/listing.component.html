@@ -31,7 +31,7 @@
                   <span [ngClass]="solution?.tagClass" class="label">{{ solution?.statusLabel }}</span>
                 }
                 @else{
-                  <span [ngClass]="solution?.tagClass" class="label" *ngIf="solution?.statusCode == 'Not_Started'">{{ solution?.statusLabel }}</span>
+                  <span [ngClass]="solution?.tagClass" class="label" *ngIf="solution?.statusLabel == 'Not Started'">{{ solution?.statusLabel }}</span>
                 }
               </div>
               @if(surveyPage){
