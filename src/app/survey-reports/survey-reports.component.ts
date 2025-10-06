@@ -64,6 +64,7 @@ export class SurveyReportsComponent implements OnInit {
   
   }
   surveyReportPdf(type:any){
+    if (!this.reportDetails?.length) return;
     let payload:any={
       filter:{questionId:this.reportDetails.map(element => element.order)}
     }
