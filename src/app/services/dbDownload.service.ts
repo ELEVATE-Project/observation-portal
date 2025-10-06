@@ -164,7 +164,7 @@ export class DbDownloadService {
     const transaction = this.db.transaction([storeName], 'readwrite');
     const request = transaction.objectStore(storeName).delete(key);
 
-    request.onsuccess = () => this.toaster.showToast("Content deleted from device");
+    request.onsuccess = () => this.toaster.showToast("Content deleted from device",'success');
     request.onerror = () => console.error('Error deleting item');
   }
 }
