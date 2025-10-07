@@ -3,6 +3,7 @@ import { DbDownloadService } from '../services/dbDownload.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 
 @Component({
   selector: 'app-downloads',
@@ -20,7 +21,6 @@ export class DownloadsComponent {
   ];
 
   selectedIndex = 0;
-  @ViewChild('confirmDialogModel') confirmDialogModel: TemplateRef<any>;
 
   downloadsData: Record<string, any[]> = {
     observation: [],
@@ -69,9 +69,16 @@ export class DownloadsComponent {
   
 
   deleteData(key: string, type: string) {
-    const dialogRef = this.dialog.open(this.confirmDialogModel);
+    const dialogRef = this.dialog.open(GenericPopupComponent, {
+      width: '400px',
+      data: {
+        title:'DELETE_CONTENT',
+        message: 'DELETE_CONTENT_DESCRIPTION',
+      }
+    });
+
     dialogRef.afterClosed().subscribe(async result => {
-      if (result === 'delete') {
+      if (result === 'yes') {
         await this.dbDownloadService.deleteData(key, type);
         await this.fetchDownloadedData(type);
       }

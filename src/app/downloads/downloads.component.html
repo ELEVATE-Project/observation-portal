@@ -49,14 +49,5 @@
   </mat-tab-group>
 </div>
 
-<ng-template #confirmDialogModel>
-  <h1 mat-dialog-title>{{ 'DELETE_CONTENT' | translate }}</h1>
-  <mat-dialog-content>{{ 'DELETE_CONTENT_DESCRIPTION' | translate }}</mat-dialog-content>
-  <mat-dialog-actions class="mat-dialog-actions">
-    <button [mat-dialog-close]="'delete'" class="confirm-delete-btn">
-      {{ 'DELETE' | translate }}
-    </button>
-  </mat-dialog-actions>
-</ng-template>
 
 <app-spinner *ngIf="!loaded"></app-spinner>

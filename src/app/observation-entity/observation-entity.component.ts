@@ -44,6 +44,8 @@ export class ObservationEntityComponent  {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
     this.entity=this.urlParamsService?.entity;
+    this.entityToAdd=this.urlParamsService?.entityType || "entity";
+    this.setHeaderConfig();
     try {
       if (!this.apiService?.profileData) {
         await this.utils.getProfileDetails();
@@ -66,19 +68,19 @@ export class ObservationEntityComponent  {
       .pipe(
         finalize(() => this.loaded = true),
         catchError((err: any) => {
-          this.toaster.showToast(err.error.message, 'Close');
+          this.toaster.showToast(err.error.message,'danger');
           throw Error(err);
         })
       )
       .subscribe((res: any) => {
-        if (res.result) {
+        if (res.status == 200) {
           this.observationId = res?.result?._id;
           this.selectedEntities = res?.result;
           this.filteredEntitiesOne = [...(this.selectedEntities?.entities ?? [])];
           this.entityToAdd=res?.result?.entityType || "entity";
           this.setHeaderConfig();
         } else {
-          this.toaster.showToast(res.message, 'Close');
+          this.toaster.showToast(res.message, 'danger');
         }
       })
   }
