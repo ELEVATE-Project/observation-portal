@@ -131,7 +131,7 @@ export class DeeplinkRedirectComponent {
   async handleObservationLink(){
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
-        this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+        this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger',9000);
         this.navigateToHomePage();
         return EMPTY;
       })
@@ -150,7 +150,7 @@ export class DeeplinkRedirectComponent {
           this.apiService?.profileData
         ).pipe(
           catchError((err: any) => {
-            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger',90000);
             this.navigateToHomePage();
             return EMPTY;
           })
