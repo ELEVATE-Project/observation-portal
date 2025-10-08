@@ -279,6 +279,7 @@ export class ListingComponent implements OnInit {
 
 
   downloadPop(solution: any, index: number) {
+    if(solution?.downloaded) return
     const dialogRef = this.dialog.open(GenericPopupComponent, {
       width: '400px',
       data: {

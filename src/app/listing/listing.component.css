@@ -236,3 +236,52 @@ img {
   margin-left: 0.625rem;
   justify-content: space-between;
 }
+
+.download-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: transform 0.2s ease;
+}
+
+.download-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.download-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.download-btn .mat-icon {
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  transition: color 0.3s ease;
+}
+
+.download-btn .mat-icon.downloaded {
+  color: var(--success-color, #4caf50);
+}
+
+.download-text {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.downloaded-text {
+  color: var(--success-color, #4caf50);
+  font-weight: 600;
+}
