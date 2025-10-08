@@ -47,13 +47,11 @@ export class DeeplinkRedirectComponent {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
-        this.router.navigate([
-          'details',
-          stateData?.assessment?.name,
-          stateData?.programId,
-          stateData?.solution?._id,
-          false
-        ]);
+          this.router.navigate([
+            'entityList',
+            stateData?.solution?._id,
+            stateData?.solution?.name
+          ], { replaceUrl:true });
         }
     }
   };
