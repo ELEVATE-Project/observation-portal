@@ -47,13 +47,11 @@ export class DeeplinkRedirectComponent {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
-        this.router.navigate([
-          'details',
-          stateData?.assessment?.name,
-          stateData?.programId,
-          stateData?.solution?._id,
-          false
-        ]);
+          this.router.navigate([
+            'entityList',
+            stateData?.solution?._id,
+            stateData?.solution?.name
+          ], { replaceUrl:true });
         }
     }
   };
@@ -131,7 +129,7 @@ export class DeeplinkRedirectComponent {
   async handleObservationLink(){
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
-        this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+        this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger',9000);
         this.navigateToHomePage();
         return EMPTY;
       })
@@ -150,7 +148,7 @@ export class DeeplinkRedirectComponent {
           this.apiService?.profileData
         ).pipe(
           catchError((err: any) => {
-            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger',90000);
             this.navigateToHomePage();
             return EMPTY;
           })
