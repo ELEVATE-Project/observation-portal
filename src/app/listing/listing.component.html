@@ -37,9 +37,16 @@
               @if(surveyPage){
                 <div class="buttons">
                   <p>{{solution?.surveyExpiry}}</p>
-                  <app-download-button [downloaded]="solution?.downloaded"
-                    (confirmedDownload)="downloadSurvey(solution, $index)">
-                  </app-download-button>
+                  <div class="download-wrapper">
+                    <button mat-icon-button class="download-btn" (click)="downloadPop(solution, $index); $event.stopPropagation()">
+                      <mat-icon [ngClass]="solution?.downloaded ? 'downloaded' : ''">
+                        {{ solution?.downloaded ? 'check' : 'arrow_downward' }}
+                      </mat-icon>
+                    </button>
+                    <p class="download-text" [ngClass]="{ 'downloaded-text': solution?.downloaded }">
+                      {{ solution?.downloaded ? ('DOWNLOADED' | translate) : ('DOWNLOAD' | translate) }}
+                    </p>
+                  </div>
                 </div>
               }@else{
               <p>{{solution?.description}}</p>

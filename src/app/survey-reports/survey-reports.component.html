@@ -57,7 +57,7 @@
             <div *ngSwitchCase="'matrix'" class="matrix-container">
               <div *ngFor="let key of objectKeys(question.instanceQuestions[0]); let k = index" class="matrix-row">
                 <div *ngIf="key !== 'instanceIdentifier'">
-                  <h2>{{question.instanceQuestions[0][key].questionNumber}}. {{ question.instanceQuestions[0][key].question }}</h2>
+                  <mat-card-title style="font-size: 1rem;">{{question.instanceQuestions[0][key].questionNumber}}. {{ question.instanceQuestions[0][key].question }}</mat-card-title>
                   
                   <div class="matrix-instances">
                     <mat-card *ngFor="let instance of question.instanceQuestions" class="instance-card">

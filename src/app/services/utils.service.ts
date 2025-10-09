@@ -91,4 +91,9 @@ export class UtilsService {
   isMobile(){
     return /iPhone|iPad|iPod|Android/i.test(window.navigator.userAgent);
   }
+
+   navigateToHomePage(){
+    const baseUrl = window.location.origin;
+    window.location.href = baseUrl+`/home`;
+  }
 }
