@@ -18,7 +18,7 @@ export class DeeplinkRedirectComponent {
   type:any;
   linkId:any;
   isOnline:any;
-
+  navigationTimeoutId:any;
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -130,7 +130,7 @@ export class DeeplinkRedirectComponent {
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
         this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
-        setTimeout(()=>{
+        this.navigationTimeoutId=setTimeout(()=>{
           this.utils.navigateToHomePage();
         },2000)
         return EMPTY;
@@ -151,7 +151,7 @@ export class DeeplinkRedirectComponent {
         ).pipe(
           catchError((err: any) => {
             this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
-            setTimeout(()=>{
+            this.navigationTimeoutId = setTimeout(()=>{
               this.utils.navigateToHomePage();
             },2000)
             return EMPTY;
@@ -194,5 +194,11 @@ export class DeeplinkRedirectComponent {
     });
   }
 
+  ngOnDestroy() {
+    if (this.navigationTimeoutId) {
+      clearTimeout(this.navigationTimeoutId);
+    }
+    window.removeEventListener('message', this.handleMessage);
+  }
 
 }
