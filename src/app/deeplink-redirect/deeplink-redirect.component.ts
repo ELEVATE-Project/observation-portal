@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as urlConfig from '../constants/url-config.json';
 import { ApiService } from '../services/api.service';
@@ -14,7 +14,7 @@ import { EMPTY } from 'rxjs';
   templateUrl: './deeplink-redirect.component.html',
   styleUrl: './deeplink-redirect.component.css'
 })
-export class DeeplinkRedirectComponent {
+export class DeeplinkRedirectComponent implements OnDestroy,OnInit {
   type:any;
   linkId:any;
   isOnline:any;
