@@ -7,6 +7,7 @@ import { ApiService } from './api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileAlterPopupComponent } from '../shared/profile-alter-popup/profile-alter-popup.component';
 import { Location } from '@angular/common';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class UtilsService {
 
  cloudStorageUpload?(payload): Observable<any>;
 
-  constructor(private profileService: ProfileService,private apiServie:ApiService,private dialog: MatDialog,private location:Location) {}
+  constructor(private profileService: ProfileService,private apiServie:ApiService,private dialog: MatDialog,private location:Location,private toaster:ToastService) {}
 
   isEmpty(value: any): boolean {
     if (value == null) {
@@ -59,10 +60,8 @@ export class UtilsService {
     if(profileData){
       localStorage.setItem('profileData',JSON.stringify(profileData))
       this.apiServie.profileData = JSON.parse(localStorage.getItem('profileData'))
-    }else {
-      await this.showProfileUpdateAlert();
-      return;
     }
+    return;
   }
 
   async showProfileUpdateAlert(){
