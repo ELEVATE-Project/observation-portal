@@ -136,6 +136,7 @@ export class ListingComponent implements OnInit {
           this.headerConfig?.showSearch && (this.entityType = res?.result?.entityType);
           let list:any = res?.result?.data ;
           list.forEach((element: any) => {
+            element.status = new Date().setHours(0, 0, 0, 0) > new Date(element.endDate).setHours(0, 0, 0, 0) ? 'expired': element.status;
             element.endDate = element.endDate ? new Date(element.endDate).toDateString() : '';
             Object.assign(element, statusMappings[element.status] ?? { tagClass: '', statusLabel: '' });
             if(this.surveyPage){
@@ -168,6 +169,10 @@ export class ListingComponent implements OnInit {
         break ;
 
       case 'Survey':
+        if(data.status === "expired"){
+            this.toaster.showToast('FORM_EXPIRED','danger')
+            break;
+        }
         this.router.navigate(['/questionnaire'], {
           queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, index: 0, submissionId:data?.submissionId,solutionId:data?.solutionId,solutionType:"survey"
           }

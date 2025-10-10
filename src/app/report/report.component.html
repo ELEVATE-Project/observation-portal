@@ -79,7 +79,7 @@
                  
                   <ng-container *ngFor="let key of objectKeys(question?.answers[0]); let k = index" style="margin-bottom: 20px;">
                   <div class="card-content" *ngIf="key !== 'instanceIdentifier'" style="width: 100%;">
-                    <h2 class="matrix-title">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</h2>
+                    <mat-card-title style="font-size: 1rem;">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</mat-card-title>
                    
                       <div class="col-12" *ngFor="let instance of question.answers" class="card-list-item" style="display: flex; flex: 1;">
                         <div class="card" style="width: 100%; height: auto;">
@@ -206,7 +206,7 @@
                    
                     <ng-container *ngFor="let key of objectKeys(question?.answers[0]); let k = index" style="margin-bottom: 20px;">
                     <div class="card-content" *ngIf="key !== 'instanceIdentifier'" style="width: 100%;">
-                      <h2 class="matrix-title">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</h2>
+                      <mat-card-title style="font-size: 1rem;">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</mat-card-title>
                      
                         <div class="col-12" *ngFor="let instance of question.answers" class="card-list-item" style="display: flex; flex: 1;">
                           <div class="card" style="width: 100%; height: auto;">
