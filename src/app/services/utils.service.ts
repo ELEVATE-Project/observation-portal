@@ -60,7 +60,13 @@ export class UtilsService {
     if(profileData){
       localStorage.setItem('profileData',JSON.stringify(profileData))
       this.apiServie.profileData = JSON.parse(localStorage.getItem('profileData'))
+      return;
     }
+    this.toaster.showToast('SESSION_EXPIRED','danger')
+    setTimeout(()=>{
+      const baseUrl = window.location.origin;
+      window.location.href = baseUrl;
+    },2000)
     return;
   }
 
