@@ -136,15 +136,7 @@ export class ObservationDomainComponent implements OnInit {
     if(notApplicable){
       return;
     }
-    this.stateData ? this.router.navigate(['questionnaire'], {
-      queryParams:{
-        solutionType:this.stateData?.solutionType
-      },
-      state:{data:{
-        ...this.stateData,
-        isSurvey:false
-      }}
-    }):
+    this.stateData ? this.statenavigation() :
       this.router.navigate(['questionnaire'], {
         queryParams: { 
           observationId:this.observationId,  
@@ -159,6 +151,19 @@ export class ObservationDomainComponent implements OnInit {
           isSurvey:true
         }}
       });
+  }
+
+  async statenavigation(){
+    await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+    this.router.navigate(['questionnaire'], {
+      queryParams:{
+        solutionType:this.stateData?.solutionType
+      },
+      state:{data:{
+        ...this.stateData,
+        isSurvey:false
+      }}
+    })
   }
 
   notApplicable(entity,selectedIndex) {

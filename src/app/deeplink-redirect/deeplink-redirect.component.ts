@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as urlConfig from '../constants/url-config.json';
 import { ApiService } from '../services/api.service';
@@ -14,11 +14,10 @@ import { EMPTY } from 'rxjs';
   templateUrl: './deeplink-redirect.component.html',
   styleUrl: './deeplink-redirect.component.css'
 })
-export class DeeplinkRedirectComponent implements OnDestroy,OnInit {
+export class DeeplinkRedirectComponent implements OnInit {
   type:any;
   linkId:any;
   isOnline:any;
-  navigationTimeoutId:any;
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -130,7 +129,7 @@ export class DeeplinkRedirectComponent implements OnDestroy,OnInit {
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
         this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
-        this.navigationTimeoutId=setTimeout(()=>{
+        setTimeout(()=>{
           this.utils.navigateToHomePage();
         },2000)
         return EMPTY;
@@ -151,7 +150,7 @@ export class DeeplinkRedirectComponent implements OnDestroy,OnInit {
         ).pipe(
           catchError((err: any) => {
             this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
-            this.navigationTimeoutId = setTimeout(()=>{
+            setTimeout(()=>{
               this.utils.navigateToHomePage();
             },2000)
             return EMPTY;
@@ -192,13 +191,6 @@ export class DeeplinkRedirectComponent implements OnDestroy,OnInit {
     },
     replaceUrl:true
     });
-  }
-
-  ngOnDestroy() {
-    if (this.navigationTimeoutId) {
-      clearTimeout(this.navigationTimeoutId);
-    }
-    window.removeEventListener('message', this.handleMessage);
   }
 
 }
