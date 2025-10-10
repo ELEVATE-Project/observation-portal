@@ -93,6 +93,6 @@
     "UPDATE_PROFILE_MSG": "Please update your profile to access the feature",
     "BACK": "Back",
     "UPDATE_PROFILE": "Update Profile",
-    "FORM_EXPIRED":"form expired",
+    "FORM_EXPIRED":"Form expired",
     "SESSION_EXPIRED":"Session expired, please log in again."
 }
