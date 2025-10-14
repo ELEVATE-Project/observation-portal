@@ -26,7 +26,7 @@ const routes: Routes = [
   { path: APP_ROUTES.REPORTS, component: ReportComponent,canActivate: [AuthGuard] },
   { path: APP_ROUTES.Observation_Led_Imp, component: ObservationLedImpComponent, canActivate: [AuthGuard] },
   { path: APP_ROUTES.OBSERVATION_AS_TASK,component:ObservationAsTaskComponent, canActivate: [AuthGuard]},
-  { path: APP_ROUTES.VERIFYLINK,component:DeeplinkRedirectComponent, canActivate: [AuthGuard]},
+  { path: APP_ROUTES.VERIFYLINK,component:DeeplinkRedirectComponent},
   { path:APP_ROUTES.SURVEYREPORTS,component:SurveyReportsComponent, canActivate: [AuthGuard]},
   { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent, canActivate: [AuthGuard]},
   { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent, canActivate: [AuthGuard]},
