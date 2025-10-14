@@ -105,7 +105,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async redirectObservation(resp) {
-    await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
+    // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
       this.router.navigate([
         'domain',

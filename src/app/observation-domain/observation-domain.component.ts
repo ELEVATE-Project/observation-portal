@@ -163,8 +163,7 @@ export class ObservationDomainComponent implements OnInit {
       state:{data:{
         ...this.stateData,
         isSurvey:false
-      }},
-      replaceUrl:true
+      }}
     })
   }
 
