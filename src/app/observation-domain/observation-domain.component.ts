@@ -156,8 +156,7 @@ export class ObservationDomainComponent implements OnInit {
   }
 
   async statenavigation(){
-    // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
-    await this.utils.navigateToHomePage()
+    await this.router.navigate(['/listing/observation'],{replaceUrl:true});
     this.router.navigate(['questionnaire'], {
       queryParams:{
         solutionType:this.stateData?.solutionType
@@ -281,8 +280,7 @@ export class ObservationDomainComponent implements OnInit {
       if (event.data?.type === 'START') {
         const stateData = event.data.data;
           if(stateData?.solution?.isRubricDriven){
-            // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
-            await this.utils.navigateToHomePage()
+            await this.router.navigate(['/listing/observation'],{replaceUrl:true});
             this.router.navigate([
             'entityList',
             stateData?.solution?._id,
