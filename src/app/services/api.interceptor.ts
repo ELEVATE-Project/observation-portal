@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -12,7 +12,6 @@ import { ApiService } from './api.service';
 import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from './toast.service';
 import { UtilsService } from './utils.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {
@@ -22,9 +21,7 @@ export class ApiInterceptor implements HttpInterceptor {
   constructor(
     private apiService: ApiService,
     private toaster: ToastService,
-    private utilService: UtilsService,
-    private router: Router,
-    private ngZone: NgZone
+    private utilService: UtilsService
   ) {
     this.setupNetworkStatusListener();
   }
@@ -113,10 +110,8 @@ export class ApiInterceptor implements HttpInterceptor {
       this.toaster.showToast('SESSION_EXPIRED', 'warning');
       setTimeout(()=>{
         const baseUrl = window.location.origin;
-      this.ngZone.run(() => {
         window.location.href = baseUrl;
-      });
-      },2000)
+      })
     }
 
     return throwError(() => error);
