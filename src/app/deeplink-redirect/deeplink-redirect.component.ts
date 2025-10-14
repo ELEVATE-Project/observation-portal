@@ -32,7 +32,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     this.network.isOnline$.subscribe(status => this.isOnline = status);
     window.addEventListener('message', this.handleMessage);
     this.route.paramMap.subscribe((param:any)=>{
-      this.type = param.get("type").replace(/^create-/, '') || '';
+      this.type = param.get("type").replace(/^create-/, '');
       this.linkId = param.get("id")
       if(!this.isOnline){
         this.toastService.showToast('NETWORK_OFFLINE','danger')
