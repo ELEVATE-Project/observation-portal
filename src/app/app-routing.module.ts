@@ -14,23 +14,22 @@ import { SurveyReportsComponent } from './survey-reports/survey-reports.componen
 import { DownloadsComponent } from './downloads/downloads.component';
 import { SurveyExpiredComponent } from './survey-expired/survey-expired.component';
 import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.component';
-import { AuthGuard } from './services/auth.guard';
 
 const routes: Routes = [ 
-  { path: APP_ROUTES.LISTING, component: ListingComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.ENTITY_LIST, component: ObservationEntityComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.ENTITY_LIST_NO_TYPE, component: ObservationEntityComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.DETAILS, component: ObservationDetailsComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.DOMAIN, component: ObservationDomainComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.QUESTIONNAIRE, component: QuestionnaireComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.REPORTS, component: ReportComponent,canActivate: [AuthGuard] },
-  { path: APP_ROUTES.Observation_Led_Imp, component: ObservationLedImpComponent, canActivate: [AuthGuard] },
-  { path: APP_ROUTES.OBSERVATION_AS_TASK,component:ObservationAsTaskComponent, canActivate: [AuthGuard]},
-  { path: APP_ROUTES.VERIFYLINK,component:DeeplinkRedirectComponent, canActivate: [AuthGuard]},
-  { path:APP_ROUTES.SURVEYREPORTS,component:SurveyReportsComponent, canActivate: [AuthGuard]},
-  { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent, canActivate: [AuthGuard]},
-  { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent, canActivate: [AuthGuard]},
-  { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent, canActivate: [AuthGuard]},
+  { path: APP_ROUTES.LISTING, component: ListingComponent },
+  { path: APP_ROUTES.ENTITY_LIST, component: ObservationEntityComponent },
+  { path: APP_ROUTES.ENTITY_LIST_NO_TYPE, component: ObservationEntityComponent },
+  { path: APP_ROUTES.DETAILS, component: ObservationDetailsComponent },
+  { path: APP_ROUTES.DOMAIN, component: ObservationDomainComponent },
+  { path: APP_ROUTES.QUESTIONNAIRE, component: QuestionnaireComponent },
+  { path: APP_ROUTES.REPORTS, component: ReportComponent },
+  { path: APP_ROUTES.Observation_Led_Imp, component: ObservationLedImpComponent },
+  { path: APP_ROUTES.OBSERVATION_AS_TASK,component:ObservationAsTaskComponent},
+  { path: APP_ROUTES.VERIFYLINK,component:DeeplinkRedirectComponent},
+  { path:APP_ROUTES.SURVEYREPORTS,component:SurveyReportsComponent},
+  { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent},
+  { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent},
+  { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent},
   { path: '', redirectTo: 'listing/observation', pathMatch: 'full' }
 ];
 
