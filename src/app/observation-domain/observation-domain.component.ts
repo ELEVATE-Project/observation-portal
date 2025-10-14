@@ -154,7 +154,7 @@ export class ObservationDomainComponent implements OnInit {
   }
 
   async statenavigation(entityIndex:any){
-    await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+    // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
     this.router.navigate(['questionnaire'], {
       queryParams:{
         solutionType:this.stateData?.solutionType,
