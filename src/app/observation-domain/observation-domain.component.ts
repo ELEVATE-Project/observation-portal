@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DbService } from '../services/db.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
+import { UtilsService } from '../services/utils.service';
 @Component({
   selector: 'app-observation-domain',
   standalone: false,
@@ -52,7 +53,8 @@ export class ObservationDomainComponent implements OnInit {
     private downloadService: DownloadService,
     private translate:TranslateService,
     private db: DbService,
-    private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+    private downloadDataPayloadCreationService:DownloadDataPayloadCreationService,
+    private utils:UtilsService
      
   ) {
     const passedData = this.router.getCurrentNavigation()?.extras.state;
@@ -154,7 +156,8 @@ export class ObservationDomainComponent implements OnInit {
   }
 
   async statenavigation(){
-    await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+    // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+    await this.utils.navigateToHomePage()
     this.router.navigate(['questionnaire'], {
       queryParams:{
         solutionType:this.stateData?.solutionType
@@ -278,7 +281,8 @@ export class ObservationDomainComponent implements OnInit {
       if (event.data?.type === 'START') {
         const stateData = event.data.data;
           if(stateData?.solution?.isRubricDriven){
-            await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+            // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+            await this.utils.navigateToHomePage()
             this.router.navigate([
             'entityList',
             stateData?.solution?._id,
