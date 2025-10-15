@@ -14,6 +14,8 @@ import { SurveyReportsComponent } from './survey-reports/survey-reports.componen
 import { DownloadsComponent } from './downloads/downloads.component';
 import { SurveyExpiredComponent } from './survey-expired/survey-expired.component';
 import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.component';
+import { navigateGuard } from './services/navigate.guard';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [ 
   { path: APP_ROUTES.LISTING, component: ListingComponent },
@@ -30,7 +32,7 @@ const routes: Routes = [
   { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent},
   { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent},
   { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent},
-  { path: '', redirectTo: 'listing/observation', pathMatch: 'full' }
+  { path: '**',component:NotFoundComponent,canActivate:[navigateGuard]}
 ];
 
 @NgModule({

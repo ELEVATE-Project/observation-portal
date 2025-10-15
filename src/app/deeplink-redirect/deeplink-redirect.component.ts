@@ -46,6 +46,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
+          window.history.replaceState({}, '','/home');
           this.router.navigate([
             'entityList',
             stateData?.solution?._id,

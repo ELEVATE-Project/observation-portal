@@ -68,6 +68,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-popup.component';
 import { ProfileAlterPopupComponent } from './shared/profile-alter-popup/profile-alter-popup.component';
 import { CleanAnswersPipe } from './pipes/clean-answers.pipe';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -101,7 +102,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     DownloadButtonComponent,
     AddEntityPopupComponent,
     ProfileAlterPopupComponent,
-    CleanAnswersPipe
+    CleanAnswersPipe,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
