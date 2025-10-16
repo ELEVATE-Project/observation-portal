@@ -45,13 +45,19 @@ export class ApiInterceptor implements HttpInterceptor {
     if (!this.onlineStatus) {
       this.offline = true;
       this.toaster.showToast('NETWORK_OFFLINE', 'danger');
-      return of();
+      return of(); 
     }
 
     this.offline = false;
 
+    const token = localStorage.getItem('accToken');
+    if (!token) {
+      this.redirectToLogin();
+      return of(); 
+    }
+
     return from(this.getToken()).pipe(
-      switchMap((token) => {
+      switchMap((freshToken) => {
         const allUrls = [
           ...Object.values(urlConfig.survey),
           ...Object.values(urlConfig.observation),
@@ -59,7 +65,7 @@ export class ApiInterceptor implements HttpInterceptor {
           urlConfig.presignedUrl,
         ];
 
-        const clonedRequest = this.addAuthHeader(request, token);
+        const clonedRequest = this.addAuthHeader(request, freshToken);
 
         if (allUrls.some((url) => request.url.includes(url))) {
           return next.handle(clonedRequest).pipe(
@@ -73,10 +79,9 @@ export class ApiInterceptor implements HttpInterceptor {
   }
 
   async getToken(): Promise<string | null> {
-    let token = this.apiService.userAuthToken
-    if (!token) {
-      return null;
-    }
+    let token = this.apiService.userAuthToken || localStorage.getItem('accToken');
+    if (!token) return null;
+
     const isValidToken = await this.utilService.validateToken(token);
     if (!isValidToken) {
       const data = await this.apiService.getAccessToken();
@@ -85,35 +90,40 @@ export class ApiInterceptor implements HttpInterceptor {
         return data;
       }
     }
+
     return token;
   }
 
   private addAuthHeader(request: HttpRequest<any>, token: string | null): HttpRequest<any> {
-    let headers: any = localStorage.getItem('headers');
-    let extraHeaders = JSON.parse(headers);
+    const headers = localStorage.getItem('headers');
+    const extraHeaders = headers ? JSON.parse(headers) : null;
+
     if (token) {
       return request.clone({
-        setHeaders: extraHeaders ? { 'X-auth-token': token,...extraHeaders } : { 'X-auth-token': token }
-      });; 
+        setHeaders: extraHeaders ? { 'X-auth-token': token, ...extraHeaders } : { 'X-auth-token': token }
+      });
     }
-    return request
+
+    return request;
   }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     if (!this.onlineStatus) {
       return throwError(() => new Error('User is offline'));
     }
 
-    if (error.status == 401) {
+    if (error.status === 401) {
       localStorage.removeItem('accToken');
       localStorage.removeItem('headers');
-      
-      this.toaster.showToast('SESSION_EXPIRED', 'warning');
-      setTimeout(()=>{
-        const baseUrl = window.location.origin;
-        window.location.href = baseUrl;
-      })
+
+      this.redirectToLogin();
     }
 
     return throwError(() => error);
+  }
+
+  private redirectToLogin() {
+      const baseUrl = window.location.origin;
+      window.location.href = baseUrl;
   }
 }
