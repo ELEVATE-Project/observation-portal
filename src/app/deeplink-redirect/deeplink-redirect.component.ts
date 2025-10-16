@@ -68,18 +68,16 @@ export class DeeplinkRedirectComponent implements OnInit {
     }
   }
 
-  navigateToEntities(data){
-    setTimeout(() => {
+ async navigateToEntities(data){
+    await window.history.replaceState({}, '','/home');
       this.router.navigate([
         'entityList',
         data?.solutionId,
         data?.name,
         data?.type,
         data?.programId
-      ],{ replaceUrl: true }
+      ]
       );
-    }
-    , 100);
   }
   fetchTemplateDetails(data){
     this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
@@ -106,6 +104,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async redirectObservation(resp) {
+    await window.history.replaceState({}, '','/home');
     // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
       this.router.navigate([
@@ -114,14 +113,14 @@ export class DeeplinkRedirectComponent implements OnInit {
         resp?.assessment?.name,
         resp?.solution?._id
       ],{
-        state:{data:{...resp,solutionType:this.type,isSurvey:false}}, replaceUrl: true
+        state:{data:{...resp,solutionType:this.type,isSurvey:false}}
       });
     } else {
       this.router.navigate(['questionnaire'], {
         queryParams:{
           solutionType:this.type,
         },
-        state:{ data:{...resp,isSurvey:false}}, replaceUrl: true
+        state:{ data:{...resp,isSurvey:false}}
       });
     }
   }
@@ -179,6 +178,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async navigateToSurvey(data:any){
+    await window.history.replaceState({}, '','/home');
     this.router.navigate(['questionnaire'], {
       queryParams:{
         index: 0, 
@@ -187,8 +187,7 @@ export class DeeplinkRedirectComponent implements OnInit {
         solutionType:this.type
       },
       state:{data:{...data,isSurvey:true},
-    },
-    replaceUrl:true
+    }
     });
   }
 
