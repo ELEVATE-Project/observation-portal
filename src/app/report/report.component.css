@@ -168,7 +168,6 @@
   
   .panel-content {
     border: 0.063rem solid var(--light-grey);
-    overflow-x: auto;
     width: fit-content;
     min-width: 100%;
   }
@@ -177,13 +176,13 @@
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 0.5rem;
-    padding: 0.5rem;
     text-align: center;
     min-width: 100%;
   }
   
   .row:nth-child(odd) {
-    background-color: var(--color-light);
+    color: var(--color-light);
+    background-color: var(--color-primary);
   }
   
   .row:nth-child(even) {
@@ -202,11 +201,10 @@
   }
   
   .title-accordion{
-    font-size: large;
+    font-size: 1rem;
     word-break: break-word;
     margin: 0;     
     overflow-wrap: break-word; 
-    max-width: 100%; 
   }
   
   .no-data-found{
@@ -284,9 +282,6 @@
     color: white;
 }
 
-::ng-deep .mat-expansion-panel-body {
-  overflow-x: auto !important;
-}
 
   @media (max-width: 47.9375rem) {
     .chip {
