@@ -6,7 +6,7 @@ import {
   HttpInterceptor,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { Observable, fromEvent, merge, of, throwError, from } from 'rxjs';
+import { Observable, fromEvent, merge, of, from, throwError } from 'rxjs';
 import { map, startWith, catchError, switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import * as urlConfig from '../constants/url-config.json';
@@ -50,14 +50,15 @@ export class ApiInterceptor implements HttpInterceptor {
 
     this.offline = false;
 
-    const token = localStorage.getItem('accToken');
-    if (!token) {
-      this.redirectToLogin();
-      return of(); 
-    }
-
+    
     return from(this.getToken()).pipe(
       switchMap((freshToken) => {
+       
+        if (!freshToken) {
+          this.redirectToLogin();
+          return of();
+        }
+
         const allUrls = [
           ...Object.values(urlConfig.survey),
           ...Object.values(urlConfig.observation),
@@ -88,6 +89,8 @@ export class ApiInterceptor implements HttpInterceptor {
       if (data) {
         localStorage.setItem('accToken', data);
         return data;
+      } else {
+        return null;
       }
     }
 
@@ -96,16 +99,26 @@ export class ApiInterceptor implements HttpInterceptor {
 
   private addAuthHeader(request: HttpRequest<any>, token: string | null): HttpRequest<any> {
     const headers = localStorage.getItem('headers');
-    const extraHeaders = headers ? JSON.parse(headers) : null;
-
+    let extraHeaders: any = null;
+  
+    if (headers) {
+      try {
+        extraHeaders = JSON.parse(headers);
+      } catch (e) {
+        console.error('Failed to parse headers from localStorage:', e);
+        localStorage.removeItem('headers');
+      }
+    }
+  
     if (token) {
       return request.clone({
         setHeaders: extraHeaders ? { 'X-auth-token': token, ...extraHeaders } : { 'X-auth-token': token }
       });
     }
-
+  
     return request;
   }
+  
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     if (!this.onlineStatus) {
