@@ -196,6 +196,11 @@
     min-width: 6.563rem;
     word-break: break-word;
   }
+
+  .criteria{
+    margin-left:-5% ;
+  }
+
   .column:nth-child(odd){
     text-align: start;
   }
