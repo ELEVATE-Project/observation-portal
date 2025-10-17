@@ -190,12 +190,15 @@
   }
   
   .column {
+    font-weight: bold;
     flex: 1 1 150px;
     padding: 0.5rem;
     min-width: 6.563rem;
     word-break: break-word;
   }
-  
+  .column:nth-child(odd){
+    text-align: start;
+  }
   .expansion-panel{
     margin: 0.625rem;
   }
@@ -282,7 +285,17 @@
     color: white;
 }
 
+.level {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color:var(--color-grey)
+}
 
+@media (max-width: 768px) {
+  .column:nth-child(odd) {
+    text-align: center;
+  }
+}
   @media (max-width: 47.9375rem) {
     .chip {
       display: block;
