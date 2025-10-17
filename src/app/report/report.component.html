@@ -130,7 +130,7 @@
 
           <div class="question-card" *ngIf="domainView">
             <mat-accordion>
-              <mat-card-title style="font-size: 1rem;">{{"DESCRIPTIVE_VIEW" | translate}}</mat-card-title>
+              <mat-card-title style="font-size: 1rem;font-weight: bold;">{{"DESCRIPTIVE_VIEW" | translate}}</mat-card-title>
               <mat-expansion-panel class="expansion-panel" *ngFor="let view of domainView?.domains; let i = index">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
@@ -152,8 +152,8 @@
                       <p>{{ criteria?.name }}</p>
                     </div>
                     <div class="column" *ngFor="let level of criteria?.levelsWithScores">
-                      <p>{{ level?.level }}</p>
-                      <p>{{ level?.score }}</p>
+                      <p>{{"LEVEL"| translate}}<span class="level">{{ level?.level }}</span></p>
+                      <p>{{"SCORE" | translate}}<span class="level">{{ level?.score }}</span></p>
                     </div>
                   </div>
                 </div>

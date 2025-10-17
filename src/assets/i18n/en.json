@@ -94,5 +94,7 @@
     "BACK": "Back",
     "UPDATE_PROFILE": "Update Profile",
     "FORM_EXPIRED":"Form expired",
-    "SESSION_EXPIRED":"Session expired, please log in again."
+    "SESSION_EXPIRED":"Session expired, please log in again.",
+    "LEVEL":"Level:",
+    "SCORE":"Score:"
 }
