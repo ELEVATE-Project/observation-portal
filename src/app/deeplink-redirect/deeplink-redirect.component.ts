@@ -46,14 +46,12 @@ export class DeeplinkRedirectComponent implements OnInit {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
-         window.history.replaceState({}, '','/home');
-          setTimeout(()=>{
-            this.router.navigate([
-              'entityList',
-              stateData?.solution?._id,
-              stateData?.solution?.name
-            ], { replaceUrl:true });
-          },100)
+          let data:any=[
+            'entityList',
+            stateData?.solution?._id,
+            stateData?.solution?.name
+          ];
+          this.redirect(data,true)
         }
     }
   };
@@ -70,19 +68,6 @@ export class DeeplinkRedirectComponent implements OnInit {
     }
   }
 
- async navigateToEntities(data){
-    window.history.replaceState({}, '','/home');
-    setTimeout(()=>{
-      this.router.navigate([
-        'entityList',
-        data?.solutionId,
-        data?.name,
-        data?.type,
-        data?.programId
-      ]
-      );
-    },100)
-  }
   fetchTemplateDetails(data){
     this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
       this.toastService.showToast(err?.error?.message, 'Close');
@@ -108,29 +93,16 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async redirectObservation(resp) {
-    window.history.replaceState({}, '','/home');
-    // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
-    if (resp?.solution?.isRubricDriven) {
-      setTimeout(()=>{
-        this.router.navigate([
-          'domain',
-          resp?.solution?._id,
-          resp?.assessment?.name,
-          resp?.solution?._id
-        ],{
-          state:{data:{...resp,solutionType:this.type,isSurvey:false}}
-        });
-      },100)
-    } else {
-      setTimeout(()=>{
-        this.router.navigate(['questionnaire'], {
-          queryParams:{
-            solutionType:this.type,
-          },
-          state:{ data:{...resp,isSurvey:false}}
-        });
-      },100)
-    }
+    resp?.solution?.isRubricDriven ? 
+    this.redirectVivaStateData(
+      ['domain',resp?.solution?._id,resp?.assessment?.name,resp?.solution?._id],
+      '',
+      {data:{...resp,solutionType:this.type,isSurvey:false}}
+    ) : this.redirectVivaStateData(
+      ['questionnaire'],
+      {solutionType:this.type},
+      { data:{...resp,isSurvey:false}}
+    )
   }
 
   async handleObservationLink(){
@@ -144,7 +116,9 @@ export class DeeplinkRedirectComponent implements OnInit {
       })
     ).subscribe((res:any)=>{
       if(res && res?.result){
-        res?.result.observationId ? this.navigateToEntities(res?.result) : this.fetchTemplateDetails(res?.result);  
+        res?.result.observationId ? 
+        this.redirect(['entityList',res?.result?.solutionId,res?.result?.name,res?.result?.type,res?.result?.programId])
+        : this.fetchTemplateDetails(res?.result);  
       }
     })
   }
@@ -164,40 +138,43 @@ export class DeeplinkRedirectComponent implements OnInit {
         )
           .subscribe(async (res: any) => {
             if (res.result === false) {
-              await this.router.navigate(['surveyStatus'],{
-                queryParams:{
-                  status:'expired'
-                },
-                replaceUrl: true
-              })
+              await this.redirect(['surveyStatus'],{status:'expired'},true)
               return;
             }
             if (res.result.status && res.result.status === 'completed') {
-              await this.router.navigate(['surveyStatus'],{
-                queryParams:{
-                  status:res?.result?.status
-                },
-                replaceUrl: true
-              })
+              await this.redirect(['surveyStatus'],{status:res?.result?.status},true)
               return;
             }
             this.navigateToSurvey(res?.result);
           })
-  }
-
+  } 
   navigateToSurvey(data:any){
+      this.redirectVivaStateData(
+        ['questionnaire'],
+        { index: 0, submissionId:data.assessment?.submissionId,solutionId:data.solution?._id,solutionType:this.type},
+        {data:{...data,isSurvey:true}}
+      )
+}
+
+  async redirect(route, queryParams?: any,replace: boolean = false ){
     window.history.replaceState({}, '','/home');
     setTimeout(()=>{
-      this.router.navigate(['questionnaire'], {
-        queryParams:{
-          index: 0, 
-          submissionId:data?.assessment?.submissionId,
-          solutionId:data?.solution?._id,
-          solutionType:this.type
-        },
-        state:{data:{...data,isSurvey:true},
-      }
-      });
+      this.router.navigate(route,{
+        queryParams:queryParams,
+        replaceUrl:replace
+      })
+    },100)
+  }
+
+  async redirectVivaStateData(route,queryParams,stateData){
+    window.history.replaceState({},'','/home');
+    setTimeout(()=>{
+      this.router.navigate(route,
+        {
+          queryParams:queryParams,
+          state:stateData
+        }
+      )
     },100)
   }
 
