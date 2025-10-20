@@ -46,12 +46,14 @@ export class DeeplinkRedirectComponent implements OnInit {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
-          window.history.replaceState({}, '','/home');
-          this.router.navigate([
-            'entityList',
-            stateData?.solution?._id,
-            stateData?.solution?.name
-          ], { replaceUrl:true });
+         await window.history.replaceState({}, '','/home');
+          setTimeout(()=>{
+            this.router.navigate([
+              'entityList',
+              stateData?.solution?._id,
+              stateData?.solution?.name
+            ], { replaceUrl:true });
+          },100)
         }
     }
   };
@@ -107,21 +109,25 @@ export class DeeplinkRedirectComponent implements OnInit {
     await window.history.replaceState({}, '','/home');
     // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
-      this.router.navigate([
-        'domain',
-        resp?.solution?._id,
-        resp?.assessment?.name,
-        resp?.solution?._id
-      ],{
-        state:{data:{...resp,solutionType:this.type,isSurvey:false}}
-      });
+      setTimeout(()=>{
+        this.router.navigate([
+          'domain',
+          resp?.solution?._id,
+          resp?.assessment?.name,
+          resp?.solution?._id
+        ],{
+          state:{data:{...resp,solutionType:this.type,isSurvey:false}}
+        });
+      },100)
     } else {
-      this.router.navigate(['questionnaire'], {
-        queryParams:{
-          solutionType:this.type,
-        },
-        state:{ data:{...resp,isSurvey:false}}
-      });
+      setTimeout(()=>{
+        this.router.navigate(['questionnaire'], {
+          queryParams:{
+            solutionType:this.type,
+          },
+          state:{ data:{...resp,isSurvey:false}}
+        });
+      },100)
     }
   }
 
@@ -179,16 +185,18 @@ export class DeeplinkRedirectComponent implements OnInit {
 
   async navigateToSurvey(data:any){
     await window.history.replaceState({}, '','/home');
-    this.router.navigate(['questionnaire'], {
-      queryParams:{
-        index: 0, 
-        submissionId:data?.assessment?.submissionId,
-        solutionId:data?.solution?._id,
-        solutionType:this.type
-      },
-      state:{data:{...data,isSurvey:true},
-    }
-    });
+    setTimeout(()=>{
+      this.router.navigate(['questionnaire'], {
+        queryParams:{
+          index: 0, 
+          submissionId:data?.assessment?.submissionId,
+          solutionId:data?.solution?._id,
+          solutionType:this.type
+        },
+        state:{data:{...data,isSurvey:true},
+      }
+      });
+    },100)
   }
 
 }
