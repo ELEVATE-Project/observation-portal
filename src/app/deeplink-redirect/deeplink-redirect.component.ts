@@ -46,7 +46,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
-         await window.history.replaceState({}, '','/home');
+         window.history.replaceState({}, '','/home');
           setTimeout(()=>{
             this.router.navigate([
               'entityList',
@@ -71,7 +71,8 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
  async navigateToEntities(data){
-    await window.history.replaceState({}, '','/home');
+    window.history.replaceState({}, '','/home');
+    setTimeout(()=>{
       this.router.navigate([
         'entityList',
         data?.solutionId,
@@ -80,6 +81,7 @@ export class DeeplinkRedirectComponent implements OnInit {
         data?.programId
       ]
       );
+    },100)
   }
   fetchTemplateDetails(data){
     this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
@@ -106,7 +108,7 @@ export class DeeplinkRedirectComponent implements OnInit {
   }
 
   async redirectObservation(resp) {
-    await window.history.replaceState({}, '','/home');
+    window.history.replaceState({}, '','/home');
     // await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
     if (resp?.solution?.isRubricDriven) {
       setTimeout(()=>{
@@ -183,8 +185,8 @@ export class DeeplinkRedirectComponent implements OnInit {
           })
   }
 
-  async navigateToSurvey(data:any){
-    await window.history.replaceState({}, '','/home');
+  navigateToSurvey(data:any){
+    window.history.replaceState({}, '','/home');
     setTimeout(()=>{
       this.router.navigate(['questionnaire'], {
         queryParams:{
