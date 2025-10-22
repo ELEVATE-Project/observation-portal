@@ -279,12 +279,14 @@ export class ObservationDomainComponent implements OnInit {
       if (event.data?.type === 'START') {
         const stateData = event.data.data;
           if(stateData?.solution?.isRubricDriven){
-            window.history.replaceState({}, '','/home');
+           window.history.replaceState({}, '','/home');
             // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
-            this.router.navigate([
+            setTimeout(()=>{
+              this.router.navigate([
             'entityList',
             stateData?.solution?._id,
             stateData?.solution?.name]);
+          },100)
           }
       }
     };
