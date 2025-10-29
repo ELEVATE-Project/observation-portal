@@ -15,7 +15,7 @@ export class EntityFilterPopupComponent {
     public dialogRef: MatDialogRef<EntityFilterPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data:any
   ){
-    this.selectedEntityName = data.entities[0].name ?? ''
+    this.selectedEntityName = data?.entities[0]?.name ?? ''
   }
 
   onEntityChange(selectedIndex: number): void {
