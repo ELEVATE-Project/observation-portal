@@ -11,7 +11,7 @@
           </span>
           <input
             [value]="headerConfig.searchTerm"
-            [placeholder]="headerConfig?.placeholder | translate:{ entity: headerConfig?.type }"
+            [placeholder]="headerConfig?.placeholder | translate:{ entity: headerConfig?.solutionType }"
             [(ngModel)]="searchAddEntityValue"
             (input)="searchInputChanged.next(searchAddEntityValue)"
             class="search-input"

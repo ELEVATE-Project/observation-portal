@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { catchError, finalize } from 'rxjs/operators';
 import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from '../services/toast.service';
@@ -14,6 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 import { offlineSaveObservation } from '../services/offlineSaveObservation.service';
 import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
+import { RouterService } from '../services/router.service';
+import { EntityFilterPopupComponent } from '../shared/entity-filter-popup/entity-filter-popup.component';
 
 @Component({
   selector: 'app-listing',
@@ -23,7 +25,6 @@ import { DownloadDataPayloadCreationService } from '../services/download-data-pa
 })
 export class ListingComponent implements OnInit {
   solutionList: any;
-  solutionId!: string;
   listType = 'observation';
   stateData: any;
   page: number = 1;
@@ -33,21 +34,15 @@ export class ListingComponent implements OnInit {
   selectedEntityType: any = '';
   loaded = false;
   entityId: any;
-  isEntityFilterModalOpen: boolean = false;
   allEntities: any;
   solutionListCount :any = 0;
-  selectedObservation:any;
-  isAnyEntitySelected: boolean = false;
   surveyPage:any;
-  description:any;
   headerConfig:any;
-  selectedEntityName:any;
   observationDownloaded: boolean = false;
-    isDataInDownloadsIndexDb: any = [];
-    submissionId: any;
+  isDataInDownloadsIndexDb: any = [];
+  submissionId: any;
 
   constructor(
-    public router: Router,
     private toaster: ToastService,
     private apiService: ApiService,
     private urlParamService:UrlParamsService,
@@ -56,9 +51,10 @@ export class ListingComponent implements OnInit {
     private datePipe: DatePipe,
     private utils:UtilsService,
     private downloadService: DownloadService,
-        private dialog: MatDialog,
-        private offlineData:offlineSaveObservation,
-        private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+    private dialog: MatDialog,
+    private offlineData:offlineSaveObservation,
+    private downloadDataPayloadCreationService:DownloadDataPayloadCreationService,
+    private navigate:RouterService
 
   ) {
   }
@@ -82,13 +78,11 @@ export class ListingComponent implements OnInit {
   }
 
   setHeader(){
-    const solutionType = this.urlParamService.solutionType;
-    let config = listingConfig[solutionType]
+    let config = listingConfig[this.urlParamService.solutionType]
     this.headerConfig = {
       ...config,
       searchTerm:'',
       showSearch:config.title === 'Observation Reports',
-      type:config.solutionType,
       placeholder:'SEARCH_PLACEHOLDER'
     }
   }
@@ -103,23 +97,10 @@ export class ListingComponent implements OnInit {
     if(!this.apiService?.profileData){
       await this.utils.getProfileDetails()
     }
-    let urlPath:any = this.headerConfig?.showSearch ? urlConfig[this.listType].reportListing : urlConfig[this.listType].listing
-    let queryParams;
-    switch (this.headerConfig?.title){
-      case 'Survey':
-      case 'Survey Reports':
-        queryParams =`?type=${this.headerConfig?.solutionType}&page=${this.page}&limit=${this.limit}&search=${this.headerConfig.searchTerm}&surveyReportPage=${this.headerConfig?.title === 'Survey Reports'}`
-        break;
-      case 'Observation Reports':
-        queryParams = `?page=${this.page}&limit=${this.limit}&entityType=${this.selectedEntityType}`
-        break;
-      case 'Observation':
-        queryParams = `?type=${this.headerConfig?.solutionType}&page=${this.page}&limit=${this.limit}&search=${this.headerConfig.searchTerm}`
-        break;
 
-      default:
-          console.warn('Unknown Page:', this.headerConfig?.title);
-    }
+    const { showSearch, solutionType, searchTerm, title } = this.headerConfig;
+    let urlPath:any = showSearch ? urlConfig[this.listType].reportListing : urlConfig[this.listType].listing
+    let queryParams=`?page=${this.page}&limit=${this.limit}`+ (showSearch?`&entityType=${this.selectedEntityType}` :`&type=${solutionType}&search=${searchTerm}${solutionType === 'survey' ? `&surveyReportPage=${title === 'Survey Reports'}` : ''}`);
     this.apiService.post(
       urlPath + queryParams,
       this.apiService?.profileData
@@ -162,104 +143,23 @@ export class ListingComponent implements OnInit {
   }
 
   navigateTo(data?: any) {
-    switch (this.headerConfig?.title){
-      case 'Observation':
-      case 'Observation Reports':
-        this.navigateObservation(data)
-        break ;
-
-      case 'Survey':
-        if(data.status === "expired"){
-            this.toaster.showToast('FORM_EXPIRED','danger')
-            break;
-        }
-        this.router.navigate(['/questionnaire'], {
-          queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, index: 0, submissionId:data?.submissionId,solutionId:data?.solutionId,solutionType:"survey"
-          }
-        });
-        break ;
-
-      case 'Survey Reports':
-        this.router.navigate(['surveyReports',
-          data?.submissionId
-        ])
-        break;
-
-      default:
-        console.warn('Unknown listType:', this.headerConfig);
-
-    }
-  }
-
-  navigateObservation(data:any){
-    if (!(this.headerConfig?.title === 'Observation')) {
-      if (data?.entities?.length > 1) {
-        this.allEntities = data?.entities;
-        this.selectedObservation = data
-        this.openFilter();
-      }
-      else if (data?.entities?.length == 1) {
-        this.router.navigate([
-          'reports',
-          data?.observationId,
-          data?.entities[0]?._id,
-          data?.entityType,
-          data?.allowMultipleAssessemts,
-          data?.isRubricDriven
-        ]);
-      } else {
-        this.toaster.showToast("NO_SOLUTION_MSG", 'Close');
-      }
-    } else {
-      this.router.navigate([
-        'entityList',
-        data.solutionId,
-        data.name,
-        data.entityType,
-        data?._id
-      ],
-      );
+    const { programId,description,solutionId,name,entityType,_id,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,surveyExpiry,status} = data
+    if(programId){
+      if(description) return this.navigate.naviagtion(['entityList',solutionId,name,entityType,_id])
+      entities?.length > 1 ? 
+      this.dialog.open(EntityFilterPopupComponent, { width: '400px', data:{...data,entities:data.entities.map((entity,index)=>({...entity,selected:index===0}))}}):
+      this.navigate.naviagtion(['reports',observationId,entities[0]?._id,entityType,allowMultipleAssessemts,isRubricDriven])
+    }else if(surveyExpiry){
+        if(status === 'expired ') return this.toaster.showToast('FORM_EXPIRED','danger')
+        this.navigate.naviagtion(['/questionnaire'],{observationId: observationId,entityId: entityId,submissionNumber:submissionNumber,submissionId:submissionId,solutionId:solutionId,solutionType:"survey"})
+    }else{
+        this.navigate.naviagtion(['surveyReports',submissionId])
     }
   }
 
   changeEntityType(selectedType: any) {
     this.selectedEntityType = selectedType;
     this.solutionList = this.initialSolutionData.filter(solution => solution?.entityType === selectedType);
-  }
-
-  openFilter() {
-    if (this.allEntities?.length > 0) {
-      this.allEntities = this.allEntities.map((entity, index) => ({
-        ...entity,
-        selected: index === 0
-      }));
-      this.selectedEntityName = this.allEntities[0].name;
-      this.isAnyEntitySelected = true;
-    }
-    this.isEntityFilterModalOpen = true;
-  }
-
-  closeFilter() {
-    this.isEntityFilterModalOpen = false;
-  }
-
-  applyFilter() {
-    let selectedEntity = this.allEntities.filter(question => question.selected);
-    this.router.navigate([
-      'reports',
-      this.selectedObservation?.observationId,
-      selectedEntity[0]?._id,
-      this.selectedObservation?.entityType,
-      false,
-      this.selectedObservation?.isRubricDriven
-    ]);
-  }
-
-  onEntityChange(selectedIndex: number): void {
-    this.allEntities.forEach((entity, index) => {
-      entity.selected = index === selectedIndex;
-    });
-    this.isAnyEntitySelected = true;
   }
 
   solutionExpiryStatus(element: any): void {

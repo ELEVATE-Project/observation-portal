@@ -1,7 +1,7 @@
 @if(loaded){
   <div class="content">
     <app-main-content [headerConfig]="headerConfig" (searchTermChange)="onSearchChange($event)"></app-main-content>
-    @if(solutionListCount !== 0){
+    @if(solutionListCount){
     <div class="observation-list">
       @if(headerConfig?.showSearch){
       <div class="select-filter">
@@ -63,30 +63,4 @@
   </div>
   }@else{
   <app-spinner></app-spinner>
-  }
-  
-  @if(isEntityFilterModalOpen){
-  <div class="modal">
-    <div class="modal-content">
-      <header class="d-flex align-items-center">
-        <h1 class="modal-title">{{'SELECT_ENTITY' | translate}}</h1>
-        <mat-icon class="close-btn" (click)="closeFilter()">close</mat-icon>
-      </header>
-      <div>
-        <ul>
-          <li *ngFor="let question of allEntities; let i = index">
-            <input type="radio" [(ngModel)]="selectedEntityName" class="modal-input" [id]="'question-' + i"
-              [value]="question.name" (change)="onEntityChange(i)">
-            <label [for]="'question-' + i">
-              {{ question.name }}
-            </label>
-          </li>
-        </ul>
-      </div>
-      <footer class="question-footer">
-        <button (click)="applyFilter()" class="apply-filter" [ngClass]="{'disabled-button': !isAnyEntitySelected}"
-          [disabled]="!isAnyEntitySelected">{{"SUBMIT" | translate}}</button>
-      </footer>
-    </div>
-  </div>
   }
