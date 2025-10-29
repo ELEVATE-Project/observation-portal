@@ -6,7 +6,7 @@ import { RouterService } from 'src/app/services/router.service';
   selector: 'app-entity-filter-popup',
   standalone: false,
   templateUrl: './entity-filter-popup.component.html',
-  styleUrl: './entity-filter-popup.component.css'
+  styleUrls:['./entity-filter-popup.component.css']
 })
 export class EntityFilterPopupComponent {
   selectedEntityName; 
@@ -15,7 +15,7 @@ export class EntityFilterPopupComponent {
     public dialogRef: MatDialogRef<EntityFilterPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data:any
   ){
-    this.selectedEntityName = data.entities[0].name
+    this.selectedEntityName = data.entities[0].name ?? ''
   }
 
   onEntityChange(selectedIndex: number): void {
