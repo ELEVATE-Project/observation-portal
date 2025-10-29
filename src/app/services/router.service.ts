@@ -9,7 +9,7 @@ export class RouterService {
 
   constructor(public router: Router) { }
 
-  naviagtion(route, queryParams?: any,replace: boolean = false){
+  navigation(route,queryParams?:any,replace:boolean = false){
     this.router.navigate(route,{queryParams:queryParams,replaceUrl:replace})
   }
 }

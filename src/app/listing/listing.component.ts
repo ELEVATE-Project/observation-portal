@@ -145,15 +145,15 @@ export class ListingComponent implements OnInit {
   navigateTo(data?: any) {
     const { programId,description,solutionId,name,entityType,_id,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,surveyExpiry,status} = data
     if(programId){
-      if(description) return this.navigate.naviagtion(['entityList',solutionId,name,entityType,_id])
+      if(description) return this.navigate.navigation(['entityList',solutionId,name,entityType,_id])
       entities?.length > 1 ? 
       this.dialog.open(EntityFilterPopupComponent, { width: '400px', data:{...data,entities:data.entities.map((entity,index)=>({...entity,selected:index===0}))}}):
-      this.navigate.naviagtion(['reports',observationId,entities[0]?._id,entityType,allowMultipleAssessemts,isRubricDriven])
+      this.navigate.navigation(['reports',observationId,entities[0]?._id,entityType,allowMultipleAssessemts,isRubricDriven])
     }else if(surveyExpiry){
-        if(status === 'expired ') return this.toaster.showToast('FORM_EXPIRED','danger')
-        this.navigate.naviagtion(['/questionnaire'],{observationId: observationId,entityId: entityId,submissionNumber:submissionNumber,submissionId:submissionId,solutionId:solutionId,solutionType:"survey"})
+        if(status === 'expired') return this.toaster.showToast('FORM_EXPIRED','danger')
+        this.navigate.navigation(['/questionnaire'],{observationId: observationId,entityId: entityId,submissionNumber:submissionNumber,submissionId:submissionId,solutionId:solutionId,solutionType:"survey"})
     }else{
-        this.navigate.naviagtion(['surveyReports',submissionId])
+        this.navigate.navigation(['surveyReports',submissionId])
     }
   }
 
