@@ -143,17 +143,35 @@ export class ListingComponent implements OnInit {
   }
 
   navigateTo(data?: any) {
-    const { programId,description,solutionId,name,entityType,_id,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,surveyExpiry,status} = data
-    if(programId){
-      if(description) return this.navigate.navigation(['entityList',solutionId,name,entityType,_id])
-      entities?.length > 1 ? 
-      this.dialog.open(EntityFilterPopupComponent, { width: '400px', data:{...data,entities:data.entities.map((entity,index)=>({...entity,selected:index===0}))}}):
-      this.navigate.navigation(['reports',observationId,entities[0]?._id,entityType,allowMultipleAssessemts,isRubricDriven])
-    }else if(surveyExpiry){
-        if(status === 'expired') return this.toaster.showToast('FORM_EXPIRED','danger')
-        this.navigate.navigation(['/questionnaire'],{observationId: observationId,entityId: entityId,submissionNumber:submissionNumber,submissionId:submissionId,solutionId:solutionId,solutionType:"survey"})
+    const { solutionId,name,entityType,_id,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,status} = data
+    if(this.headerConfig.solutionType === 'observation'){
+        if(this.headerConfig.title === 'Observation') return this.navigate.navigation(['entityList',solutionId,name,entityType,_id])
+        entities?.length > 1 ? 
+          this.dialog.open(EntityFilterPopupComponent, 
+            { 
+              width: '400px', 
+              data:{
+                ...data,
+                entities:data.entities.map((entity,index)=>({...entity,selected:index===0}))
+              }
+            }
+          ):
+        this.navigate.navigation(['reports',observationId,entities[0]?._id,entityType,allowMultipleAssessemts,isRubricDriven])
     }else{
-        this.navigate.navigation(['surveyReports',submissionId])
+      if(this.headerConfig.title === 'Survey Reports') return this.navigate.navigation(['surveyReports',submissionId])
+      if(status === 'expired') return this.toaster.showToast('FORM_EXPIRED','danger')
+      this.navigate.navigation(
+            ['/questionnaire'],
+            {
+              observationId: observationId,
+              entityId: entityId,
+              submissionNumber:submissionNumber,
+              submissionId:submissionId,
+              solutionId:solutionId,
+              solutionType:this.headerConfig.solutionType
+            }
+          )
+
     }
   }
 
