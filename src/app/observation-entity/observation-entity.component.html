@@ -1,12 +1,11 @@
-<ng-container *ngIf="loaded">
-  
+@if(loaded){
+
   <app-main-content [headerConfig]="headerConfig" (searchTermChange)="handleEntitySearchInput($event)"></app-main-content>
   
       <div class="add-btn-container">
         <button class="add-entity-btn" (click)="openAllEntityList()" [disabled]="!observationId" [ngClass]="{ 'disabled-button': !observationId }">{{ 'ADD_ENTITY' | translate:{ entity: entityToAdd } }}</button>
       </div>
     
-      <div class="d-flex flex-dc gap-4">
         <div class="observation-list">
           <div class="grid-container">
             <div class="grid-item" *ngFor="let entity of filteredEntitiesOne">
@@ -26,15 +25,14 @@
                 </mat-card-content>
               </mat-card>
               
-            </div>
           </div>
         </div>
       </div>
     @if(!filteredEntitiesOne?.length){
       <app-no-data></app-no-data>
     }
-  
-  </ng-container>
-  
-  <app-spinner *ngIf="!loaded"></app-spinner>
+}@else{
+  <app-spinner></app-spinner>
+}
+ 
   
