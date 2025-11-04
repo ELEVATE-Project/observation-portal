@@ -1,26 +1,41 @@
+import * as urlConfig from '../constants/url-config.json';
 
 export const listingConfig:any ={
     observation:{
       title:'Observation',
       solutionType:'observation',
       description:'OBSERVATION_LISTING_MESSAGE',
+      placeholder:'SEARCH_PLACEHOLDER',
+      searchTerm:'',
+      urlPath:urlConfig['observation'].listing+'observation'
     },
     survey :{
       title:'Survey',
       solutionType:'survey',
       description:'SURVEY_DESC',
+      placeholder:'SEARCH_PLACEHOLDER',
+      searchTerm:'',
+      urlPath:urlConfig['observation'].listing+'survey'
     },
     observationReports:{
       title:'Observation Reports',
       solutionType:'observation',
       description:'OBSERVATION_REPORTS_DESC',
+      placeholder:'SEARCH_PLACEHOLDER',
+      showSearch:true,
+      urlPath:urlConfig['observation'].reportListing
     },
     surveyReports:{
       title:'Survey Reports',
       solutionType:'survey',
       description:'SURVEY_DESC',
+      placeholder:'SEARCH_PLACEHOLDER',
+      searchTerm:'',
+      urlPath:urlConfig['observation'].listing+'survey'
     }
 }
+
+
 export const dialogConfirmationMap ={
   observeAgain:{
     title:'OBSERVE_AGIAN',

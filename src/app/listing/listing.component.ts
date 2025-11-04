@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute} from '@angular/router';
 import { catchError, finalize } from 'rxjs/operators';
-import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from '../services/toast.service';
 import { ApiService } from '../services/api.service';
 import { UrlParamsService } from '../services/urlParams.service';
@@ -25,7 +24,6 @@ import { EntityFilterPopupComponent } from '../shared/entity-filter-popup/entity
 })
 export class ListingComponent implements OnInit {
   solutionList: any;
-  listType = 'observation';
   stateData: any;
   page: number = 1;
   limit: number = 10;
@@ -35,7 +33,6 @@ export class ListingComponent implements OnInit {
   loaded = false;
   entityId: any;
   allEntities: any;
-  solutionListCount :any = 0;
   surveyPage:any;
   headerConfig:any;
   observationDownloaded: boolean = false;
@@ -61,7 +58,7 @@ export class ListingComponent implements OnInit {
  
   ngOnInit(): void {
     this.urlParamService.parseRouteParams(this.route)
-    this.setHeader()
+    this.headerConfig = listingConfig[this.urlParamService.solutionType]
     this.surveyPage = this.headerConfig?.title === 'Survey'
     this.loadInitialData();
   }
@@ -73,18 +70,7 @@ export class ListingComponent implements OnInit {
     }
     this.page = 1;
     this.solutionList = [];
-    this.solutionListCount = 0;
     this.getListData();
-  }
-
-  setHeader(){
-    let config = listingConfig[this.urlParamService.solutionType]
-    this.headerConfig = {
-      ...config,
-      searchTerm:'',
-      showSearch:config.title === 'Observation Reports',
-      placeholder:'SEARCH_PLACEHOLDER'
-    }
   }
 
   loadInitialData(): void {
@@ -99,10 +85,10 @@ export class ListingComponent implements OnInit {
     }
 
     const { showSearch, solutionType, searchTerm, title } = this.headerConfig;
-    let urlPath:any = showSearch ? urlConfig[this.listType].reportListing : urlConfig[this.listType].listing
-    let queryParams=`?page=${this.page}&limit=${this.limit}`+ (showSearch?`&entityType=${this.selectedEntityType}` :`&type=${solutionType}&search=${searchTerm}${solutionType === 'survey' ? `&surveyReportPage=${title === 'Survey Reports'}` : ''}`);
+    let queryParams=`&page=${this.page}&limit=${this.limit}`+ 
+    (showSearch?`&entityType=${this.selectedEntityType}` :`&search=${searchTerm}${solutionType === 'survey' ?`&surveyReportPage=${title === 'Survey Reports'}` : ''}`);
     this.apiService.post(
-      urlPath + queryParams,
+      this.headerConfig.urlPath + queryParams,
       this.apiService?.profileData
     ).pipe(
       finalize(() => this.loaded = true),
@@ -113,7 +99,6 @@ export class ListingComponent implements OnInit {
     )
       .subscribe((res: any) => {
         if (res?.status === 200) {
-          this.solutionListCount = res?.result?.count;
           this.headerConfig?.showSearch && (this.entityType = res?.result?.entityType);
           let list:any = res?.result?.data ;
           list.forEach((element: any) => {

@@ -1,7 +1,7 @@
 @if(loaded){
   <div class="content">
     <app-main-content [headerConfig]="headerConfig" (searchTermChange)="onSearchChange($event)"></app-main-content>
-    @if(solutionListCount){
+    @if(solutionList.length){
     <div class="observation-list">
       @if(headerConfig?.showSearch){
       <div class="select-filter">
