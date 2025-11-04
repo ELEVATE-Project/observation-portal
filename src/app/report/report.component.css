@@ -197,9 +197,28 @@
     word-break: break-word;
   }
 
-  .criteria{
-    margin-left:-5% ;
+  .levelswithScores {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 150px;
+    padding: 0.5rem;
+    min-width: 6.563rem;
   }
+
+
+.criteria {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.2rem 0;
+  width: 100%;
+}
+.criteria span.level {
+  min-width: 2rem;
+  font-weight: bold;
+}
 
   .column:nth-child(odd){
     text-align: start;
