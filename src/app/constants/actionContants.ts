@@ -7,7 +7,7 @@ export const listingConfig:any ={
       description:'OBSERVATION_LISTING_MESSAGE',
       placeholder:'SEARCH_PLACEHOLDER',
       searchTerm:'',
-      urlPath:urlConfig['observation'].listing+'observation'
+      urlPath:urlConfig['observation'].listing+'observation&search='
     },
     survey :{
       title:'Survey',
@@ -15,7 +15,8 @@ export const listingConfig:any ={
       description:'SURVEY_DESC',
       placeholder:'SEARCH_PLACEHOLDER',
       searchTerm:'',
-      urlPath:urlConfig['observation'].listing+'survey'
+      urlPath:urlConfig['observation'].listing+'survey&surveyReportPage=false&search=',
+      surveyPage:true,
     },
     observationReports:{
       title:'Observation Reports',
@@ -31,7 +32,7 @@ export const listingConfig:any ={
       description:'SURVEY_DESC',
       placeholder:'SEARCH_PLACEHOLDER',
       searchTerm:'',
-      urlPath:urlConfig['observation'].listing+'survey'
+      urlPath:urlConfig['observation'].listing+'survey&surveyReportPage=true&search='
     }
 }
 

@@ -27,14 +27,14 @@
             <mat-card-content>
               <div class="card-header">
                 <h2 class="observation-name"><b>{{ solution?.name }}</b></h2>
-                @if(surveyPage){
+                @if(headerConfig.surveyPage){
                   <span [ngClass]="solution?.tagClass" class="label">{{ solution?.statusLabel }}</span>
                 }
                 @else{
                   <span [ngClass]="solution?.tagClass" class="label" *ngIf="solution?.statusLabel == 'Not Started'">{{ solution?.statusLabel }}</span>
                 }
               </div>
-              @if(surveyPage){
+              @if(headerConfig.surveyPage){
                 <div class="buttons">
                   <p>{{solution?.surveyExpiry}}</p>
                   <div class="download-wrapper">

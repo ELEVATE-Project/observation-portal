@@ -9,7 +9,7 @@
     },
     "observation":{
         "listing":"/survey/v1/solutions/targetedSolutions?type=",
-        "reportListing":"/survey/v1/observationSubmissions/solutionList?",
+        "reportListing":"/survey/v1/observationSubmissions/solutionList?entityType=",
         "details":"/survey/v1/observations/assessment/",
         "getSelectedEntities":"/survey/v1/observations/entities?solutionId=",
         "targetedEntity": "/survey/v1/observations/targetedEntity/",
