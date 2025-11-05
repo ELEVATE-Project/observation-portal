@@ -31,9 +31,7 @@ export class ListingComponent implements OnInit {
   initialSolutionData: any = [];
   selectedEntityType: any = '';
   loaded = false;
-  entityId: any;
   allEntities: any;
-  surveyPage:any;
   headerConfig:any;
   observationDownloaded: boolean = false;
   isDataInDownloadsIndexDb: any = [];
@@ -59,7 +57,6 @@ export class ListingComponent implements OnInit {
   ngOnInit(): void {
     this.urlParamService.parseRouteParams(this.route)
     this.headerConfig = listingConfig[this.urlParamService.solutionType]
-    this.surveyPage = this.headerConfig?.title === 'Survey'
     this.loadInitialData();
   }
 
@@ -84,9 +81,7 @@ export class ListingComponent implements OnInit {
       await this.utils.getProfileDetails()
     }
 
-    const { showSearch, solutionType, searchTerm, title } = this.headerConfig;
-    let queryParams=`&page=${this.page}&limit=${this.limit}`+ 
-    (showSearch?`&entityType=${this.selectedEntityType}` :`&search=${searchTerm}${solutionType === 'survey' ?`&surveyReportPage=${title === 'Survey Reports'}` : ''}`);
+    let queryParams=(this.headerConfig.showSearch?`${this.selectedEntityType}` :`${this.headerConfig.searchTerm}`)+`&page=${this.page}&limit=${this.limit}`
     this.apiService.post(
       this.headerConfig.urlPath + queryParams,
       this.apiService?.profileData
@@ -105,7 +100,7 @@ export class ListingComponent implements OnInit {
             element.status = new Date().setHours(0, 0, 0, 0) > new Date(element.endDate).setHours(0, 0, 0, 0) ? 'expired': element.status;
             element.endDate = element.endDate ? new Date(element.endDate).toDateString() : '';
             Object.assign(element, statusMappings[element.status] ?? { tagClass: '', statusLabel: '' });
-            if(this.surveyPage){
+            if(this.headerConfig.surveyPage){
               const diffDays = element.endDate ? this.getDateDiff(element.endDate) : 0;
               element.daysUntilExpiry = Math.max(diffDays, 0);
               element.isExpiringSoon = diffDays > 0 && diffDays <= 2 ? true : false;
