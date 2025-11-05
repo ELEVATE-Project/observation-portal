@@ -112,12 +112,10 @@ mat-chip {
   padding: 4px 10px;
   border-radius: 16px;
   background-color: whitesmoke !important;
-  color: var(--color-dark) !important;
 }
 
 mat-chip.multiselect-chip {
-  background-color: var(--color-primary) !important;
-  color: white !important;
+  color: var(--color-primary) !important;
 }
 
 .matrix-container {
