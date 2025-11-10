@@ -24,18 +24,15 @@ import { EntityFilterPopupComponent } from '../shared/entity-filter-popup/entity
 })
 export class ListingComponent implements OnInit {
   solutionList: any;
-  stateData: any;
   page: number = 1;
   limit: number = 10;
   entityType: any;
   initialSolutionData: any = [];
   selectedEntityType: any = '';
   loaded = false;
-  allEntities: any;
   headerConfig:any;
   observationDownloaded: boolean = false;
   isDataInDownloadsIndexDb: any = [];
-  submissionId: any;
 
   constructor(
     private toaster: ToastService,
@@ -104,7 +101,7 @@ export class ListingComponent implements OnInit {
               const diffDays = element.endDate ? this.getDateDiff(element.endDate) : 0;
               element.daysUntilExpiry = Math.max(diffDays, 0);
               element.isExpiringSoon = diffDays > 0 && diffDays <= 2 ? true : false;
-              this.solutionExpiryStatus(element);
+              element.surveyExpiry = this.solutionExpiryStatus(element);
             }
           });
           this.solutionList = [...this.solutionList, ...list];
@@ -124,8 +121,8 @@ export class ListingComponent implements OnInit {
 
   navigateTo(data?: any) {
     const { solutionId,name,entityType,_id,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,status} = data
-    if(this.headerConfig.solutionType === 'observation'){
-        if(this.headerConfig.title === 'Observation') return this.navigate.navigation(['entityList',solutionId,name,entityType,_id])
+    if(this.headerConfig.isObservation){
+        if(this.headerConfig.observation) return this.navigate.navigation(['entityList',solutionId,name,entityType,_id])
         entities?.length > 1 ? 
           this.dialog.open(EntityFilterPopupComponent, 
             { 
@@ -138,7 +135,7 @@ export class ListingComponent implements OnInit {
           ):
         this.navigate.navigation(['reports',observationId,entities[0]?._id,entityType,allowMultipleAssessemts,isRubricDriven])
     }else{
-      if(this.headerConfig.title === 'Survey Reports') return this.navigate.navigation(['surveyReports',submissionId])
+      if(this.headerConfig.surveyReports) return this.navigate.navigation(['surveyReports',submissionId])
       if(status === 'expired') return this.toaster.showToast('FORM_EXPIRED','danger')
       this.navigate.navigation(
             ['/questionnaire'],
@@ -160,18 +157,16 @@ export class ListingComponent implements OnInit {
     this.solutionList = this.initialSolutionData.filter(solution => solution?.entityType === selectedType);
   }
 
-  solutionExpiryStatus(element: any): void {
+  solutionExpiryStatus(element: any) {
     const format = (date: any) => this.datePipe.transform(date, 'mediumDate');
     const t = this.translate.instant.bind(this.translate);
-    element.surveyExpiry = element.status === 'expired' ? `${t('EXPIRED_ON')} ${format(element.endDate)}` 
-        : element.endDate && element.isExpiringSoon
-        ? `${t('EXPIRED_IN')} ${element.daysUntilExpiry} days`
-        : element.completedDate
-        ? `${t('COMPLETED_ON')} ${format(element.completedDate)}`
-        : element.endDate
-        ? `${t('VALID_TILL')} ${format(element.endDate)}`
-        : '';
+    if (element.status === 'expired') return `${t('EXPIRED_ON')} ${format(element.endDate)}`;
+    if (element.endDate && element.isExpiringSoon) return `${t('EXPIRED_IN')} ${element.daysUntilExpiry} days`;
+    if (element.completedDate) return `${t('COMPLETED_ON')} ${format(element.completedDate)}`;
+    if (element.endDate) return `${t('VALID_TILL')} ${format(element.endDate)}`
+    return ''
   }
+
   getDateDiff(endDateStr: string): number {
     const endDate = new Date(endDateStr);
     const today = new Date();
