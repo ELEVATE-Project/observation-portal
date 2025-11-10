@@ -114,8 +114,8 @@ mat-chip {
   background-color: var(--color-primary) !important;
 }
 
-::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__text-label {
-  color: #fff !important;
+.mat-mdc-standard-chip {
+  --mdc-chip-label-text-color: #fff !important;
 }
 
 .matrix-container {
