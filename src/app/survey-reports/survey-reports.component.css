@@ -111,11 +111,11 @@ mat-chip {
   font-size: 0.875rem;
   padding: 4px 10px;
   border-radius: 16px;
-  background-color: whitesmoke !important;
+  background-color: var(--color-primary) !important;
 }
 
-mat-chip.multiselect-chip {
-  color: var(--color-primary) !important;
+.mat-mdc-standard-chip {
+  --mdc-chip-label-text-color: #fff !important;
 }
 
 .matrix-container {
