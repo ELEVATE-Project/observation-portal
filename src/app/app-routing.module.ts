@@ -19,19 +19,19 @@ import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [ 
   { path: APP_ROUTES.LISTING, component: ListingComponent },
-  { path: APP_ROUTES.ENTITY_LIST, component: ObservationEntityComponent },
-  { path: APP_ROUTES.ENTITY_LIST_NO_TYPE, component: ObservationEntityComponent },
-  { path: APP_ROUTES.DETAILS, component: ObservationDetailsComponent },
-  { path: APP_ROUTES.DOMAIN, component: ObservationDomainComponent },
-  { path: APP_ROUTES.QUESTIONNAIRE, component: QuestionnaireComponent },
-  { path: APP_ROUTES.REPORTS, component: ReportComponent },
-  { path: APP_ROUTES.Observation_Led_Imp, component: ObservationLedImpComponent },
-  { path: APP_ROUTES.OBSERVATION_AS_TASK,component:ObservationAsTaskComponent},
-  { path: APP_ROUTES.VERIFYLINK,component:DeeplinkRedirectComponent},
-  { path:APP_ROUTES.SURVEYREPORTS,component:SurveyReportsComponent},
-  { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent},
-  { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent},
-  { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent},
+  { path: APP_ROUTES.ENTITY_LIST, component: ObservationEntityComponent,data: { title: 'Observation Entity' } },
+  { path: APP_ROUTES.ENTITY_LIST_NO_TYPE, component: ObservationEntityComponent,data: { title: 'Observation Entity' } },
+  { path: APP_ROUTES.DETAILS, component: ObservationDetailsComponent,data: { title: 'Observation Details' } },
+  { path: APP_ROUTES.DOMAIN, component: ObservationDomainComponent,data: { title: 'Observation Domain' } },
+  { path: APP_ROUTES.QUESTIONNAIRE, component: QuestionnaireComponent,data: { title: 'Questionnaire' } },
+  { path: APP_ROUTES.REPORTS, component: ReportComponent,data: { title: 'Observation Reports' } },
+  { path: APP_ROUTES.Observation_Led_Imp, component: ObservationLedImpComponent,data: { title: 'Observation LedImprovements' } },
+  { path: APP_ROUTES.OBSERVATION_AS_TASK,component:ObservationAsTaskComponent,data: { title: 'Observation As Task' }},
+  { path: APP_ROUTES.VERIFYLINK,component:DeeplinkRedirectComponent,data: { title: 'DeepLink Redirect' }},
+  { path:APP_ROUTES.SURVEYREPORTS,component:SurveyReportsComponent,data: { title: 'Survey Reports' }},
+  { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent,data: { title: 'Downloads' }},
+  { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent,data: { title: 'Suvery Expired' }},
+  { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent,data: { title: 'View Evidences' }},
   { path: '**',component:NotFoundComponent,canActivate:[navigateGuard]}
 ];
 
