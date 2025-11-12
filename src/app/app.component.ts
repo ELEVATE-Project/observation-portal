@@ -28,6 +28,6 @@ export class AppComponent {
       });
   }
   goBack(): void {
-    window.history.go(-1);
+    this.location.back()
   }
 }
