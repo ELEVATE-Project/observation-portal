@@ -9,6 +9,7 @@ export const listingConfig:any ={
       searchTerm:'',
       urlPath:urlConfig['observation'].listing+'observation&search=',
       isObservation:true,
+      observation:true
     },
     survey :{
       title:'Survey',
