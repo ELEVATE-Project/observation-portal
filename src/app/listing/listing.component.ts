@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 import { offlineSaveObservation } from '../services/offlineSaveObservation.service';
 import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-listing',
@@ -58,13 +59,19 @@ export class ListingComponent implements OnInit {
     private downloadService: DownloadService,
         private dialog: MatDialog,
         private offlineData:offlineSaveObservation,
-        private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+        private downloadDataPayloadCreationService:DownloadDataPayloadCreationService,
+        private titleService: Title
 
   ) {
   }
  
   ngOnInit(): void {
     this.urlParamService.parseRouteParams(this.route)
+    this.route.paramMap.subscribe(params => {
+      const type = params.get('solutionType');
+      const fullTitle = `${type.charAt(0).toUpperCase() + type.slice(1)} Listing`;
+      this.titleService.setTitle(fullTitle);
+    });
     this.setHeader()
     this.surveyPage = this.headerConfig?.title === 'Survey'
     this.loadInitialData();
