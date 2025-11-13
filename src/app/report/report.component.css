@@ -220,9 +220,6 @@
   font-weight: bold;
 }
 
-  .column:nth-child(odd){
-    text-align: start;
-  }
   .expansion-panel{
     margin: 0.625rem;
   }

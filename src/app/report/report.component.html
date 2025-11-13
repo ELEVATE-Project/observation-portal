@@ -150,9 +150,9 @@
                     <div class="column">
                       <p>{{ criteria?.name }}</p>
                     </div>
-                    <div class="levelswithScores" *ngFor="let level of criteria?.levelsWithScores">
-                      <p class="criteria">{{"LEVEL"| translate}}<span class="level">{{ level?.level }}</span></p>
-                      <p class="criteria">{{"SCORE"| translate}}<span class="level">{{ level?.score }}</span></p>
+                    <div class="column" *ngFor="let level of criteria?.levelsWithScores">
+                      <p>{{ level?.level }}</p>
+                      <p>{{ level?.score }}</p>
                     </div>
                   </div>
                 </div>
