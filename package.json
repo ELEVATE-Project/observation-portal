@@ -29,7 +29,7 @@
     "jwt-decode": "^4.0.0",
     "network-service": "^0.0.1",
     "ngx-infinite-scroll": "^20.0.0",
-    "questionnaire-webcomponent": "^4.1.45",
+    "questionnaire-webcomponent": "^4.1.47",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
