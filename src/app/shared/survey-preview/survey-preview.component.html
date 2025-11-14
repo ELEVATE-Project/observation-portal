@@ -26,5 +26,11 @@
             [src]="objectURL" 
             class="preview-pdf">
     </iframe>
+
+    <audio *ngIf="objectType === 'audio'" 
+           [src]="objectURL" 
+           controls 
+           class="preview-media">
+    </audio>
   </div>
 </div>

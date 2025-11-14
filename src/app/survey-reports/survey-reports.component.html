@@ -1,9 +1,19 @@
 <div class="report-container">
     <div class="header-container">
         <h1 class="survey-title">{{surveyName}}</h1>
-        <button class="filter-button" (click)="openFilterDialog()">
+        <div class="button-container">
+          <button (click)="openFilterDialog()">
             <mat-icon>tune</mat-icon>
-        </button>
+          </button>
+          <button (click)="surveyReportPdf('download')">
+            <mat-icon>picture_as_pdf</mat-icon>
+            <span>{{"EXPORT_PDF"|translate}}</span>
+          </button>
+          <button (click)="surveyReportPdf('share')">
+            <mat-icon>share</mat-icon>
+            <span>{{'SHARE_PDF'| translate}}</span>
+          </button>
+        </div>
     </div>
 
     <hr class="custom-divider" />
@@ -36,17 +46,18 @@
     
             <div *ngSwitchCase="'multiselect'" class="response-chip">
               <mat-chip-list>
-                <mat-chip *ngFor="let answer of question.answers" 
-                         style="background-color: var(--color-primary); color: white;">
-                  {{ answer }}
-                </mat-chip>
+                <div *ngFor="let answer of question.answers">
+                  @if(answer){
+                    <mat-chip class="multiselect-chip">{{answer}}</mat-chip>
+                  }
+                </div>
               </mat-chip-list>
             </div>
     
             <div *ngSwitchCase="'matrix'" class="matrix-container">
               <div *ngFor="let key of objectKeys(question.instanceQuestions[0]); let k = index" class="matrix-row">
                 <div *ngIf="key !== 'instanceIdentifier'">
-                  <h2>{{question.instanceQuestions[0][key].questionNumber}}. {{ question.instanceQuestions[0][key].question }}</h2>
+                  <mat-card-title style="font-size: 1rem;">{{question.instanceQuestions[0][key].questionNumber}}. {{ question.instanceQuestions[0][key].question }}</mat-card-title>
                   
                   <div class="matrix-instances">
                     <mat-card *ngFor="let instance of question.instanceQuestions" class="instance-card">
@@ -89,4 +100,5 @@
           
       </mat-card>
 </div>
-</div>  
+</div>
+<app-spinner *ngIf="!loaded"></app-spinner>

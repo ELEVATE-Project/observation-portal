@@ -42,3 +42,11 @@ export const surveyStatusMap = {
     text:'SURVEY_COMPLETED_MSG'
   }
 }
+
+export const  statusMappings = {
+  'active': { tagClass: 'tag-not-started', statusLabel: 'Not Started' },
+  'draft': { tagClass: 'tag-in-progress', statusLabel: 'In Progress' },
+  'started': { tagClass: 'tag-in-progress', statusLabel: 'In Progress' },
+  'completed': { tagClass: 'tag-completed', statusLabel: 'Completed' },
+  'expired': { tagClass: 'tag-expired', statusLabel: 'Expired' }
+};

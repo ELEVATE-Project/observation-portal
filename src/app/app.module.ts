@@ -4,10 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {
-  MatNativeDateModule,
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
+  MatNativeDateModule
 } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ListingComponent } from './listing/listing.component';
@@ -62,6 +59,16 @@ import { ViewEvidencesComponent } from './shared/view-evidences/view-evidences.c
 import { GenericPopupComponent } from './shared/generic-popup/generic-popup.component';
 import { NoDataComponent } from './shared/no-data/no-data.component';
 import { MainContentComponent } from './shared/main-content/main-content.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { ShareLinkPopupComponent } from './shared/share-link-popup/share-link-popup.component';
+import { ShortUrlPipe } from './shared/pipes/short-url.pipe';
+import { ObservationFilterComponent } from './shared/observation-filter/observation-filter.component';
+import { DownloadButtonComponent } from './shared/download-button/download-button.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-popup.component';
+import { ProfileAlterPopupComponent } from './shared/profile-alter-popup/profile-alter-popup.component';
+import { CleanAnswersPipe } from './pipes/clean-answers.pipe';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -88,7 +95,15 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     ViewEvidencesComponent,
     GenericPopupComponent,
     NoDataComponent,
-    MainContentComponent
+    MainContentComponent,
+    ShareLinkPopupComponent,
+    ShortUrlPipe,
+    ObservationFilterComponent,
+    DownloadButtonComponent,
+    AddEntityPopupComponent,
+    ProfileAlterPopupComponent,
+    CleanAnswersPipe,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -118,13 +133,11 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     MatGridListModule,
     MatToolbarModule,
     MatTabsModule,
-    BrowserModule,
-    AppRoutingModule,
     MatMenuModule,
     MatSelectModule,
-    FormsModule,
     MatExpansionModule,
     MatChipsModule,
+    InfiniteScrollModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -132,6 +145,10 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: true,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     DatePipe,

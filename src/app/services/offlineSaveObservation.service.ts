@@ -14,9 +14,17 @@ export class offlineSaveObservation {
     private db: DbService
   ) {
   }
-  getFullObservationData(observationId, entityId, submissionId,submissionNumber): Promise<void> {
+  getFullQuestionerData(type: 'observation' | 'survey', observationId: string, entityId: string, submissionId: string,submissionNumber: string | number, solutionId: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.apiService.post(urlConfig.observation.details + `${observationId}` + `?entityId=${entityId}`+`&submissionNumber=${submissionNumber}`, this.apiService.profileData)
+      let apiUrl = '';
+
+    if (type === 'observation') {
+      apiUrl = urlConfig.observation.details + `${observationId}?entityId=${entityId}&submissionNumber=${submissionNumber}`
+    } else if (type === 'survey') {
+      apiUrl = urlConfig.survey.details + `${solutionId}`
+    }
+
+      this.apiService.post(apiUrl, this.apiService.profileData)
         .pipe(
           catchError((err: any) => {
             this.toaster.showToast(err?.error?.message, 'Close');
@@ -27,7 +35,7 @@ export class offlineSaveObservation {
         .subscribe(async (res: any) => {
           if (res?.result) {
             await this.setDataInIndexDb(res?.result, submissionId);
-            resolve();
+            resolve(res.result);
           } else {
             this.toaster.showToast(res?.message, 'danger');
             reject(res?.message);
@@ -51,7 +59,6 @@ export class offlineSaveObservation {
     let indexdbData = await this.db.getData(submissionId);
     let currentObservation = {
       data: indexdbData?.data
-
     };
     return currentObservation;
   }

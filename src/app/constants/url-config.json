@@ -19,7 +19,7 @@
         "update":"/survey/v1/observationSubmissions/update/",
         "create":"/survey/v1/observationSubmissions/create/",
         "project": "/project/v1/project/templates/details/",
-        "templateDetails":"/project/v1/solutions/details/",
+        "templateDetails":"/survey/v1/solutions/details/",
         "refreshTokenUrl":"/user/v1/account/generateToken",
         "observationVerifyLink":"/survey/v1/solutions/verifyLink/",
         "observationEvidences": "/ml/observations/mlreports/v1/listAllEvidences"

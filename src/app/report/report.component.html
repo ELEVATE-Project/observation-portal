@@ -8,16 +8,16 @@
      </div>
     <div class="report-container">
       <div class="select-wrapper">
-        <mat-form-field class="custom-select" *ngIf="isMultiple == 'true'">
+        <mat-form-field class="custom-select" *ngIf="filterData?.filter.type === 'dropdown'">
           <mat-label>{{"SELECT_SUBMISSION"|translate}}</mat-label>
           <mat-select (selectionChange)="onSelectionChange($event.value)">
-            <mat-option *ngFor="let item of filterData" [value]="item._id">
+            <mat-option *ngFor="let item of filterData?.filter?.data" [value]="item._id">
               {{ item.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-      <div class="buttons-left">
+      <div class="buttons-left" *ngIf="isData">
         <button [ngClass]="{'border-bottom-button': observationType === 'questions'}"
           (click)="toggleObservationType('questions')" class="switch-buttons">{{'QUESTIONS' | translate}}</button>
         <button [ngClass]="{'border-bottom-button': observationType === 'criteria'}"
@@ -28,7 +28,11 @@
       <div class="buttons-right" *ngIf="reportDetails?.length > 0;">
         <button (click)="openFilter()" class="apply-filter" *ngIf="!domainView">{{"FILTERS" | translate}}</button>
         <button class="apply-filter"
-          (click)="downloadPDF(submissionId, observationType === 'questions' ? false : true, true)">{{"EXPORT_PDF"|translate}}</button>
+          (click)="downloadPDF(submissionId, observationType === 'questions' ? false : true, true,'download')">{{"EXPORT_PDF"|translate}}</button>
+          <button class="apply-filter" 
+        (click)="downloadPDF(submissionId, observationType === 'questions' ? false : true, true,'share')">
+           {{'SHARE_PDF'| translate}}
+        </button>
       </div>
       
      <div *ngIf="reportDetails?.length > 0; else noData">
@@ -64,7 +68,7 @@
                   <label>{{ question?.answers }}</label>
                 </div>
                 <div *ngSwitchCase="'multiselect'">
-                  <span *ngFor="let answer of question?.answers" class="chip">{{ answer }}</span>
+                  <span *ngFor="let answer of question?.answers  | cleanAnswers" class="chip">{{ answer }}</span>
                 </div>
                 <div *ngSwitchCase="'number'">
                   <label>{{ question?.answers }}</label>
@@ -75,7 +79,7 @@
                  
                   <ng-container *ngFor="let key of objectKeys(question?.answers[0]); let k = index" style="margin-bottom: 20px;">
                   <div class="card-content" *ngIf="key !== 'instanceIdentifier'" style="width: 100%;">
-                    <h2 class="matrix-title">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</h2>
+                    <mat-card-title style="font-size: 1rem;">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</mat-card-title>
                    
                       <div class="col-12" *ngFor="let instance of question.answers" class="card-list-item" style="display: flex; flex: 1;">
                         <div class="card" style="width: 100%; height: auto;">
@@ -126,23 +130,26 @@
 
           <div class="question-card" *ngIf="domainView">
             <mat-accordion>
-              <h2 class="mb-2">{{"DESCRIPTIVE_VIEW" | translate}}</h2>
+              <mat-card-title style="font-size: 1rem;font-weight: bold;">{{"DESCRIPTIVE_VIEW" | translate}}</mat-card-title>
               <mat-expansion-panel class="expansion-panel" *ngFor="let view of domainView?.domains; let i = index">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    <h2 class="title-accordion">{{ view?.domainName}}</h2>
+                    <mat-card-title class="title-accordion">{{ view?.domainName}}</mat-card-title>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <div class="panel-content">
                   <div class="row">
-                    <div class="column"></div>
+                    <div class="column">
+                      <p>{{"CRITERIA" | translate}}</p>
+                    </div>
                     <div class="column" *ngFor="let heading of domainView?.heading">
                       <p>{{ heading }}</p>
                     </div>
                   </div>
-          
                   <div class="row" *ngFor="let criteria of view?.criterias">
-                    <div class="column">{{ criteria?.name }}</div>
+                    <div class="column">
+                      <p>{{ criteria?.name }}</p>
+                    </div>
                     <div class="column" *ngFor="let level of criteria?.levelsWithScores">
                       <p>{{ level?.level }}</p>
                       <p>{{ level?.score }}</p>
@@ -191,7 +198,7 @@
                     <label>{{ question?.answers }}</label>
                   </div>
                   <div *ngSwitchCase="'multiselect'">
-                    <span *ngFor="let answer of question?.answers" class="chip">{{ answer }}</span>
+                    <span *ngFor="let answer of question?.answers | cleanAnswers" class="chip">{{ answer }}</span>
                   </div>
                   <div *ngSwitchCase="'number'">
                     <label>{{ question?.answers }}</label>
@@ -202,7 +209,7 @@
                    
                     <ng-container *ngFor="let key of objectKeys(question?.answers[0]); let k = index" style="margin-bottom: 20px;">
                     <div class="card-content" *ngIf="key !== 'instanceIdentifier'" style="width: 100%;">
-                      <h2 class="matrix-title">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</h2>
+                      <mat-card-title style="font-size: 1rem;">{{qi + 1}}.{{ k + 1 }}. {{ question.answers[0][key].question }}</mat-card-title>
                      
                         <div class="col-12" *ngFor="let instance of question.answers" class="card-list-item" style="display: flex; flex: 1;">
                           <div class="card" style="width: 100%; height: auto;">
@@ -255,35 +262,13 @@
         {{"CLICK_HERE_TO_IMPROVE" | translate}}
       </button>
        </div>
-      <div *ngIf="isFilterModalOpen" class="modal">
-        <div class="modal-content">
-          <header class="d-flex align-items-center">
-            <h1 class="modal-title">{{'SELECT_QUESTIONS_FILTER'|translate}}</h1>
-            <mat-icon class="close-btn" (click)="closeFilter()">close</mat-icon>
-          </header>
-          <div>
-            <ul>
-              <li *ngFor="let question of allQuestions; let i = index">
-                <input type="checkbox" [(ngModel)]="question.selected" class="modal-input" [id]="'question-' + i">
-                <label [for]="'question-' + i">
-                  {{ observationType === 'questions' ? question?.question : question?.criteriaName }}
-                </label>
-              </li>
-            </ul>
-          </div>
-          <footer class="question-footer">
-            <button (click)="applyFilter()" class="apply-filter">{{"APPLY_FILTERS" | translate}}</button>
-          </footer>
-        </div>
-      </div>
-
     </div>
   </main>
 
 <ng-template #noData>
-@if(loaded){
+@if(isData){
   <p class="no-data-found">{{"NO_DATA_MSG" |translate}}</p>
-}  
+}
 </ng-template>
 
 <app-spinner *ngIf="!loaded"></app-spinner>
