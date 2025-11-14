@@ -223,7 +223,6 @@ export class ListingComponent implements OnInit {
         data.solutionId,
         data.name,
         data.entityType,
-        data?._id
       ],
       );
     }
