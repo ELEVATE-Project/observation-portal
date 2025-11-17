@@ -22,7 +22,6 @@ export class ObservationEntityComponent  {
   solutionId: any;
   entityToAdd: string;
   filteredEntitiesOne: any;
-  entity:any;
   entities = new FormControl();
   dialogRef: any;
   observationId: any;
@@ -43,7 +42,6 @@ export class ObservationEntityComponent  {
   async ngOnInit() {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
-    this.entity=this.urlParamsService?.entity;
     this.entityToAdd=this.urlParamsService?.entityType || "entity";
     this.setHeaderConfig();
     try {

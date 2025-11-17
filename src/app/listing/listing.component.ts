@@ -120,9 +120,9 @@ export class ListingComponent implements OnInit {
   }
 
   navigateTo(data?: any) {
-    const { solutionId,name,entityType,_id,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,status} = data
+    const { solutionId,name,entityType,observationId,entities,allowMultipleAssessemts,isRubricDriven,entityId,submissionNumber,submissionId,status} = data
     if(this.headerConfig.isObservation){
-        if(this.headerConfig.observation) return this.navigate.navigation(['entityList',solutionId,name,entityType,_id])
+        if(this.headerConfig.observation) return this.navigate.navigation(['entityList',solutionId,name,entityType])
         entities?.length > 1 ? 
           this.dialog.open(EntityFilterPopupComponent, 
             { 
