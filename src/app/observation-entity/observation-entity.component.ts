@@ -2,7 +2,7 @@ import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from '../services/toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, finalize } from 'rxjs';
@@ -10,6 +10,7 @@ import { UrlParamsService } from '../services/urlParams.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 import { AddEntityPopupComponent } from '../shared/add-entity-popup/add-entity-popup.component';
 import { UtilsService } from '../services/utils.service';
+import { RouterService } from '../services/router.service';
 @Component({
   selector: 'app-observation-entity',
   standalone: false,
@@ -21,8 +22,6 @@ export class ObservationEntityComponent  {
   solutionId: any;
   entityToAdd: string;
   filteredEntitiesOne: any;
-  entity:any;
-  addedEntities: string[] = [];
   entities = new FormControl();
   dialogRef: any;
   observationId: any;
@@ -33,17 +32,16 @@ export class ObservationEntityComponent  {
   constructor(
     private apiService: ApiService, 
     private toaster: ToastService, 
-    private router: Router, 
     private dialog: MatDialog,
     private urlParamsService:UrlParamsService,
     private route: ActivatedRoute,
     private utils:UtilsService,
+    private navigate:RouterService
   ) {}
 
   async ngOnInit() {
     this.urlParamsService.parseRouteParams(this.route);
     this.solutionId = this.urlParamsService?.solutionId;
-    this.entity=this.urlParamsService?.entity;
     this.entityToAdd=this.urlParamsService?.entityType || "entity";
     this.setHeaderConfig();
     try {
@@ -123,17 +121,7 @@ export class ObservationEntityComponent  {
     );
   }
   navigateToDetails(data) {
-    this.router.navigate([
-      'details',
-      this.observationId,
-      data?._id,
-      this.selectedEntities?.allowMultipleAssessemts
-    ],{
-      queryParams:{
-        'name':data?.name,
-        'submissionId': data?.submissionId,
-      }
-    });
+    this.navigate.navigation(['details',this.observationId,data?._id,this.selectedEntities?.allowMultipleAssessemts],{'name':data?.name,'submissionId': data?.submissionId})
   }
 
 
@@ -154,7 +142,6 @@ export class ObservationEntityComponent  {
           .subscribe((res: any) => {
             if (res.status == 200) {
               this.toaster.showToast(res.message, 'success', 5000);
-              this.addedEntities = [];
               this.getEntities();
             } else {
               this.toaster.showToast(res.message, 'Close');
@@ -173,7 +160,7 @@ export class ObservationEntityComponent  {
       placeholder:'SEARCH_ENTITY_PLACEHOLDER',
       searchTerm:'',
       showSearch:false,
-      type:this.entityToAdd
+      solutionType:this.entityToAdd
     }
   }
   

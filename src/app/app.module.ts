@@ -69,6 +69,7 @@ import { AddEntityPopupComponent } from './shared/add-entity-popup/add-entity-po
 import { ProfileAlterPopupComponent } from './shared/profile-alter-popup/profile-alter-popup.component';
 import { CleanAnswersPipe } from './pipes/clean-answers.pipe';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { EntityFilterPopupComponent } from './shared/entity-filter-popup/entity-filter-popup.component';
 
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -103,7 +104,8 @@ export function translateHttpLoaderFactory(httpClient: HttpClient) {
     AddEntityPopupComponent,
     ProfileAlterPopupComponent,
     CleanAnswersPipe,
-    NotFoundComponent
+    NotFoundComponent,
+    EntityFilterPopupComponent
   ],
   imports: [
     BrowserModule,
