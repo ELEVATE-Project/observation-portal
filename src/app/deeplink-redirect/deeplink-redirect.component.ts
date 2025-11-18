@@ -149,11 +149,11 @@ export class DeeplinkRedirectComponent implements OnInit {
           })
   } 
   navigateToSurvey(data:any){
-    this.redirectVivaStateData(
+     this.redirectVivaStateData(
         ['questionnaire'],
         { index: 0, submissionId:data.assessment?.submissionId,solutionId:data.solution?._id,solutionType:this.type},
         {data:{...data,isSurvey:true}}
-    )
+     )
 }
 
   async redirect(route, queryParams?: any,replace: boolean = false ){
