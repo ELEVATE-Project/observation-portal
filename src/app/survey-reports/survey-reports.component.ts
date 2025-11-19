@@ -64,11 +64,12 @@ export class SurveyReportsComponent implements OnInit {
   
   }
   surveyReportPdf(type:any){
+    this.loaded=false;
     if (!this.reportDetails?.length) return;
     let payload:any={
       filter:{questionId:this.reportDetails.map(element => element.order)}
     }
-    this.apiService.post(urlConfig.survey.reports+`${this.submissionId}&pdf=true`,payload)
+    this.apiService.post(urlConfig.survey.reports+`${this.submissionId}&pdf=true`,payload).pipe(finalize(()=>this.loaded = true))
     .subscribe(async (res:any) => { 
       if(type === 'download'){
         await this.openUrl(res?.message?.pdfLink);
