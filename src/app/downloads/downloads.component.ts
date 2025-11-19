@@ -1,9 +1,9 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { DownloadService } from '../services/download.service';
 import { DbDownloadService } from '../services/dbDownload.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
 
 @Component({
   selector: 'app-downloads',
@@ -13,58 +13,80 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class DownloadsComponent {
   loaded = false;
-  filters: any[] = [
+
+  filters = [
     { value: 'observation', label: 'OBSERVATION' },
     { value: 'survey', label: 'SURVEY' },
     { value: 'projects', label: 'PROJECTS' },
   ];
-  selectedIndex: number = 0;
-  @ViewChild('confirmDialogModel') confirmDialogModel: TemplateRef<any>;
-  dialogRef: any;
 
-constructor(
-  public router: Router,
-  private dbDownloadService: DbDownloadService,
-  private dialog: MatDialog,
-  private translate:TranslateService
-) {
-}
+  selectedIndex = 0;
 
-ngOnInit(): void {
-  this.loaded = true;
-  this.fetchDownloadedData("observation");
-}
+  downloadsData: Record<string, any[]> = {
+    observation: [],
+    survey: [],
+    projects: []
+  };
 
-onTabChange(index: number) {
-  const selectedTab = this.filters[index];
-}
+  constructor(
+    private router: Router,
+    private dbDownloadService: DbDownloadService,
+    private dialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
-isDataInDownloadsIndexDb:any;
-
-async fetchDownloadedData(type){
-  if(type == "observation"){
-    this.isDataInDownloadsIndexDb = await this.dbDownloadService.getAllDownloadsData();
+  async ngOnInit() {
+    this.loaded = true;
+    await this.fetchDownloadedData(this.filters[0].value);
   }
-}
 
-navigateTo(route){
-  this.router.navigateByUrl(route);
-}
-
-
-deleteData(key) {
-  const dialogRef = this.dialog.open(this.confirmDialogModel);
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result === 'delete') {
-      this.dbDownloadService.deleteData(key);
-  this.fetchDownloadedData("observation");
+  async onTabChange(index: number) {
+    const selectedTab = this.filters[index].value;
+    if (!this.downloadsData[selectedTab]?.length) {
+      await this.fetchDownloadedData(selectedTab);
     }
-  });
-}
+  }
 
-setLanguage() {
-  this.translate.setDefaultLang('en');
-  this.translate.use('en');
-}
+  async fetchDownloadedData(type: string) {
+    const results = await this.dbDownloadService.getAllDownloadsDatas(type) || [];
+    this.downloadsData[type] = results.map((item: any) => ({
+      key: item.key,
+      data: Array.isArray(item.data) ? item.data[0] : item.data
+    }));
+  }
+
+  navigateTo(route?: string, type?: string) {
+    if (!route) return;
+    const url = route.trim();
+  
+    if (type === 'projects') {
+      window.location.href = url;
+      return;
+    } else {
+      this.router.navigateByUrl(url);
+    }
+  }
+  
+
+  deleteData(key: string, type: string) {
+    const dialogRef = this.dialog.open(GenericPopupComponent, {
+      width: '400px',
+      data: {
+        title:'DELETE_CONTENT',
+        message: 'DELETE_CONTENT_DESCRIPTION',
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result === 'yes') {
+        await this.dbDownloadService.deleteData(key, type);
+        await this.fetchDownloadedData(type);
+      }
+    });
+  }
+
+  setLanguage() {
+    this.translate.setDefaultLang('en');
+    this.translate.use('en');
+  }
 }

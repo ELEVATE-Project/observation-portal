@@ -1,0 +1,16 @@
+<div class="dialog-container">
+    <div class="dialog-header">
+      <h2 class="dialog-title" mat-dialog-title>{{ data | shortUrl:25 }}</h2>
+      <button mat-icon-button class="close-button" aria-label="Close" (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  
+    <mat-dialog-actions class="dialog-actions">
+      <button mat-stroked-button class="btn secondary-btn" (click)="onCopy()">
+        <mat-icon style="margin-right: 8px;">content_copy</mat-icon>
+        {{ "COPY" | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+  

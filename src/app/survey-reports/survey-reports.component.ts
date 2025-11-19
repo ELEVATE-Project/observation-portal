@@ -6,6 +6,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyFilterComponent } from '../shared/survey-filter/survey-filter.component';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { UtilsService } from '../services/utils.service';
+import { ReportsService } from '../services/reports.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-survey-reports',
@@ -23,27 +25,31 @@ export class SurveyReportsComponent implements OnInit {
   surveyName!: string;
   objectKeys = Object.keys;
   submissionId: any;
-  solutionId:any
+  solutionId:any;
+  pdf:any=false;
+  loaded:any=false;
+
   constructor(
     private apiService: ApiService,
     private dialog: MatDialog,
     private router:ActivatedRoute, 
     private utils:UtilsService,
     public route: Router,
+    private reports:ReportsService
   ) {}
 
   ngOnInit() {
     this.router.params.subscribe(param => {
       this.submissionId = param['id'];
       this.solutionId=param['solutionId']
-      this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{
-        "survey": true,
-        "submissionId": this.submissionId,
-        "pdf": false
-      })
+      this.loaded=false;
+      this.apiService.post(urlConfig.survey.reports+`${this.submissionId}`,{}).pipe(finalize(()=>this.loaded = true))
       .subscribe((res:any) => { 
         this.surveyName = res.message.surveyName
-        this.allQuestions = res.message.report;
+        let reportSections:any [] = Array.isArray(res?.message?.report) ? res.message.report : [];
+        this.allQuestions = reportSections?.map((question:any) => {
+          return { ...question, selected: true };
+        });
         this.reportDetails = this.processSurveyData(this.allQuestions).map(item => {
           if (item?.evidences?.length) {
             return {
@@ -57,23 +63,46 @@ export class SurveyReportsComponent implements OnInit {
     })
   
   }
+  surveyReportPdf(type:any){
+    this.loaded=false;
+    if (!this.reportDetails?.length) return;
+    let payload:any={
+      filter:{questionId:this.reportDetails.map(element => element.order)}
+    }
+    this.apiService.post(urlConfig.survey.reports+`${this.submissionId}&pdf=true`,payload).pipe(finalize(()=>this.loaded = true))
+    .subscribe(async (res:any) => { 
+      if(type === 'download'){
+        await this.openUrl(res?.message?.pdfLink);
+        return;
+      }
+      await this.reports.shareReport(res?.message?.pdfLink,'survey')
+    });
+  }
 
   processSurveyData(data: any[]): any[] {
     const mapAnswersToLabels = (answers: any[], optionsAvailable: any[]) => {
-      return answers.map((answer: any) => {
+      return (answers || []).map((answer: any) => {
+      
         if (typeof answer === 'number') {
           return answer;
         }
-  
-        const trimmedAnswer = answer.trim();
-        if (trimmedAnswer === '') {
-          return 'No response is available'; 
+
+        if (!answer || (typeof answer === 'string' && answer.trim() === '')) {
+          return false;
         }
-  
-        const option = optionsAvailable?.find((opt: { value: any }) => opt.value === trimmedAnswer);
+    
+        if (typeof answer !== 'string') {
+          return answer;
+        }
+    
+        const trimmedAnswer = answer.trim();
+        const option = optionsAvailable?.find(
+          (opt: { value: any }) => opt.value === trimmedAnswer
+        );
         return option ? option.label : trimmedAnswer;
       });
     };
+    
   
     const processInstanceQuestions = (instance: any) => {
       const processedInstance = { ...instance };

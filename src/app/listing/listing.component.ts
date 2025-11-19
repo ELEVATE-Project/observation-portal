@@ -5,10 +5,16 @@ import * as urlConfig from '../constants/url-config.json';
 import { ToastService } from '../services/toast.service';
 import { ApiService } from '../services/api.service';
 import { UrlParamsService } from '../services/urlParams.service';
-import { listingConfig} from '../constants/actionContants';
+import { listingConfig, statusMappings} from '../constants/actionContants';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
 import { UtilsService } from '../services/utils.service';
+import { DownloadService } from '../services/download.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
+import { offlineSaveObservation } from '../services/offlineSaveObservation.service';
+import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-listing',
@@ -36,6 +42,10 @@ export class ListingComponent implements OnInit {
   surveyPage:any;
   description:any;
   headerConfig:any;
+  selectedEntityName:any;
+  observationDownloaded: boolean = false;
+    isDataInDownloadsIndexDb: any = [];
+    submissionId: any;
 
   constructor(
     public router: Router,
@@ -45,12 +55,23 @@ export class ListingComponent implements OnInit {
     private route:ActivatedRoute,
     private translate: TranslateService,
     private datePipe: DatePipe,
-    private utils:UtilsService
+    private utils:UtilsService,
+    private downloadService: DownloadService,
+        private dialog: MatDialog,
+        private offlineData:offlineSaveObservation,
+        private downloadDataPayloadCreationService:DownloadDataPayloadCreationService,
+        private titleService: Title
+
   ) {
   }
  
   ngOnInit(): void {
     this.urlParamService.parseRouteParams(this.route)
+    this.route.paramMap.subscribe(params => {
+      const type = params.get('solutionType');
+      const fullTitle = `${type.charAt(0).toUpperCase() + type.slice(1)} Listing`;
+      this.titleService.setTitle(fullTitle);
+    });
     this.setHeader()
     this.surveyPage = this.headerConfig?.title === 'Survey'
     this.loadInitialData();
@@ -64,7 +85,6 @@ export class ListingComponent implements OnInit {
     this.page = 1;
     this.solutionList = [];
     this.solutionListCount = 0;
-    this.loaded =false
     this.getListData();
   }
 
@@ -121,17 +141,21 @@ export class ListingComponent implements OnInit {
         if (res?.status === 200) {
           this.solutionListCount = res?.result?.count;
           this.headerConfig?.showSearch && (this.entityType = res?.result?.entityType);
-          this.solutionList = [...this.solutionList, ...res?.result?.data];
-          if(this.surveyPage){
-            this.solutionList.forEach((element: any) => {
-              element.endDate = this.formatDate(element.endDate);
-              this.checkAndUpdateExpiry(element);
-              this.assignStatusAndClasses(element);
-              this.calculateExpiryDetails(element);
+          let list:any = res?.result?.data ;
+          list.forEach((element: any) => {
+            element.status = new Date().setHours(0, 0, 0, 0) > new Date(element.endDate).setHours(0, 0, 0, 0) ? 'expired': element.status;
+            element.endDate = element.endDate ? new Date(element.endDate).toDateString() : '';
+            Object.assign(element, statusMappings[element.status] ?? { tagClass: '', statusLabel: '' });
+            if(this.surveyPage){
+              const diffDays = element.endDate ? this.getDateDiff(element.endDate) : 0;
+              element.daysUntilExpiry = Math.max(diffDays, 0);
+              element.isExpiringSoon = diffDays > 0 && diffDays <= 2 ? true : false;
               this.solutionExpiryStatus(element);
-            });
-          }
+            }
+          });
+          this.solutionList = [...this.solutionList, ...list];
           this.initialSolutionData = this.solutionList;
+          this.checkDataInDB()
         } else {
           this.toaster.showToast(res?.message, 'Close');
         }
@@ -152,6 +176,10 @@ export class ListingComponent implements OnInit {
         break ;
 
       case 'Survey':
+        if(data.status === "expired"){
+            this.toaster.showToast('FORM_EXPIRED','danger')
+            break;
+        }
         this.router.navigate(['/questionnaire'], {
           queryParams: {observationId: data?.observationId, entityId: data?.entityId, submissionNumber: data?.submissionNumber, index: 0, submissionId:data?.submissionId,solutionId:data?.solutionId,solutionType:"survey"
           }
@@ -183,7 +211,7 @@ export class ListingComponent implements OnInit {
           data?.observationId,
           data?.entities[0]?._id,
           data?.entityType,
-          false,
+          data?.allowMultipleAssessemts,
           data?.isRubricDriven
         ]);
       } else {
@@ -195,7 +223,6 @@ export class ListingComponent implements OnInit {
         data.solutionId,
         data.name,
         data.entityType,
-        data?._id
       ],
       );
     }
@@ -207,6 +234,14 @@ export class ListingComponent implements OnInit {
   }
 
   openFilter() {
+    if (this.allEntities?.length > 0) {
+      this.allEntities = this.allEntities.map((entity, index) => ({
+        ...entity,
+        selected: index === 0
+      }));
+      this.selectedEntityName = this.allEntities[0].name;
+      this.isAnyEntitySelected = true;
+    }
     this.isEntityFilterModalOpen = true;
   }
 
@@ -228,89 +263,83 @@ export class ListingComponent implements OnInit {
 
   onEntityChange(selectedIndex: number): void {
     this.allEntities.forEach((entity, index) => {
-      if (index !== selectedIndex) {
-        entity.selected = false;
-      }
+      entity.selected = index === selectedIndex;
     });
-    this.isAnyEntitySelected = this.allEntities.some(entity => entity.selected);
+    this.isAnyEntitySelected = true;
   }
 
   solutionExpiryStatus(element: any): void {
-    let message = '';
-    if (element?.status === 'expired') {
-      const formattedEndDate = this.datePipe.transform(element?.endDate, 'mediumDate');
-      message = `${this.translate.instant('EXPIRED_ON')} ${formattedEndDate}`;
-    } else if (element?.endDate && element.isExpiringSoon) {
-      message = `${this.translate.instant('EXPIRED_IN')} ${element.daysUntilExpiry} days`;
-    } else if (element?.completedDate) {
-      const formattedCompletedDate = this.datePipe.transform(element?.completedDate, 'mediumDate');
-      message = `${this.translate.instant('COMPLETED_ON')} ${formattedCompletedDate}`;
-    } else if (element?.endDate) {
-      const formattedEndDate = this.datePipe.transform(element?.endDate, 'mediumDate');
-      message = `${this.translate.instant('VALID_TILL')} ${formattedEndDate}`;
-    }
-    element.surveyExpiry = message;
+    const format = (date: any) => this.datePipe.transform(date, 'mediumDate');
+    const t = this.translate.instant.bind(this.translate);
+    element.surveyExpiry = element.status === 'expired' ? `${t('EXPIRED_ON')} ${format(element.endDate)}` 
+        : element.endDate && element.isExpiringSoon
+        ? `${t('EXPIRED_IN')} ${element.daysUntilExpiry} days`
+        : element.completedDate
+        ? `${t('COMPLETED_ON')} ${format(element.completedDate)}`
+        : element.endDate
+        ? `${t('VALID_TILL')} ${format(element.endDate)}`
+        : '';
   }
-  
-  
-  formatDate(endDate: string): string {
-    if (!endDate) {
-      return '';
-    }
-    const date = new Date(endDate);
-    const localTime = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    return localTime.toDateString();
-  }
-  checkAndUpdateExpiry(element: any) {
-    const expiryDate = new Date(element.endDate);
-    const currentDate = new Date();
+  getDateDiff(endDateStr: string): number {
+    const endDate = new Date(endDateStr);
+    const today = new Date();
+    endDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    return Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  };
 
-    expiryDate.setHours(0, 0, 0, 0);
-    currentDate.setHours(0, 0, 0, 0);
 
-    if (currentDate > expiryDate) {
-      element.status = 'expired';
+  downloadPop(solution: any, index: number) {
+    if(solution?.downloaded) return
+    const dialogRef = this.dialog.open(GenericPopupComponent, {
+      width: '400px',
+      data: {
+        message: 'DOWNLOAD_MSG',
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        this.downloadSurvey(solution, index);
+      }
+    });
+  }
+  
+
+  async downloadSurvey(solution: any, index: number) {
+    try {
+      const newItem = this.downloadDataPayloadCreationService.buildSurveyItem(solution);
+  
+      const check = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
+      if (!check?.data) {
+        await this.offlineData.getFullQuestionerData(
+          "survey", "", "", solution?.submissionId, 0, solution?.solutionId
+        );
+      }
+  
+      await this.downloadService.downloadData("survey", newItem);
+  
+      this.solutionList[index].downloaded = true;
+    } catch (e) {
+      this.solutionList[index].downloaded = false;
     }
   }
-  calculateExpiryDetails(element: any) {
-    if (element.endDate) {
-      element.isExpiringSoon = this.isExpiringSoon(element.endDate);
-      element.daysUntilExpiry = this.getDaysUntilExpiry(element.endDate);
-    } else {
-      element.isExpiringSoon = false;
-      element.daysUntilExpiry = 0;
-    }
-  }
-  isExpiringSoon(endDate: string | Date): boolean {
-    const currentDate = new Date();
-    const expiryDate = new Date(endDate);
   
-    const diffTime = expiryDate.getTime() - currentDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  async checkDataInDB() {
+    const storedSurveys = await this.downloadService.checkAndFetchDownloadsDatas("survey") || [];
+    this.solutionList = this.solutionList.map((solution: any) => {
+      const isDownloaded = storedSurveys.some((item: any) => {
+        const entries = Array.isArray(item?.data) ? item.data : [item?.data].filter(Boolean);
+        return entries.some(
+          (d: any) =>
+            d?.metaData?.solutionId === solution?._id &&
+            d?.metaData?.submissionId === solution?.submissionId
+        );
+      });
   
-    return diffDays <= 2 && diffDays > 0;
+      return { ...solution, downloaded: isDownloaded };
+    });
   }
 
-  getDaysUntilExpiry(endDate: string | Date): number {
-    const currentDate = new Date();
-    const expiryDate = new Date(endDate);
-  
-    const diffTime = expiryDate.getTime() - currentDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-    return Math.max(diffDays, 0);
-  }
-  assignStatusAndClasses(element: any) {
-    const statusMappings = {
-      'active': { tagClass: 'tag-not-started', statusLabel: 'Not Started' },
-      'draft': { tagClass: 'tag-in-progress', statusLabel: 'In Progress' },
-      'started': { tagClass: 'tag-in-progress', statusLabel: 'In Progress' },
-      'completed': { tagClass: 'tag-completed', statusLabel: 'Completed' },
-      'expired': { tagClass: 'tag-expired', statusLabel: 'Expired' }
-    };
-  
-    const statusInfo = (statusMappings as any)[element.status] || { tagClass: 'tag-not-started', statusLabel: 'Not Started' };
-    element.tagClass = statusInfo.tagClass;
-    element.statusLabel = statusInfo.statusLabel;
-  }
 }

@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ToastService } from './toast.service';
-
 @Injectable({
   providedIn: 'root'
 })
 export class DbDownloadService {
   private observationDbName = 'downloads'
-  private observationDbVersion = 1
-  private observationStoreName = 'observation'
+  private observationDbVersion = 3
   private db!: IDBDatabase
   private observationDbInitialized: Promise<void>;
+  private ensureStorePromises = new Map<string, Promise<void>>();
 
   constructor(
     private toaster: ToastService,
@@ -23,10 +22,20 @@ export class DbDownloadService {
   
       request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains(this.observationStoreName)) {
-          db.createObjectStore(this.observationStoreName, { keyPath: 'key' });
-        }
+      
+        const storeNames = [
+          "observation",  
+          "survey",      
+          "projects"     
+        ];
+      
+        storeNames.forEach(storeName => {
+          if (!db.objectStoreNames.contains(storeName)) {
+            db.createObjectStore(storeName, { keyPath: 'key' });
+          }
+        });
       };
+      
   
       request.onsuccess = (event: Event) => {
         this.db = (event.target as IDBOpenDBRequest).result;
@@ -40,22 +49,62 @@ export class DbDownloadService {
     });
   }
 
-  async addDownloadsData(data: any) {
+
+  private ensureStore(storeName: string): Promise<void> {
+    if (this.ensureStorePromises.has(storeName)) {
+      return this.ensureStorePromises.get(storeName)!;
+    }
+  
+    if (!this.db.objectStoreNames.contains(storeName)) {
+      const version = this.db.version + 1;
+      this.db.close();
+      const request = indexedDB.open(this.observationDbName, version);
+  
+      request.onupgradeneeded = (event: any) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName, { keyPath: 'key' });
+        }
+      };
+  
+      const p = new Promise<void>((resolve, reject) => {
+        request.onsuccess = (event: any) => {
+          this.db = event.target.result;
+          this.ensureStorePromises.delete(storeName);
+          resolve();
+        };
+        request.onerror = (event: any) => {
+          this.ensureStorePromises.delete(storeName);
+          reject(event.target.error);
+        };
+      });
+  
+      this.ensureStorePromises.set(storeName, p);
+      return p;
+    }
+  
+    return Promise.resolve();
+  }
+  
+
+  async addDownloadsData(data: any, storeName:any) {
     await this.observationDbInitialized;
-    const transaction = this.db.transaction([this.observationStoreName], 'readwrite');
-    const store = transaction.objectStore(this.observationStoreName);
+    await this.ensureStore(storeName);
+    const transaction = this.db.transaction([storeName], 'readwrite');
+    const store = transaction.objectStore(storeName);
     store.add(data);
   }
 
-  async getDownloadsData(key: any, dbType?:any): Promise<any> {
+  async getDownloadsDataByKeyId(key: any, storeName:any): Promise<any> {
     await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
   
     return new Promise((resolve, reject) => {
       try {
         
-        let transaction = this.db.transaction([this.observationStoreName], 'readonly');
-        let store = transaction.objectStore(this.observationStoreName);
+        let transaction = this.db.transaction([storeName], 'readonly');
+        let store = transaction.objectStore(storeName);
        
         const request = store.get(key);
   
@@ -73,16 +122,16 @@ export class DbDownloadService {
     });
   }
 
-
-  async getAllDownloadsData(): Promise<any> {
+  async getAllDownloadsDatas(storeName:any): Promise<any> {
     await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
   
     return new Promise((resolve, reject) => {
       try {
         
-        let transaction = this.db.transaction([this.observationStoreName], 'readonly');
-        let store = transaction.objectStore(this.observationStoreName);
+        let transaction = this.db.transaction([storeName], 'readonly');
+        let store = transaction.objectStore(storeName);
        
         const request = store.getAll();
   
@@ -100,31 +149,22 @@ export class DbDownloadService {
     });
   }
   
+  async updateData(data: any, storeName: string) {
+    await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
-  updateData(data: any) {
-    const transaction = this.db.transaction([this.observationStoreName], 'readwrite');
-    const store = transaction.objectStore(this.observationStoreName);
-    const request = store.put(data);
-    request.onsuccess = (event) => {};
-    request.onerror = (event) => {
-      console.error('Error updating Data: ');
-    };
-    return
+    const transaction = this.db.transaction([storeName], 'readwrite');
+    transaction.objectStore(storeName).put(data);
   }
 
-  deleteData(key: any) {
-    const transaction = this.db.transaction([this.observationStoreName], 'readwrite');
-    const store = transaction.objectStore(this.observationStoreName);
-    const request = store.delete(key);
+  async deleteData(key: any, storeName: string) {
+    await this.observationDbInitialized;
+    await this.ensureStore(storeName);
 
-    request.onsuccess = (event) => {
-      this.toaster.showToast("Content deleted from device")
-    };
+    const transaction = this.db.transaction([storeName], 'readwrite');
+    const request = transaction.objectStore(storeName).delete(key);
 
-    request.onerror = (event) => {
-      console.error('Error deleting item: ',);
-    };
+    request.onsuccess = () => this.toaster.showToast("Content deleted from device",'success');
+    request.onerror = () => console.error('Error deleting item');
   }
-
-
 }

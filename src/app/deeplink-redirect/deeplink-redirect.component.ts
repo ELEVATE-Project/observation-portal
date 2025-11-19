@@ -7,18 +7,17 @@ import { NetworkServiceService } from 'network-service';
 import { Location } from '@angular/common';
 import { catchError } from 'rxjs/operators';
 import { UtilsService } from '../services/utils.service';
-
+import { EMPTY } from 'rxjs';
 @Component({
   selector: 'app-deeplink-redirect',
   standalone: false,
   templateUrl: './deeplink-redirect.component.html',
   styleUrl: './deeplink-redirect.component.css'
 })
-export class DeeplinkRedirectComponent {
+export class DeeplinkRedirectComponent implements OnInit {
   type:any;
   linkId:any;
   isOnline:any;
-
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
@@ -33,7 +32,7 @@ export class DeeplinkRedirectComponent {
     this.network.isOnline$.subscribe(status => this.isOnline = status);
     window.addEventListener('message', this.handleMessage);
     this.route.paramMap.subscribe((param:any)=>{
-      this.type = param.get("type")
+      this.type = param.get("type").replace(/^create-/, '');
       this.linkId = param.get("id")
       if(!this.isOnline){
         this.toastService.showToast('NETWORK_OFFLINE','danger')
@@ -47,13 +46,12 @@ export class DeeplinkRedirectComponent {
     if (event.data?.type === 'START') {
       const stateData = event.data.data;
         if(stateData?.isATargetedSolution){
-        this.router.navigate([
-          'details',
-          stateData?.assessment?.name,
-          stateData?.programId,
-          stateData?.solution?._id,
-          false
-        ]);
+          let data:any=[
+            'entityList',
+            stateData?.solution?._id,
+            stateData?.solution?.name
+          ];
+          this.redirect(data,true)
         }
     }
   };
@@ -70,23 +68,10 @@ export class DeeplinkRedirectComponent {
     }
   }
 
-  navigateToEntities(data){
-    setTimeout(() => {
-      this.router.navigate([
-        'entityList',
-        data?.solutionId,
-        data?.name,
-        data?.type,
-        data?.programId
-      ],{ replaceUrl: true }
-      );
-    }
-    , 100);
-  }
   fetchTemplateDetails(data){
     this.apiService.post(urlConfig.observation.templateDetails+ `${data.solutionId}`,this.apiService.profileData).pipe(catchError((err: any) => {
       this.toastService.showToast(err?.error?.message, 'Close');
-      throw Error(err);
+      return EMPTY;
     })
   ).subscribe((res:any) => {
       if (res?.result) {
@@ -108,98 +93,89 @@ export class DeeplinkRedirectComponent {
   }
 
   async redirectObservation(resp) {
-    await this.router.navigate([`/listing/${this.type}`],{replaceUrl:true});
-    if (resp?.solution?.isRubricDriven) {
-      this.router.navigate([
-        'domain',
-        resp?.solution?._id,
-        resp?.assessment?.name,
-        resp?.solution?._id
-      ],{
-        state:{data:{...resp,solutionType:this.type,isSurvey:false}}
-      });
-    } else {
-      this.router.navigate(['questionnaire'], {
-        queryParams:{
-          solutionType:this.type,
-        },
-        state:{ data:{...resp,isSurvey:false}}
-      });
-    }
+    resp?.solution?.isRubricDriven ? 
+    this.redirectVivaStateData(
+      ['domain',resp?.solution?._id,resp?.assessment?.name,resp?.solution?._id],
+      '',
+      {data:{...resp,solutionType:this.type,isSurvey:false}}
+    ) : this.redirectVivaStateData(
+      ['questionnaire'],
+      {solutionType:this.type},
+      { data:{...resp,isSurvey:false}}
+    )
   }
 
   async handleObservationLink(){
-    if(!this.apiService.profileData){
-      await this.router.navigate([`/listing/${this.type}`]);
-      return
-    }
     this.apiService.post(urlConfig.observation.observationVerifyLink+this.linkId+"?createProject=false",this.apiService.profileData).pipe(
       catchError((err: any) => {
-        this.toastService.showToast(err?.error?.message, 'Close');
-        throw Error(err);
+        this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+        setTimeout(()=>{
+          this.utils.navigateToHomePage();
+        },2000)
+        return EMPTY;
       })
     ).subscribe((res:any)=>{
       if(res && res?.result){
-        res?.result.observationId ? this.navigateToEntities(res?.result) : this.fetchTemplateDetails(res?.result);  
-      }else{
-        this.location.back()
+        res?.result.observationId ? 
+        this.redirect(['entityList',res?.result?.solutionId,res?.result?.name,res?.result?.type])
+        : this.fetchTemplateDetails(res?.result);  
       }
-    },(err:any)=>{
-      this.toastService.showToast('MSG_INVALID_LINK',"danger")
-      this.router.navigate([`/listing/${this.type}`]);
     })
   }
 
   async handleSurveyLink() {
-    if(!this.apiService.profileData){
-      await this.router.navigate([`/listing/${this.type}`]);
-      return
-    }
      this.apiService.post(
         urlConfig.survey.surveyVerifyLink+this.linkId,
           this.apiService?.profileData
         ).pipe(
           catchError((err: any) => {
-            this.toastService.showToast(err?.error?.message, 'Close');
-            throw Error(err);
+            this.toastService.showToast(err?.error?.message ?? 'MSG_INVALID_LINK', 'danger');
+            setTimeout(()=>{
+              this.utils.navigateToHomePage();
+            },2000)
+            return EMPTY;
           })
         )
           .subscribe(async (res: any) => {
             if (res.result === false) {
-              await this.router.navigate(['surveyStatus'],{
-                queryParams:{
-                  status:'expired'
-                }
-              })
+              await this.redirect(['surveyStatus'],{status:'expired'},true)
               return;
             }
             if (res.result.status && res.result.status === 'completed') {
-              await this.router.navigate(['surveyStatus'],{
-                queryParams:{
-                  status:res?.result?.status
-                }
-              })
+              await this.redirect(['surveyStatus'],{status:res?.result?.status},true)
               return;
             }
             this.navigateToSurvey(res?.result);
-          },(err:any)=>{
-            this.toastService.showToast('MSG_INVALID_LINK',"danger")
-            this.router.navigate([`/listing/${this.type}`]);
           })
+  } 
+  navigateToSurvey(data:any){
+    this.redirectVivaStateData(
+        ['questionnaire'],
+        { index: 0, submissionId:data.assessment?.submissionId,solutionId:data.solution?._id,solutionType:this.type},
+        {data:{...data,isSurvey:true}}
+    )
+}
+
+  async redirect(route, queryParams?: any,replace: boolean = false ){
+    window.history.replaceState({}, '','/home');
+    setTimeout(()=>{
+      this.router.navigate(route,{
+        queryParams:queryParams,
+        replaceUrl:replace
+      })
+    },300)
   }
 
-  async navigateToSurvey(data:any){
-    this.router.navigate(['questionnaire'], {
-      queryParams:{
-        index: 0, 
-        submissionId:data?.assessment?.submissionId,
-        solutionId:data?.solution?._id,
-        solutionType:this.type
-      },
-      state:{data:{...data,isSurvey:true},
-    },
-    replaceUrl:true
-    });
+  async redirectVivaStateData(route,queryParams,stateData){
+    window.history.replaceState({},'','/home');
+    setTimeout(()=>{
+      this.router.navigate(route,
+        {
+          queryParams:queryParams,
+          state:stateData
+        }
+      )
+    },300)
   }
 
 }
