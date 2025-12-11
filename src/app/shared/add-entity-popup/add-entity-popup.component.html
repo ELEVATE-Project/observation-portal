@@ -1,0 +1,59 @@
+<div class="dialog-container">
+    <div class="dialog-header">
+        <h2 class="dialog-title" mat-dialog-title> {{ 'ADD_ENTITY' | translate:{ entity: entityToAdd } }}</h2>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="srch">
+        <div class="srch-bar">
+            <span class="icon">
+              <i class="material-icons">search</i>
+            </span>
+            <input
+            [(ngModel)]="searchAddEntityValue"
+            (input)="searchInputChanged.next(searchAddEntityValue)"
+            [placeholder]="'SEARCH_ENTITY_PLACEHOLDER' | translate: { entity: entityToAdd }"
+            class="search-input"
+          />
+          <button aria-label="Clear" *ngIf="searchAddEntityValue" class="clear-btn" (click)="getSearchEntities()">
+              <i class="material-icons">close</i>
+          </button>
+      </div>
+    </div>
+    
+    <mat-dialog-content class="dialog-content">
+        @if(loaded){
+          <app-spinner></app-spinner>
+        }@else {
+            @if(filteredEntities?.length){
+              <mat-selection-list
+                  [multiple]="true"
+                  (selectionChange)="onSelectionChange($event)">
+                      <mat-list-option
+                          *ngFor="let entity of filteredEntities"
+                          [value]="entity?._id"
+                          [selected]="isEntitySelected(entity)"
+                          [disabled]="isEntityInFilteredEntitiesOne(entity)">
+                          {{ entity?.name }}
+                      </mat-list-option>
+              </mat-selection-list>
+          }@else{
+              <p class="no-data">{{ 'NO_DATA_FOUND' | translate: { entityType: entityToAdd  } }} </p>   
+          }
+        }
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+      <button mat-dialog-close class="btn secondary-btn">
+        {{'CANCEL' | translate}}
+      </button>
+      <button
+      color="primary" class="btn primary-btn"
+        [mat-dialog-close]="addedEntities"
+        [ngClass]="{ 'disabled-button': !addedEntities?.length }"
+        [disabled]="!addedEntities?.length">
+        {{'ADD' | translate}}
+      </button>
+    </mat-dialog-actions>
+</div>
+
+  

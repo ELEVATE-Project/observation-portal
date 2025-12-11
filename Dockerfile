@@ -9,15 +9,17 @@ RUN npm install --force
 
 COPY . .
 
-RUN ng build --configuration production 
+RUN ng build --configuration production
 
 FROM node:18 AS final
 
 WORKDIR /usr/src/app
 
-COPY --from=build /app/dist/observation-portal/browser /usr/src/app/dist
+COPY --from=build /app/dist/observation-portal/browser /usr/src/app/dist/observations
 
-COPY src/assets/env/env.js /usr/src/app/dist/assets/env/env.js
+COPY --from=build /app/dist/observation-portal/browser/index.html /usr/src/app/dist/index.html
+
+COPY src/assets/env/env.js /usr/src/app/dist/observations/assets/env/env.js
 
 RUN npm install --force -g serve
 

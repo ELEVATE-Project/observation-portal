@@ -24,7 +24,7 @@
           <div class="card-header">
             <h2 class="observation-name">{{ entity?.name }}</h2>
               <div class="card-right">
-                <button class="not-applicable primary-btn" *ngIf="(entity?.canBeNotAllowed && !entity.progressStatus) && !entity.notApplicable" (click)="notApplicable(entity,i); $event.stopPropagation()">{{'NOT_APPLICABLE' | translate}}</button>
+                <button class="not-applicable primary-btn" *ngIf="(entity?.canBeNotAllowed && !(entity.progressStatus && (entity.progressStatus === 'completed' || entity.progressStatus === 'inProgress') )) && !entity.notApplicable" (click)="notApplicable(entity,i); $event.stopPropagation()">{{'NOT_APPLICABLE' | translate}}</button>
                 <mat-icon>{{entity?.show ? 'expand_less' : 'expand_more' }}</mat-icon>
               </div>
           </div>
@@ -36,7 +36,7 @@
               <p>{{ 'STATUS' | translate }}:{{"NOT_APPLICABLE" | translate}}</p>
               }@else{
               <p>{{ 'STATUS' | translate }}:
-                {{ !entity?.progressStatus ? ('NOT_STARTED' | translate) : (entity?.progressStatus | translate)}}
+                {{ entity?.progressStatus ? (entity?.progressStatus | translate):(entity?.isSubmitted ? ('COMPLETED' | translate) : ('NOT_STARTED' | translate) ) }}
               </p>
               }
             </div>

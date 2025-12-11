@@ -11,6 +11,7 @@ import { DownloadService } from '../services/download.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DbService } from '../services/db.service';
 import { GenericPopupComponent } from '../shared/generic-popup/generic-popup.component';
+import { DownloadDataPayloadCreationService } from '../services/download-data-payload-creation.service';
 @Component({
   selector: 'app-observation-domain',
   standalone: false,
@@ -50,13 +51,16 @@ export class ObservationDomainComponent implements OnInit {
     private offlineData:offlineSaveObservation,
     private downloadService: DownloadService,
     private translate:TranslateService,
-     private db: DbService
+    private db: DbService,
+    private downloadDataPayloadCreationService:DownloadDataPayloadCreationService
+     
   ) {
     const passedData = this.router.getCurrentNavigation()?.extras.state;
     this.observationDetails = passedData;
   }
 
   async ngOnInit() {
+   setTimeout(async () => {
     window.addEventListener('message', this.handleMessage);
     this.stateData = history.state?.data;
     if(this.stateData){
@@ -67,11 +71,14 @@ export class ObservationDomainComponent implements OnInit {
     this.entityId = this.urlParamsService?.entityId;
     this.id = this.urlParamsService?.solutionId;
     this.submissionId = this.urlParamsService?.solutionId;
+
     this.isQuestionerDataInIndexDb = await this.offlineData.checkAndMapIndexDbDataToVariables(this.submissionId);
 
-      this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "downloadObservation");
+      this.isDataInDownloadsIndexDb = await this.downloadService.checkAndFetchDownloadsData(this.observationId, "observation");
+      
       if (this.isQuestionerDataInIndexDb?.data) {
         this.mapDataToVariables(this.isQuestionerDataInIndexDb?.data)
+          
       }
 
       if (Array.isArray(this.isDataInDownloadsIndexDb) && this.isDataInDownloadsIndexDb.length > 0) {
@@ -91,6 +98,7 @@ export class ObservationDomainComponent implements OnInit {
         this.observationDownloaded = false;
       }
     }
+   }, 500);
   }
 
   mapDataToVariables(observationData) {
@@ -128,15 +136,7 @@ export class ObservationDomainComponent implements OnInit {
     if(notApplicable){
       return;
     }
-    this.stateData ? this.router.navigate(['questionnaire'], {
-      queryParams:{
-        solutionType:this.stateData?.solutionType
-      },
-      state:{data:{
-        ...this.stateData,
-        isSurvey:false
-      }}
-    }):
+    this.stateData ? this.statenavigation(entityIndex) :
       this.router.navigate(['questionnaire'], {
         queryParams: { 
           observationId:this.observationId,  
@@ -151,6 +151,20 @@ export class ObservationDomainComponent implements OnInit {
           isSurvey:true
         }}
       });
+  }
+
+  async statenavigation(entityIndex:any){
+    // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+    this.router.navigate(['questionnaire'], {
+      queryParams:{
+        solutionType:this.stateData?.solutionType,
+        sectionIndex:entityIndex
+      },
+      state:{data:{
+        ...this.stateData,
+        isSurvey:false
+      }}
+    })
   }
 
   notApplicable(entity,selectedIndex) {
@@ -208,9 +222,46 @@ export class ObservationDomainComponent implements OnInit {
 
   }
   async downloadObservation() {
-    await this.downloadService.downloadObservation(this.observationId, this.entityId, this.observationDetails, this.submissionId)
+    const submissionId = this.observationDetails?._id ?? this.submissionId;
+  
+    let isDataInIndexDb: any = await this.offlineData.checkAndMapIndexDbDataToVariables(submissionId);
+  
+    if (!isDataInIndexDb?.data) {
+      const fetched = await this.offlineData.getFullQuestionerData(
+        "observation",
+        this.observationId,
+        this.entityId,
+        submissionId,
+        this.observationDetails?.submissionNumber,
+        ""
+      );
+  
+      // normalize to same structure
+      isDataInIndexDb =
+        fetched?.data ??
+        (await this.offlineData.checkAndMapIndexDbDataToVariables(submissionId))?.data;
+    } else {
+      isDataInIndexDb = isDataInIndexDb.data;
+    }
+  
+    const subTitle =
+      isDataInIndexDb?.assessment?.description ??
+      this.observationDetails?.description ??
+      "";
+  
+    const newItem = this.downloadDataPayloadCreationService.buildObservationItem(
+      this.observationDetails,
+      this.observationId,
+      this.entityId,
+      this.observationDetails?.allowMultipleAssessemts,
+      submissionId,
+      subTitle
+    );
+  
+    await this.downloadService.downloadData("observation", newItem);
     this.observationDownloaded = true;
   }
+  
   downloadPop() {
       const dialogRef = this.dialog.open(GenericPopupComponent,{
         width: '400px',
@@ -228,10 +279,14 @@ export class ObservationDomainComponent implements OnInit {
       if (event.data?.type === 'START') {
         const stateData = event.data.data;
           if(stateData?.solution?.isRubricDriven){
-            this.router.navigate([
+           window.history.replaceState({}, '','/home');
+            // await this.router.navigate(['/listing/observation'],{replaceUrl:true});
+            setTimeout(()=>{
+              this.router.navigate([
             'entityList',
             stateData?.solution?._id,
             stateData?.solution?.name]);
+          },100)
           }
       }
     };
