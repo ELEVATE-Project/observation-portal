@@ -31,7 +31,7 @@ const routes: Routes = [
   { path:APP_ROUTES.SURVEYREPORTS,component:SurveyReportsComponent,data: { title: 'Survey Reports' }},
   { path: APP_ROUTES.DOWNLOADS,component:DownloadsComponent,data: { title: 'Downloads' }},
   { path:APP_ROUTES.SURVEYEXPIRED,component:SurveyExpiredComponent,data: { title: 'Suvery Expired' }},
-  { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent,data: { title: 'View Evidences' }},
+  // { path:APP_ROUTES.VIEWALLEVIDENCES,component:ViewEvidencesComponent,data: { title: 'View Evidences' }},
   { path: '**',component:NotFoundComponent,canActivate:[navigateGuard]}
 ];
 
