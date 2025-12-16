@@ -182,9 +182,21 @@ export class SurveyReportsComponent implements OnInit {
 
   applyFilter() {
     this.updateFilteredQuestions();
-    const questionsToProcess = this.filteredQuestions.length > 0 ? this.filteredQuestions : this.allQuestions;
-    this.reportDetails = this.processSurveyData(questionsToProcess);
+  
+    const questionsToProcess =
+      this.filteredQuestions.length > 0 ? this.filteredQuestions : this.allQuestions;
+  
+    this.reportDetails = this.processSurveyData(questionsToProcess).map(item => {
+      if (item?.evidences?.length) {
+        return {
+          ...item,
+          evidences: this.utils.mapEvidences(item.evidences)
+        };
+      }
+      return item;
+    });
   }
+  
  
 openUrl(evidence: any) {
   window.open(evidence, '_blank');
