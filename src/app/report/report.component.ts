@@ -413,7 +413,7 @@ openDialog(evidence: any) {
       ? this.renderCharts(this.reportDetails, false)
       : this.renderCharts(this.reportDetails, true);
   
-    if (!reset && this.filteredQuestions.length === 0) {
+    if (!reset && !this.filteredQuestions.length) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }
   }

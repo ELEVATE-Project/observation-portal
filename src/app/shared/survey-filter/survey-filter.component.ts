@@ -19,7 +19,7 @@ export class SurveyFilterComponent {
 }
   applyFilter(){
     const selectedQuestions = this.allQuestions.filter((q: any) => q.selected);
-    if (selectedQuestions.length === 0) {
+    if (!selectedQuestions.length) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }else{
     this.dialogRef.close(selectedQuestions);
