@@ -405,10 +405,19 @@ openDialog(evidence: any) {
   applyFilter(reset: boolean = false) {
 
     const questionsToProcess = this.filteredQuestions().length > 0 ? this.filteredQuestions() : this.allQuestions();
-    this.reportDetails.set(this.processSurveyData(questionsToProcess));
+    this.reportDetails.set(this.processSurveyData(questionsToProcess).map(item => {
+      if (item?.evidences?.length) {
+        return {
+          ...item,
+          evidences: this.utils.mapEvidences(item.evidences)
+        };
+      }
+      return item;
+    }))
+    
     this.cdr.detectChanges();
     this.objectType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
-    if (!reset && this.filteredQuestions().length === 0) {
+    if (!reset && !this.filteredQuestions().length) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }
 
