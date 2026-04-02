@@ -35,7 +35,7 @@ Chart.register(PieController, BarController, ArcElement, BarElement, CategorySca
 export class ReportComponent implements OnInit {
   reportDetails = signal<any[]>([]);
   objectURL = signal<any>(null);
-  objectType = signal<string>('questions');
+  objectType = signal<string>('');
   isModalOpen = signal(false);
   filteredQuestions = signal<any[]>([]);
   allQuestions = signal<any[]>([]);
