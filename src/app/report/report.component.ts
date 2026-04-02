@@ -22,8 +22,8 @@ import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../services/utils.service';
 import { ReportsService } from '../services/reports.service';
-import { ObservationFilterComponent } from '../shared/observation-filter/observation-filter.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReportsFilterModal } from '../shared/reports-filter-modal/reports-filter-modal';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -376,11 +376,12 @@ openDialog(evidence: any) {
   }
 
   openFilter() {
-     const dialogRef = this.dialog.open(ObservationFilterComponent, {
+     const dialogRef = this.dialog.open(ReportsFilterModal, {
           width: '400px',
           data: { 
             allQuestions: this.allQuestions(),
-            observationType:this.observationType()
+            labelKey: this.observationType() === 'questions' ? 'question' : 'criteriaName',
+            title: 'SELECT_QUESTIONS_FILTER'
            }  
         });
       

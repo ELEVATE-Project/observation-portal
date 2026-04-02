@@ -3,12 +3,12 @@ import * as urlConfig from '../constants/url-config.json';
 import { ApiService } from '../services/api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SurveyFilterComponent } from '../shared/survey-filter/survey-filter.component';
 import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.component';
 import { UtilsService } from '../services/utils.service';
 import { ReportsService } from '../services/reports.service';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReportsFilterModal } from '../shared/reports-filter-modal/reports-filter-modal';
 
 @Component({
   selector: 'app-survey-reports',
@@ -175,9 +175,13 @@ export class SurveyReportsComponent implements OnInit {
   }
 
   openFilterDialog() {
-    const dialogRef = this.dialog.open(SurveyFilterComponent, {
+    const dialogRef = this.dialog.open(ReportsFilterModal, {
       width: '400px',
-      data: { allQuestions: this.allQuestions() }
+      data: { 
+        allQuestions: this.allQuestions(),
+        labelKey: 'question',
+        title: 'QUESTIONS'
+      }
     });
 
     dialogRef
