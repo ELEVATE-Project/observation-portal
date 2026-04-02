@@ -117,7 +117,7 @@ export class DeeplinkRedirectComponent implements OnInit {
     ).subscribe((res:any)=>{
       if(res && res?.result){
         res?.result.observationId ? 
-        this.redirect(['entityList',res?.result?.solutionId,res?.result?.name,res?.result?.type,res?.result?.programId])
+        this.redirect(['entityList',res?.result?.solutionId,res?.result?.name,res?.result?.type])
         : this.fetchTemplateDetails(res?.result);  
       }
     })
