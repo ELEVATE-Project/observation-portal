@@ -160,10 +160,7 @@ getProfileData(): Observable<{ normalizedProfile: any, profileInfo: string } | n
     }
 
     return {
-      normalizedProfile: this.profileService.normalizeProfileData({
-        ...rawProfileData,
-        role: normalizedRole
-      }),
+      normalizedProfile: this.profileService.normalizeProfileData(rawProfileData),
       profileInfo: this.profileService.buildProfileInfo(rawProfileData)
     };
   };
