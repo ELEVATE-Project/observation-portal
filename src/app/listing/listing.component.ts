@@ -61,7 +61,6 @@ export class ListingComponent implements OnInit {
     })
   }
   ngOnInit(): void {
-    console.log("Initialising listing component ============:");
     setTimeout(() => {
       let scrollTop = window.pageYOffset;
       window.scrollTo(0, scrollTop + 1);
@@ -92,7 +91,6 @@ async loadInitialData() {
   this.page = 1;
   this.solutionList = [];
   this.utils.getProfileData().subscribe(response => {
-    console.log("PRof resp from service: ",response)
     if (!response) return;
 
     this.profileData = response?.normalizedProfile;
