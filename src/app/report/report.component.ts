@@ -35,7 +35,6 @@ Chart.register(PieController, BarController, ArcElement, BarElement, CategorySca
 export class ReportComponent implements OnInit {
   reportDetails = signal<any[]>([]);
   objectURL = signal<any>(null);
-  objectType = signal<string>('');
   isModalOpen = signal(false);
   filteredQuestions = signal<any[]>([]);
   allQuestions = signal<any[]>([]);
@@ -139,7 +138,7 @@ export class ReportComponent implements OnInit {
         });
         this.reportDetails.set(processed);
         this.cdr.detectChanges();
-        this.objectType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
+        this.observationType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
         if (this.initialLoad()) {
           this.initialLoad.set(false);
           this.filterData.set(dropDownFilterData);
@@ -417,7 +416,7 @@ openDialog(evidence: any) {
     }))
     
     this.cdr.detectChanges();
-    this.objectType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
+    this.observationType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
     if (!reset && !this.filteredQuestions().length) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }
