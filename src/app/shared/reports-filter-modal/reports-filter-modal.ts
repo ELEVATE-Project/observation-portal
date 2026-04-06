@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ReportsQuestion } from 'src/app/constants/actionContants';
 import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
@@ -42,4 +43,9 @@ export class ReportsFilterModal {
   close() {
     this.dialogRef.close();
   }
+
+   trackById(index: number, question: ReportsQuestion) {
+    return question?.id ?? index;
+  }
+
 }

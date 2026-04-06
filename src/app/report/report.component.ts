@@ -24,6 +24,7 @@ import { UtilsService } from '../services/utils.service';
 import { ReportsService } from '../services/reports.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReportsFilterModal } from '../shared/reports-filter-modal/reports-filter-modal';
+import { OBSERVATION_REPORTS_TYPES} from '../constants/actionContants';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -44,7 +45,7 @@ export class ReportComponent implements OnInit {
   resultData = signal<any>(null);
   totalSubmissions = signal<any[]>([]);
   observationId = signal<any>(null);
-  observationType = signal<any>('questions');
+  observationType = signal<any>(OBSERVATION_REPORTS_TYPES?.QUESTIONS);
   entityId = signal<any>(null);
   loaded = signal(false);
   filterData = signal<any>(null);
@@ -379,7 +380,7 @@ openDialog(evidence: any) {
           width: '400px',
           data: { 
             allQuestions: this.allQuestions(),
-            labelKey: this.observationType() === 'questions' ? 'question' : 'criteriaName',
+            labelKey: this.observationType() === OBSERVATION_REPORTS_TYPES?.QUESTIONS ? OBSERVATION_REPORTS_TYPES?.QUESTION_LABEL : OBSERVATION_REPORTS_TYPES?.CRITERIA_LABEL,
             title: 'SELECT_QUESTIONS_FILTER'
            }  
         });
