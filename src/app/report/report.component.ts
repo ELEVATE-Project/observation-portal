@@ -139,7 +139,7 @@ export class ReportComponent implements OnInit {
         });
         this.reportDetails.set(processed);
         this.cdr.detectChanges();
-        this.observationType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
+        this.observationType() === OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
         if (this.initialLoad()) {
           this.initialLoad.set(false);
           this.filterData.set(dropDownFilterData);
@@ -417,7 +417,7 @@ openDialog(evidence: any) {
     }))
     
     this.cdr.detectChanges();
-    this.observationType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
+    this.observationType() === OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
     if (!reset && !this.filteredQuestions().length) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }
@@ -440,7 +440,7 @@ openDialog(evidence: any) {
 
   toggleObservationType(type: any) {
     this.observationType.set(type);
-    type == 'questions' ? this.loadObservationReport(this.submissionId(), false, false) : this.loadObservationReport(this.submissionId(), true, false);
+    type == OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.loadObservationReport(this.submissionId(), false, false) : this.loadObservationReport(this.submissionId(), true, false);
   }
 
   downloadPDF(submissionId: string, criteria: boolean, pdf: boolean,type:any) {
@@ -472,7 +472,7 @@ openDialog(evidence: any) {
   }
   onSelectionChange(submissionId: string): void {
     this.submissionId.set(submissionId);
-    this.observationType() == 'questions' ? this.loadObservationReport(submissionId, false, false) : this.loadObservationReport(submissionId, true, false);
+    this.observationType() == OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.loadObservationReport(submissionId, false, false) : this.loadObservationReport(submissionId, true, false);
   }
 
   navigateToObservationLedImpPage(){

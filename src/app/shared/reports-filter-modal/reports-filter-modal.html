@@ -13,12 +13,14 @@
 
     <div class="dialog-body">
       <ul class="question-list">
-        <li *ngFor="let question of allQuestions;trackBy: trackById">
+        @for (question of allQuestions; track question.id) {
+        <li>
           <label>
             <input type="checkbox" [(ngModel)]="question.selected" />
             {{ question[labelKey] }}
           </label>
         </li>
+        }
       </ul>
     </div>
 

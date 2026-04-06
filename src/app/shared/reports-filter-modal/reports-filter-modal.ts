@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ReportsQuestion } from 'src/app/constants/actionContants';
+import { OBSERVATION_REPORTS_TYPES, ReportsQuestion } from 'src/app/constants/actionContants';
 import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { ToastService } from 'src/app/services/toast.service';
 export class ReportsFilterModal {
 
   allQuestions: any[] = [];
-  labelKey: string = 'question';
+  labelKey: string = OBSERVATION_REPORTS_TYPES.QUESTION_LABEL;
   title: string = 'FILTER';
 
   constructor(
@@ -21,7 +21,7 @@ export class ReportsFilterModal {
     private toaster: ToastService
   ) {
     this.allQuestions = data.allQuestions || [];
-    this.labelKey = data.labelKey || 'question';
+    this.labelKey = data.labelKey || OBSERVATION_REPORTS_TYPES.QUESTION_LABEL;
     this.title = data.title || 'FILTER';
   }
 
