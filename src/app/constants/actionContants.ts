@@ -88,3 +88,15 @@ export const  statusMappings = {
   'completed': { tagClass: 'tag-completed', statusLabel: 'Completed' },
   'expired': { tagClass: 'tag-expired', statusLabel: 'Expired' }
 };
+
+export const OBSERVATION_REPORTS_TYPES = {
+  QUESTIONS: 'questions',
+  QUESTION_LABEL: 'question',
+  CRITERIA_LABEL: 'criteriaName'
+};
+
+export interface ReportsQuestion {
+  id: number | string;
+  selected: boolean;
+  [key: string]: any;
+}

@@ -22,8 +22,9 @@ import { SurveyPreviewComponent } from '../shared/survey-preview/survey-preview.
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from '../services/utils.service';
 import { ReportsService } from '../services/reports.service';
-import { ObservationFilterComponent } from '../shared/observation-filter/observation-filter.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReportsFilterModal } from '../shared/reports-filter-modal/reports-filter-modal';
+import { OBSERVATION_REPORTS_TYPES} from '../constants/actionContants';
 Chart.register(PieController, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
@@ -35,7 +36,6 @@ Chart.register(PieController, BarController, ArcElement, BarElement, CategorySca
 export class ReportComponent implements OnInit {
   reportDetails = signal<any[]>([]);
   objectURL = signal<any>(null);
-  objectType = signal<string>('questions');
   isModalOpen = signal(false);
   filteredQuestions = signal<any[]>([]);
   allQuestions = signal<any[]>([]);
@@ -45,7 +45,7 @@ export class ReportComponent implements OnInit {
   resultData = signal<any>(null);
   totalSubmissions = signal<any[]>([]);
   observationId = signal<any>(null);
-  observationType = signal<any>('questions');
+  observationType = signal<any>(OBSERVATION_REPORTS_TYPES?.QUESTIONS);
   entityId = signal<any>(null);
   loaded = signal(false);
   filterData = signal<any>(null);
@@ -139,7 +139,7 @@ export class ReportComponent implements OnInit {
         });
         this.reportDetails.set(processed);
         this.cdr.detectChanges();
-        this.objectType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
+        this.observationType() === OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
         if (this.initialLoad()) {
           this.initialLoad.set(false);
           this.filterData.set(dropDownFilterData);
@@ -376,11 +376,12 @@ openDialog(evidence: any) {
   }
 
   openFilter() {
-     const dialogRef = this.dialog.open(ObservationFilterComponent, {
+     const dialogRef = this.dialog.open(ReportsFilterModal, {
           width: '400px',
           data: { 
             allQuestions: this.allQuestions(),
-            observationType:this.observationType()
+            labelKey: this.observationType() === OBSERVATION_REPORTS_TYPES?.QUESTIONS ? OBSERVATION_REPORTS_TYPES?.QUESTION_LABEL : OBSERVATION_REPORTS_TYPES?.CRITERIA_LABEL,
+            title: 'SELECT_QUESTIONS_FILTER'
            }  
         });
       
@@ -405,10 +406,19 @@ openDialog(evidence: any) {
   applyFilter(reset: boolean = false) {
 
     const questionsToProcess = this.filteredQuestions().length > 0 ? this.filteredQuestions() : this.allQuestions();
-    this.reportDetails.set(this.processSurveyData(questionsToProcess));
+    this.reportDetails.set(this.processSurveyData(questionsToProcess).map(item => {
+      if (item?.evidences?.length) {
+        return {
+          ...item,
+          evidences: this.utils.mapEvidences(item.evidences)
+        };
+      }
+      return item;
+    }))
+    
     this.cdr.detectChanges();
-    this.objectType() === 'questions' ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
-    if (!reset && this.filteredQuestions().length === 0) {
+    this.observationType() === OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.renderCharts(this.reportDetails(), false) : this.renderCharts(this.reportDetails(), true);
+    if (!reset && !this.filteredQuestions().length) {
       this.toaster.showToast('SELECT_ATLEAST_ONE_QUESTION', 'danger');
     }
 
@@ -430,7 +440,7 @@ openDialog(evidence: any) {
 
   toggleObservationType(type: any) {
     this.observationType.set(type);
-    type == 'questions' ? this.loadObservationReport(this.submissionId(), false, false) : this.loadObservationReport(this.submissionId(), true, false);
+    type == OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.loadObservationReport(this.submissionId(), false, false) : this.loadObservationReport(this.submissionId(), true, false);
   }
 
   downloadPDF(submissionId: string, criteria: boolean, pdf: boolean,type:any) {
@@ -462,7 +472,7 @@ openDialog(evidence: any) {
   }
   onSelectionChange(submissionId: string): void {
     this.submissionId.set(submissionId);
-    this.observationType() == 'questions' ? this.loadObservationReport(submissionId, false, false) : this.loadObservationReport(submissionId, true, false);
+    this.observationType() == OBSERVATION_REPORTS_TYPES.QUESTIONS ? this.loadObservationReport(submissionId, false, false) : this.loadObservationReport(submissionId, true, false);
   }
 
   navigateToObservationLedImpPage(){
