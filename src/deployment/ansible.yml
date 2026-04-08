@@ -3,6 +3,7 @@
   vars:
     project_path: /opt/frontend/observation-portal
     root_path: /opt/frontend
+    NVM_DIR: "/home/jenkins/.nvm"
   tasks:
     - name: Slurp host file
       slurp:
@@ -34,24 +35,25 @@
         version: "{{gitBranch}}"
         force: yes
 
-    - name: Setup Node 20 using NVM
+    - name: Install and set Node 20
       shell: |
-        export NVM_DIR="$HOME/.nvm"
-        if [ ! -d "$NVM_DIR" ]; then
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-        fi
+        export NVM_DIR="{{ NVM_DIR }}"
         . "$NVM_DIR/nvm.sh"
         nvm install 20
+        nvm alias default 20
         nvm use 20
       args:
         executable: /bin/bash
 
     - name: Install dependencies
       shell: |
-        export NVM_DIR="$HOME/.nvm"
-        source $NVM_DIR/nvm.sh
-        cd {{project_path}}
-        npm ci
+        export NVM_DIR="{{ NVM_DIR }}"
+        . "$NVM_DIR/nvm.sh"
+        nvm use 20
+        cd {{ project_path }}
+        npm ci --legacy-peer-deps
+      args:
+        executable: /bin/bash
 
     - name: Set permission for env script
       shell: chmod 744 {{ project_path }}/src/scripts/json2env.sh
