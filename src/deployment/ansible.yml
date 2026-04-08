@@ -33,9 +33,22 @@
         dest: "{{project_path}}"
         version: "{{gitBranch}}"
         force: yes
+    - name: Setup Node 20 using NVM
+      shell: |
+        export NVM_DIR="$HOME/.nvm"
+        if [ ! -d "$NVM_DIR" ]; then
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+        fi
+        source $NVM_DIR/nvm.sh
+        nvm install 20
+        nvm use 20
 
     - name: Install dependencies
-      shell: cd {{project_path}} && npm i --force
+      shell: |
+        export NVM_DIR="$HOME/.nvm"
+        source $NVM_DIR/nvm.sh
+        cd {{project_path}}
+        npm ci
 
     - name: Set permission for env script
       shell: chmod 744 {{ project_path }}/src/scripts/json2env.sh
@@ -67,8 +80,11 @@
       shell: rm -rf dist
 
     - name: Build angular portal
-
-      shell: cd {{project_path}} && ng build --configuration production
+      shell: |
+        export NVM_DIR="$HOME/.nvm"
+        source $NVM_DIR/nvm.sh
+        cd {{project_path}}
+        npx ng build --configuration production
 
     - name: Start pm2
 
