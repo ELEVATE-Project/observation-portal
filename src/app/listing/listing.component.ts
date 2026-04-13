@@ -144,7 +144,7 @@ export class ListingComponent implements OnInit {
     }else{
       if(headerConfig.surveyReports) return this.navigate?.navigation(['surveyReports',submissionId])
       if(status === 'expired') return this.toaster.showToast('FORM_EXPIRED','danger')
-      this.navigate?.navigation(['/questionnaire'],{observationId,entityId,submissionNumber,submissionId,solutionId,solutionType:headerConfig.solutionType})
+      this.navigate?.navigation(['/questionnaire'],{observationId,entityId,index: 0, submissionNumber,submissionId,solutionId,solutionType:headerConfig.solutionType})
 
     }
   }
@@ -232,5 +232,5 @@ export class ListingComponent implements OnInit {
       solutions.map((item, idx) => (idx === index ? { ...item, downloaded } : item))
     );
   }
-
+  
 }
