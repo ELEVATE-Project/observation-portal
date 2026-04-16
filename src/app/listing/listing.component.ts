@@ -191,16 +191,25 @@ export class ListingComponent implements OnInit {
   
 
   async downloadSurvey(solution: any, index: number) {
-    try {
-      const newItem = this.downloadDataPayloadCreationService.buildSurveyItem(solution);
-  
+    try {  
       const check = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
+      let surveyData;
       if (!check?.data) {
-        await this.offlineData.getFullQuestionerData(
+        surveyData = await this.offlineData.getFullQuestionerData(
           "survey", "", "", solution?.submissionId, 0, solution?.solutionId
         );
       }
-  
+
+      const submissionId = surveyData?.assessment?.submissionId;
+      const solutionId = surveyData?.solution?._id;
+
+      const mergedSolution = {
+        ...solution,
+        submissionId,
+        solutionId
+      };
+      
+      const newItem = this.downloadDataPayloadCreationService.buildSurveyItem(mergedSolution);
       await this.downloadService.downloadData("survey", newItem);
       this.markSolutionDownloaded(index, true);
     } catch (e) {
