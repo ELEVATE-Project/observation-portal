@@ -191,17 +191,24 @@ export class ListingComponent implements OnInit {
   
 
   async downloadSurvey(solution: any, index: number) {
-    try {  
-      const check = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
-      let surveyData;
+    try {
+      let check:any;
+      let surveyData:any;
+      let submissionId:any;
+      let solutionId:any;
+      if(solution?.submissionId){
+      check = await this.offlineData.checkAndMapIndexDbDataToVariables(solution?.submissionId);
+      }
       if (!check?.data) {
         surveyData = await this.offlineData.getFullQuestionerData(
           "survey", "", "", solution?.submissionId, 0, solution?.solutionId
         );
+        submissionId = surveyData?.assessment?.submissionId;
+        solutionId = surveyData?.solution?._id;
+      }else{
+        submissionId = solution?.submissionId;
+        solutionId = solution?.solutionId;
       }
-
-      const submissionId = surveyData?.assessment?.submissionId;
-      const solutionId = surveyData?.solution?._id;
 
       const mergedSolution = {
         ...solution,
@@ -224,7 +231,7 @@ export class ListingComponent implements OnInit {
         const entries = Array.isArray(item?.data) ? item.data : [item?.data].filter(Boolean);
         return entries.some(
           (d: any) =>
-            d?.metaData?.solutionId === solution?._id &&
+            d?.metaData?.solutionId === solution?.solutionId &&
             d?.metaData?.submissionId === solution?.submissionId
         );
       });
@@ -241,5 +248,5 @@ export class ListingComponent implements OnInit {
       solutions.map((item, idx) => (idx === index ? { ...item, downloaded } : item))
     );
   }
-  
+
 }
