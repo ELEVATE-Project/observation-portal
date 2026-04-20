@@ -218,4 +218,12 @@ body{
   color: #ffffff !important;
 }
 
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 
+.mdc-snackbar__label {
+  visibility: visible !important;
+  font-size: 15px !important;
+}
