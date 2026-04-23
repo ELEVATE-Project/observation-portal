@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { ToastService } from 'src/app/services/toast.service';
@@ -29,6 +29,7 @@ export class AddEntityPopupComponent {
     private toaster: ToastService,
     private apiService: ApiService,
     private destroyRef: DestroyRef,
+    private cd: ChangeDetectorRef
 ){
   this.entityToAdd = data.entityToAdd;
   this.observationId=data.observationId;
@@ -61,7 +62,12 @@ export class AddEntityPopupComponent {
     url += `&parentEntityId=${parentEntityId}`;
   }
 
-  this.apiService.post(url, this.apiService.profileData).pipe(finalize(() => this.loaded = false))
+  this.apiService.post(url, this.apiService.profileData).pipe(finalize(() => 
+    {
+      this.loaded = false;
+      this.cd.detectChanges();
+    }
+    ))
       .subscribe((res: any) => {
         if (res.result) {
           const searchEntities = res?.result?.[0]?.data ?? [];
