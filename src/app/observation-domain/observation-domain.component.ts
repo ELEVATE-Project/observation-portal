@@ -94,12 +94,24 @@ export class ObservationDomainComponent implements OnInit {
   }
 
 
-  mapDataToVariables(observationData) {
-    const mappedEntities = observationData?.assessment?.evidences || [];
-    this.entities.set(mappedEntities);
-    this.evidences.set(mappedEntities.map((element: any) => ({ ...element, show: false })));
-    this.loaded.set(true);
-  }
+mapDataToVariables(observationData) {
+  const statusMap = {
+    inProgress: 'IN_PROGRESS',
+    notStarted: 'NOT_STARTED',
+    completed: 'COMPLETED',
+    submitted: 'SUBMITTED'
+  };
+
+  const mappedEntities = (observationData?.assessment?.evidences || []).map((element: any) => ({
+    ...element,
+    progressStatusLabel: statusMap[element?.progressStatus] || 'NOT_STARTED',
+    show: false
+  }));
+
+  this.entities.set(mappedEntities);
+  this.evidences.set(mappedEntities);
+  this.loaded.set(true);
+}
 
   toggleExpand(entity:any){
     this.evidences.update((items) =>

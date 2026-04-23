@@ -33,10 +33,10 @@
           <div class="btn-container">
             <div>
               @if(entity?.notApplicable){
-              <p>{{ 'STATUS' | translate }}:{{"NOT_APPLICABLE" | translate}}</p>
+              <p>{{ 'STATUS' | translate }}: {{"NOT_APPLICABLE" | translate}}</p>
               }@else{
               <p>{{ 'STATUS' | translate }}:
-                {{ !entity?.progressStatus ? ('NOT_STARTED' | translate) : (entity?.progressStatus | translate)}}
+                {{ entity?.progressStatusLabel | translate }}
               </p>
               }
             </div>
@@ -93,7 +93,7 @@
 
 <ng-template #notApplicableModel>
   <div class="p-16 flex flex-col items-center justify-center">
-    <h1 mat-dialog-title>{{"NOT_APPLICABLE" | translate}}</h1>
+    <h1 mat-dialog-title>{{"NOT_APPLICABLE" | translate | titlecase }}</h1>
     <mat-dialog-content>
         <p>{{ 'ADD_REMARKS' | translate }}</p>
         <mat-form-field appearance="fill" style="width: 100%;">

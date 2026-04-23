@@ -227,3 +227,9 @@ body{
   visibility: visible !important;
   font-size: 15px !important;
 }
+
+.mat-mdc-list-option .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background, .mat-mdc-list-option .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background {
+  border-color: var(--primary-color) !important;
+  background-color: var(--primary-color) !important;
+}
+  
