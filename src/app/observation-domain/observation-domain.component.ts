@@ -98,8 +98,7 @@ mapDataToVariables(observationData) {
   const statusMap = {
     inProgress: 'IN_PROGRESS',
     notStarted: 'NOT_STARTED',
-    completed: 'COMPLETED',
-    submitted: 'SUBMITTED'
+    completed: 'COMPLETED'
   };
 
   const mappedEntities = (observationData?.assessment?.evidences || []).map((element: any) => ({
