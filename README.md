@@ -100,7 +100,7 @@ Part 3: Elevate Portal Integration (Optional)
 
 If you require a complete user management system with login, registration, and discovery of observation, survey and reports:
 
-Setup Elevate Portal: Follow the installation guide in the Elevate Portal Repository.
+Setup Elevate Portal: Follow the installation guide in the [Elevate Portal Repository](https://github.com/ELEVATE-Project/elevate-portal).
 
 Authentication & Access: The portal handles user sessions and provides the interface to launch specific projects and programs within this PWA.
 
