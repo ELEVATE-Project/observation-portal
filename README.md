@@ -71,6 +71,9 @@ Setup and Configuration
 Setting up the Project
 ----------------------
 
+Part 1: Frontend Setup
+----------------------
+
 1. Go to the project folder using the below command.
     ```
     cd observation-portal
@@ -79,6 +82,36 @@ Setting up the Project
    - Follow the [Environment Configuration](#environment-configuration) section.
 
 3. Run `npm i -f`.
+
+
+
+Part 2: Backend Setup
+----------------------
+
+If you want to connect the portal to the full backend service:
+
+Setup Backend Service: Follow the instructions in the [Samiksha Service Documentation](https://github.com/ELEVATE-Project/samiksha-service/tree/main/documentation/3.4.0).
+
+Update Base URL: Once the backend is running (typically on port 4301), update the baseURL in your Frontend code path src/assets/env/env.js to http://localhost:4301.
+
+
+Part 3: Elevate Portal Integration (Optional)
+----------------------------------------------
+
+If you require a complete user management system with login, registration, and discovery of observation, survey and reports:
+
+Setup Elevate Portal: Follow the installation guide in the Elevate Portal Repository.
+
+Authentication & Access: The portal handles user sessions and provides the interface to launch specific projects and programs within this PWA.
+
+Update Base URL: Once the backend is running (typically on port 3001), update the NEXT_PUBLIC_BASE_URL in your apps/shikshagraha-app/public/env-config.js to http://localhost:3001.
+
+Host the app: Run the following command to serve the portal:
+
+nx dev shikshagraha-app --port=3000 --verbose
+
+
+
 
 Serving the Application
 ------------------------
