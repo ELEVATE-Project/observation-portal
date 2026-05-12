@@ -108,7 +108,7 @@ Update Base URL: Once the backend is running (typically on port 3001), update th
 
 Host the app: Run the following command to serve the portal:
 
-nx dev shikshagraha-app --port=3000 --verbose
+npx nx dev shikshagraha-app --port=3000 --verbose
 
 
 
@@ -214,7 +214,7 @@ Open another terminal and run:
 ```bash
 cd observation-portal
 npm install
-ng serve --host 0.0.0.0 --port 4200
+ng serve --port 4200
 ```
 
 Verify:
@@ -222,6 +222,20 @@ Verify:
 ```text
 http://localhost:4200
 ```
+```text
+Note:
+If you need to access the app from another device on the same network
+(for example, mobile testing), run:
+
+ng serve --host 0.0.0.0 --port 4200
+```
+
+And later in **Recommended Development Workflow**:```md### Terminal 2```bashcd observation-portalng serve --port 4200
+
+For remote-device/LAN testing:
+ng serve --host 0.0.0.0 --port 4200
+
+That should address the review comment cleanly while still preserving the remote testing workflow.
 
 ---
 
