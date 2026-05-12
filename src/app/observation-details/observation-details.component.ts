@@ -260,7 +260,7 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
 
   toggleTabs(event: MatTabChangeEvent): void {
     const selectedTabLabel = event.tab.textLabel;
-    if (selectedTabLabel === 'In progress') {
+    if (selectedTabLabel === 'In Progress') {
       this.isPendingTabSelected.set(true);
       this.getObservationsByStatus(['draft', 'started', 'inprogress']);
     } else if (selectedTabLabel === 'Completed') {
