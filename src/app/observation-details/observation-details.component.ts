@@ -259,11 +259,10 @@ getObservationsByStatus(statuses: ('draft' | 'inprogress' | 'completed' | 'start
   }
 
   toggleTabs(event: MatTabChangeEvent): void {
-    const selectedTabLabel = event.tab.textLabel;
-    if (selectedTabLabel === 'In progress') {
+    if (event.index === 0) {
       this.isPendingTabSelected.set(true);
       this.getObservationsByStatus(['draft', 'started', 'inprogress']);
-    } else if (selectedTabLabel === 'Completed') {
+    } else if (event.index === 1) {
       this.isPendingTabSelected.set(false);
       this.getObservationsByStatus(['completed']);
     }
@@ -349,5 +348,17 @@ async fetchDownloadedData(mapData) {
 setLanguage() {
   this.translate.setDefaultLang('en');
   this.translate.use('en');
+}
+
+getTabLabel(key: string): string {
+  const translated = this.translate.instant(key);
+
+  if (this.translate.currentLang === 'en') {
+    return translated.replace(/\w\S*/g, (txt) =>
+      txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
+    );
+  }
+
+  return translated;
 }
 }
