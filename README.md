@@ -92,7 +92,12 @@ If you want to connect the portal to the full backend service:
 
 Setup Backend Service: Follow the instructions in the [Samiksha Service Documentation](https://github.com/ELEVATE-Project/samiksha-service/tree/main/documentation/3.4.0).
 
-Update Base URL: Once the backend is running (typically on port 4301), update the baseURL in your Frontend code path src/assets/env/env.js to http://localhost:4301.
+Update Backend URL: Once the backend is running (typically on port 4301), update the `surveyBaseURL` field in `src/assets/env/env.js`:
+
+```javascript
+window["env"] = {
+    surveyBaseURL: "http://localhost:4301",
+};
 
 
 Part 3: Elevate Portal Integration (Optional)
@@ -223,6 +228,7 @@ Verify:
 http://localhost:4200
 ```
 ```text
+
 Note:
 If you need to access the app from another device on the same network
 (for example, mobile testing), run:
@@ -547,6 +553,12 @@ npm run dev
 
 ```bash
 cd observation-portal
+ng serve --port 4200
+```
+
+For remote-device/LAN testing, use:
+
+```bash
 ng serve --host 0.0.0.0 --port 4200
 ```
 
